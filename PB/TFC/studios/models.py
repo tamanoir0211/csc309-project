@@ -1,3 +1,107 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import CASCADE
+import datetime
 
 # Create your models here.
+
+
+class Location(models.Model):
+    latitude = models.DecimalField(max_digits=8, decimal_places=6, validators=[MinValueValidator(-90), MaxValueValidator(90)])
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, validators=[MinValueValidator(-180), MaxValueValidator(180)])
+    address = models.CharField(max_length=200)
+    postal_code = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.address
+
+
+class Studio(models.Model):
+    name = models.CharField(max_length=200)
+    phone_number = models.CharField(max_length=15)
+    location = models.OneToOneField(Location, on_delete=CASCADE)
+
+    def __str__(self):
+        return self.name
+
+
+class StudioImages(models.Model):
+    image = models.ImageField()
+    studio = models.ForeignKey(Studio, on_delete=CASCADE)
+
+
+class StudioAmenities(models.Model):
+    type = models.CharField(max_length=50)
+    quantity = models.PositiveIntegerField()
+    studio = models.ForeignKey(Studio, on_delete=CASCADE)
+
+    def __str__(self):
+        return self.studio.name + " - " + self.type
+
+
+class Coach(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class Class(models.Model):
+    DAY_CHOICES = (
+        (0, 'Monday'),
+        (1, 'Tuesday'),
+        (2, 'Wednesday'),
+        (3, 'Thursday'),
+        (4, 'Friday'),
+        (5, 'Saturday'),
+        (6, 'Sunday'),
+    )
+    name = models.CharField(max_length=200)
+    description = models.TextField()
+    capacity = models.PositiveIntegerField()
+    end_date = models.DateField()
+    day = models.IntegerField(choices=DAY_CHOICES)
+    start_time = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(23)])
+    studio = models.ForeignKey(Studio, on_delete=CASCADE)
+    coach = models.ForeignKey(Coach, on_delete=CASCADE)
+
+    class Meta:
+        verbose_name_plural = "Classes"
+
+    def save(self, *args, **kwargs):
+        created = not self.pk
+        super().save(*args, **kwargs)
+        if created:
+            date = find_date(datetime.date.today(), self.day)
+            while date < self.end_date:
+                time = datetime.time(self.start_time, 0)
+                start = datetime.datetime.combine(date, time)
+                ClassTime.objects.create(classes=self, time=start)
+                date += datetime.timedelta(days=7)
+
+    def __str__(self):
+        return self.name
+
+
+class ClassKeyword(models.Model):
+    keyword = models.CharField(max_length=100)
+    classes = models.ForeignKey(Class, on_delete=CASCADE)
+
+    def __str__(self):
+        return self.classes.name + ' - ' + self.keyword
+
+
+def find_date(date, day):
+    today = datetime.date.today()
+    diff = day - date.weekday()
+    if diff <= 0:
+        diff += 7
+    return today + datetime.timedelta(diff)
+
+
+class ClassTime(models.Model):
+    classes = models.ForeignKey(Class, on_delete=CASCADE)
+    time = models.DateTimeField()
+
+    def __str__(self):
+        return self.classes.name + ' - ' + self.time.strftime("%Y-%m-%d %H:%M")
