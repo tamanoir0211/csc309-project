@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import CASCADE
 import datetime
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -59,21 +60,30 @@ class Class(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
     capacity = models.PositiveIntegerField()
-    end_date = models.DateField()
+    range_date_start = models.DateField()
+    range_date_end = models.DateField()
     day = models.IntegerField(choices=DAY_CHOICES)
     start_time = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(23)])
+    end_time = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(23)])
     studio = models.ForeignKey(Studio, on_delete=CASCADE)
     coach = models.ForeignKey(Coach, on_delete=CASCADE)
 
     class Meta:
         verbose_name_plural = "Classes"
 
+    def clean(self):
+        super(Class, self).clean()
+        if self.start_time >= self.end_time:
+            raise ValidationError('End time cannot be earlier than start time')
+        if self.range_date_start >= self.range_date_end:
+            raise ValidationError('End date cannot be earlier than start date')
+
     def save(self, *args, **kwargs):
         created = not self.pk
         super().save(*args, **kwargs)
         if created:
             date = find_date(datetime.date.today(), self.day)
-            while date < self.end_date:
+            while date < self.range_date_end:
                 time = datetime.time(self.start_time, 0)
                 start = datetime.datetime.combine(date, time)
                 ClassTime.objects.create(classes=self, time=start)
@@ -100,7 +110,12 @@ def find_date(date, day):
 
 
 class ClassTime(models.Model):
+    STATUS_CHOICES = (
+        (True, 'Scheduled'),
+        (False, 'Cancelled'),
+    )
     classes = models.ForeignKey(Class, on_delete=CASCADE)
+    status = models.BooleanField(default=True, choices=STATUS_CHOICES)
     time = models.DateTimeField()
 
     def __str__(self):

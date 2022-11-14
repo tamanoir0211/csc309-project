@@ -1,10 +1,9 @@
 from django.contrib import admin
-from studios.models import Location, Studio, StudioImages, StudioAmenities, Coach, Class, ClassKeyword, ClassTime
+from .models import Location, Studio, StudioImages, StudioAmenities, Coach, Class, ClassKeyword, ClassTime
 
 
 class LocationAdmin(admin.ModelAdmin):
     list_display = ['id', 'address']
-    # readonly_fields = ('id',)
 
 
 class StudioImagesInline(admin.TabularInline):
