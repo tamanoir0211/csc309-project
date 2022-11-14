@@ -1,4 +1,5 @@
 from rest_framework.generics import RetrieveAPIView, ListAPIView
+from rest_framework.views import APIView
 from .models import Studio
 from django.shortcuts import get_object_or_404
 from .serializers import StudioSerializer, StudioDetailSerializer
@@ -10,7 +11,8 @@ from rest_framework.exceptions import ValidationError
 
 def distance(lat1, lon1, lat2, lon2):
     p = Decimal(0.017453292519943295)
-    hav = 0.5 - cos((lat2-lat1)*p)/2 + cos(lat1*p)*cos(lat2*p) * (1-cos((lon2-lon1)*p)) / 2
+    hav = 0.5 - cos((lat2-lat1)*p)/2 + cos(lat1*p) * \
+        cos(lat2*p) * (1-cos((lon2-lon1)*p)) / 2
     return 12742 * asin(sqrt(hav))
 
 # Create your views here.
@@ -26,15 +28,19 @@ class StudioListView(ListAPIView):
             float(input_lat)
             float(input_long)
         except ValueError:
-            raise ValidationError({"Value Error": ["Invalid latitude/longitude"]})
+            raise ValidationError(
+                {"Value Error": ["Invalid latitude/longitude"]})
 
         studio_distance = {}
         studios = Studio.objects.all()
         for studio in studios:
-            studio_distance[studio.id] = distance(Decimal(input_lat), Decimal(input_long), studio.location.latitude, studio.location.longitude)
-        sorted_distance = {k: v for k, v in sorted(studio_distance.items(), key=lambda item: item[1])}
+            studio_distance[studio.id] = distance(Decimal(input_lat), Decimal(
+                input_long), studio.location.latitude, studio.location.longitude)
+        sorted_distance = {k: v for k, v in sorted(
+            studio_distance.items(), key=lambda item: item[1])}
         id_list = list(sorted_distance.keys())
-        shortest_dist = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(id_list)])
+        shortest_dist = Case(*[When(pk=pk, then=pos)
+                             for pos, pk in enumerate(id_list)])
         return Studio.objects.order_by(shortest_dist)
 
 
@@ -51,3 +57,7 @@ class StudioDetailView(RetrieveAPIView):
         url_direction = 'https://www.google.com/maps/dir/?api=1&destination='+lat+'%2c'+long
         response.data['url_direction'] = url_direction
         return response
+
+# class StudioSearchView(APIView):
+
+#     def get(self, request, format=None):
