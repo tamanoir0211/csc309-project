@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import StudioListView, StudioDetailView, ClassScheduleView, ClassEnrollView
+from .views import StudioListView, StudioDetailView, ClassScheduleView  # , ClassEnrollView
 
 app_name = 'studios'
 urlpatterns = [

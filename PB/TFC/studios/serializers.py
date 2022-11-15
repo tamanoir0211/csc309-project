@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Studio, Location, StudioImages, StudioAmenities, ClassTime, Class, Coach, ClassBooking
-from User.serializers import UserSerializer
+# from User.serializers import UserSerializer
 
 
 class LocationSerializer(serializers.ModelSerializer):
