@@ -1,6 +1,6 @@
 import datetime
 
-from rest_framework.generics import RetrieveAPIView, ListAPIView
+from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView
 from rest_framework.views import APIView
 from .models import Studio, ClassTime
 from django.shortcuts import get_object_or_404
@@ -9,6 +9,7 @@ from math import cos, asin, sqrt
 from django.db.models import Case, When
 from decimal import Decimal
 from rest_framework.exceptions import ValidationError
+from rest_framework import filters
 
 
 def distance(lat1, lon1, lat2, lon2):
@@ -34,7 +35,8 @@ class StudioListView(ListAPIView):
                 {"Value Error": ["Invalid latitude/longitude"]})
 
         if not (-90 <= float(input_lat) <= 90) or not (-180 <= float(input_long) <= 180):
-            raise ValidationError({"Value Error": ["Invalid latitude/longitude"]})
+            raise ValidationError(
+                {"Value Error": ["Invalid latitude/longitude"]})
 
         studio_distance = {}
         studios = Studio.objects.all()
@@ -63,16 +65,21 @@ class StudioDetailView(RetrieveAPIView):
         response.data['url_direction'] = url_direction
         return response
 
-# class StudioSearchView(APIView):
-
-#     def get(self, request, format=None):
-
 
 class ClassScheduleView(ListAPIView):
     serializer_class = ClassScheduleSerializer
 
     def get_queryset(self):
-        classes = ClassTime.objects.filter(classes=self.kwargs.get('studio_id'))
+        classes = ClassTime.objects.filter(
+            classes=self.kwargs.get('studio_id'))
         if classes:
-            classes = classes.filter(status=True, time__gte=datetime.datetime.now()).order_by('time')
+            classes = classes.filter(
+                status=True, time__gte=datetime.datetime.now()).order_by('time')
         return classes
+
+
+# class StudioSearchView(ListCreateAPIView):
+#     queryset = Studio.objects.all()
+#     serializer_class = StudioSerializer
+#     filter_backends = [filters.SearchFilter]
+#     search_fields = ['name', 'studio__StudioAmenities', 'class_name', 'coach']
