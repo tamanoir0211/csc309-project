@@ -33,17 +33,16 @@ class ClassTimeInline(admin.TabularInline):
 
 
 class ClassAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name']
-    verbose_name_plural = 'Classes'
+    list_display = ['id', 'name', 'studio']
     inlines = [ClassKeywordInline, ClassTimeInline]
 
 
 # Register your models here.
 admin.site.register(Location, LocationAdmin)
 admin.site.register(Studio, StudioAdmin)
-admin.site.register(StudioImages, StudioImagesAdmin)
-admin.site.register(StudioAmenities)
+# admin.site.register(StudioImages, StudioImagesAdmin)
+# admin.site.register(StudioAmenities)
 admin.site.register(Coach)
 admin.site.register(Class, ClassAdmin)
-admin.site.register(ClassKeyword)
-admin.site.register(ClassTime)
+# admin.site.register(ClassKeyword)
+# admin.site.register(ClassTime)
