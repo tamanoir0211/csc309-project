@@ -1,5 +1,4 @@
 import datetime
-
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.views import APIView
 from .models import Studio, ClassTime
@@ -24,8 +23,10 @@ class StudioListView(ListAPIView):
     serializer_class = StudioSerializer
 
     def get_queryset(self):
-        input_lat = self.kwargs.get('latitude')
-        input_long = self.kwargs.get('longitude')
+        # input_lat = self.kwargs.get('latitude')
+        # input_long = self.kwargs.get('longitude')
+        input_lat = self.request.query_params.get('latitude')
+        input_long = self.request.query_params.get('longitude')
         try:
             float(input_lat)
             float(input_long)
