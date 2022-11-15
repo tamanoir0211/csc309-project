@@ -11,7 +11,7 @@ class User(models.Model):
     email = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
     user_id = models.AutoField(primary_key=True)
-    subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL)
+    subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, null=True, blank=True)
 
 
 class Admin(models.Model):
@@ -22,6 +22,6 @@ class Admin(models.Model):
 class PaymentInfo(models.Model):
     card_number = models.CharField(max_length=16)
     expiration_date = models.DateField()
-    cvv = models.IntegerField(max_length=4)
+    cvv = models.IntegerField()
     payment_info_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
