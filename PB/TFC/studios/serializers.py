@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Studio, Location, StudioImages, StudioAmenities, ClassTime, Class, Coach, ClassBooking
-# from User.serializers import UserSerializer
+from User.serializers import UserSerializer
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -62,10 +62,10 @@ class ClassScheduleSerializer(serializers.ModelSerializer):
         fields = ['classes', 'time']
 
 
-# class ClassBookingSerializer(serializers.ModelSerializer):
-#     class_time = ClassScheduleSerializer()
-#     user = UserSerializer()
+class ClassBookingSerializer(serializers.ModelSerializer):
+    class_time = ClassScheduleSerializer()
+    user = UserSerializer()
 
-#     class Meta:
-#         model = ClassBooking
-#         fields = ['class_time', 'user']
+    class Meta:
+        model = ClassBooking
+        fields = ['class_time', 'user']

@@ -3,7 +3,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import CASCADE
 import datetime
 from django.core.exceptions import ValidationError
-from TFC.User.models import User
+from User.models import User
 
 # Create your models here.
 
@@ -143,10 +143,10 @@ class ClassTime(models.Model):
         return self.classes.name + ' - ' + self.time.strftime("%Y-%m-%d %H:%M")
 
 
-# class ClassBooking(models.Model):
-#     class_time = models.ForeignKey(ClassTime, on_delete=CASCADE)
-#     user = models.ForeignKey(User, on_delete=CASCADE)
+class ClassBooking(models.Model):
+    class_time = models.ForeignKey(ClassTime, on_delete=CASCADE)
+    user = models.ForeignKey(User, on_delete=CASCADE)
 
-#     def create(cls, class_time, user):
-#         sub = cls(class_time, user)
-#         return sub
+    def create(cls, class_time, user):
+        sub = cls(class_time, user)
+        return sub

@@ -86,35 +86,35 @@ class ClassScheduleView(ListAPIView):
 #     search_fields = ['name', 'studio__StudioAmenities', 'class_name', 'coach']
 
 
-# class ClassEnrollView(CreateAPIView):
+class ClassEnrollView(CreateAPIView):
 
-#     def post(self, request):
-#         user = request.user
-#         user_id = user.id
+    def post(self, request):
+        user = request.user
+        user_id = user.id
 
-#         # check if class and studio exist
-#         if not Class.objects.filter(studio=self.kwargs['studio_id'], id=self.kwargs['class_id']).exists:
-#             raise ValidationError(
-#                 {"Value Error": ["404 Not found"]})
-#         else:
-#             class_time = ClassTime.objects.get(classes=self.kwargs['class_id'])
+        # check if class and studio exist
+        if not Class.objects.filter(studio=self.kwargs['studio_id'], id=self.kwargs['class_id']).exists:
+            raise ValidationError(
+                {"Value Error": ["404 Not found"]})
+        else:
+            class_time = ClassTime.objects.get(classes=self.kwargs['class_id'])
 
-#             # if exist, create a new ClassBooking
-#             class_booking = ClassBooking(class_time.id, user_id)
-#             class_booking.save()
+            # if exist, create a new ClassBooking
+            class_booking = ClassBooking(class_time.id, user_id)
+            class_booking.save()
 
 
-# class ClassDropView(CreateAPIView):
+class ClassDropView(CreateAPIView):
 
-#     def post(self, request):
-#         user = request.user
-#         user_id = user.id
+    def post(self, request):
+        user = request.user
+        user_id = user.id
 
-#         # check if class and studio exist
-#         if not Class.objects.filter(studio=self.kwargs['studio_id'], id=self.kwargs['class_id']).exists:
-#             raise ValidationError(
-#                 {"Value Error": ["404 Not found"]})
-#         else:
-#             class_time = ClassTime.objects.get(classes=self.kwargs['class_id'])
-#             class_booking = ClassBooking.objects.get(class_time=class_time.id)
-#             class_booking.delete()
+        # check if class and studio exist
+        if not Class.objects.filter(studio=self.kwargs['studio_id'], id=self.kwargs['class_id']).exists:
+            raise ValidationError(
+                {"Value Error": ["404 Not found"]})
+        else:
+            class_time = ClassTime.objects.get(classes=self.kwargs['class_id'])
+            class_booking = ClassBooking.objects.get(class_time=class_time.id)
+            class_booking.delete()
