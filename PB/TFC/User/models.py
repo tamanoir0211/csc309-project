@@ -1,5 +1,5 @@
 from django.db import models
-from ..Subscriptions.models import Subscription
+from ..subscriptions.models import Subscription
 # Create your models here.
 
 
