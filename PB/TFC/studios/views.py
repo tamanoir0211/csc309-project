@@ -1,8 +1,10 @@
+import datetime
+
 from rest_framework.generics import RetrieveAPIView, ListAPIView
 from rest_framework.views import APIView
-from .models import Studio
+from .models import Studio, ClassTime
 from django.shortcuts import get_object_or_404
-from .serializers import StudioSerializer, StudioDetailSerializer
+from .serializers import StudioSerializer, StudioDetailSerializer, ClassScheduleSerializer
 from math import cos, asin, sqrt
 from django.db.models import Case, When
 from decimal import Decimal
@@ -30,6 +32,9 @@ class StudioListView(ListAPIView):
         except ValueError:
             raise ValidationError(
                 {"Value Error": ["Invalid latitude/longitude"]})
+
+        if not (-90 <= float(input_lat) <= 90) or not (-180 <= float(input_long) <= 180):
+            raise ValidationError({"Value Error": ["Invalid latitude/longitude"]})
 
         studio_distance = {}
         studios = Studio.objects.all()
@@ -61,3 +66,13 @@ class StudioDetailView(RetrieveAPIView):
 # class StudioSearchView(APIView):
 
 #     def get(self, request, format=None):
+
+
+class ClassScheduleView(ListAPIView):
+    serializer_class = ClassScheduleSerializer
+
+    def get_queryset(self):
+        classes = ClassTime.objects.filter(classes=self.kwargs.get('studio_id'))
+        if classes:
+            classes = classes.filter(status=True, time__gte=datetime.datetime.now()).order_by('time')
+        return classes
