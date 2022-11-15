@@ -30,11 +30,17 @@ class StudioImages(models.Model):
     image = models.ImageField()
     studio = models.ForeignKey(Studio, on_delete=CASCADE)
 
+    class Meta:
+        verbose_name_plural = "Studio images"
+
 
 class StudioAmenities(models.Model):
     type = models.CharField(max_length=50)
     quantity = models.PositiveIntegerField()
     studio = models.ForeignKey(Studio, on_delete=CASCADE)
+
+    class Meta:
+        verbose_name_plural = "Studio amenities"
 
     def __str__(self):
         return self.studio.name + " - " + self.type
@@ -79,15 +85,25 @@ class Class(models.Model):
             raise ValidationError('End date cannot be earlier than start date')
 
     def save(self, *args, **kwargs):
-        created = not self.pk
+        created = self.pk
         super().save(*args, **kwargs)
-        if created:
-            date = find_date(datetime.date.today(), self.day)
+        if not created:
+            date = find_date(self.range_date_start, self.day)
             while date < self.range_date_end:
                 time = datetime.time(self.start_time, 0)
                 start = datetime.datetime.combine(date, time)
                 ClassTime.objects.create(classes=self, time=start)
                 date += datetime.timedelta(days=7)
+        else:
+            all_classes = ClassTime.objects.filter(classes=self)
+            new_range_start = self.range_date_start
+            new_range_end = self.range_date_end
+            for each_class in all_classes:
+                if not (new_range_start <= each_class.time.date() < new_range_end):
+                    each_class.status = False
+                    each_class.save()
+                else:
+                    pass
 
     def __str__(self):
         return self.name
