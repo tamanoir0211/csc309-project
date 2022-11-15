@@ -8,6 +8,7 @@ from math import cos, asin, sqrt
 from django.db.models import Case, When
 from decimal import Decimal
 from rest_framework.exceptions import ValidationError
+from django.db.models import Q
 
 
 def distance(lat1, lon1, lat2, lon2):
@@ -27,12 +28,13 @@ class StudioListView(ListAPIView):
         # input_long = self.kwargs.get('longitude')
         input_lat = self.request.query_params.get('latitude')
         input_long = self.request.query_params.get('longitude')
+        if not input_lat or not input_long:
+            raise ValidationError({"Param error": ["Wrong parameter name or missing value of parameter"]})
         try:
             float(input_lat)
             float(input_long)
         except ValueError:
-            raise ValidationError(
-                {"Value Error": ["Invalid latitude/longitude"]})
+            raise ValidationError({"Value Error": ["Invalid latitude/longitude"]})
 
         if not (-90 <= float(input_lat) <= 90) or not (-180 <= float(input_long) <= 180):
             raise ValidationError({"Value Error": ["Invalid latitude/longitude"]})
@@ -77,3 +79,25 @@ class ClassScheduleView(ListAPIView):
         if classes:
             classes = classes.filter(status=True, time__gte=datetime.datetime.now()).order_by('time')
         return classes
+
+
+class StudioSearchFilterView(ListAPIView):
+    serializer_class = StudioSerializer
+
+    def get_queryset(self):
+        studio_name = self.request.query_params.get('studio_name')
+        amenity = self.request.query_params.get('amenity')
+        class_name = self.request.query_params.get('class_name')
+        coach = self.request.query_params.get('coach')
+        custom_q = Q()
+        if studio_name:
+            custom_q = Q(name__icontains=studio_name)
+        if amenity:
+            custom_q &= Q(studioamenities__type__icontains=amenity)
+        if class_name:
+            custom_q &= Q(class__name__icontains=class_name)
+        if coach:
+            custom_q &= Q(class__coach__name__icontains=coach)
+
+        print(Studio.objects.filter(custom_q))
+        return Studio.objects.filter(custom_q).distinct()
