@@ -1,10 +1,8 @@
 import datetime
-
-from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView, CreateAPIView
+from rest_framework.exceptions import NotFound
+from rest_framework.generics import RetrieveAPIView, ListAPIView, CreateAPIView
 from rest_framework.permissions import AllowAny
-from rest_framework.views import APIView
 from .models import Studio, ClassTime, Class, ClassBooking
-from User.models import User
 from django.shortcuts import get_object_or_404
 from .serializers import StudioSerializer, StudioDetailSerializer, ClassScheduleSerializer
 from math import cos, asin, sqrt
@@ -12,7 +10,6 @@ from django.db.models import Case, When
 from decimal import Decimal
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
-from rest_framework import filters
 
 
 def distance(lat1, lon1, lat2, lon2):
@@ -76,6 +73,7 @@ class StudioDetailView(RetrieveAPIView):
 
 class ClassScheduleView(ListAPIView):
     serializer_class = ClassScheduleSerializer
+    # permission_classes = [AllowAny]
 
     def get_queryset(self):
         classes = ClassTime.objects.filter(
@@ -83,6 +81,8 @@ class ClassScheduleView(ListAPIView):
         if classes:
             classes = classes.filter(
                 status=True, time__gte=datetime.datetime.now()).order_by('time')
+        else:
+            raise NotFound()
         return classes
 
 
@@ -106,12 +106,6 @@ class StudioSearchFilterView(ListAPIView):
             custom_q &= Q(class__coach__name__icontains=coach)
 
         return Studio.objects.filter(custom_q).distinct()
-
-# class StudioSearchView(ListCreateAPIView):
-#     queryset = Studio.objects.all()
-#     serializer_class = StudioSerializer
-#     filter_backends = [filters.SearchFilter]
-#     search_fields = ['name', 'studio__StudioAmenities', 'class_name', 'coach']
 
 
 class ClassEnrollView(CreateAPIView):
