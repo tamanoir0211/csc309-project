@@ -38,12 +38,19 @@ class User(AbstractBaseUser):
     email = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=100)
     user_id = models.AutoField(primary_key=True)
-    #subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, null=True, blank=True)
+    subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, null=True, blank=True)
     last_login = models.DateTimeField(auto_now=True)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     USERNAME_FIELD = 'email'
     objects = UserManager()
+
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
+
+    def has_module_perms(self, app_label):
+        return self.is_admin
+
 
 class Admin(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
