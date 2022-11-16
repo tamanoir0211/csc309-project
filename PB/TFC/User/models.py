@@ -6,6 +6,7 @@ from django.db.models.signals import post_save
 from django.conf import settings
 from django.dispatch import receiver
 from django.contrib.auth.models import BaseUserManager
+from creditcards.models import CardNumberField, CardExpiryField, SecurityCodeField
 # Create your models here.
 
 class UserManager(BaseUserManager):
@@ -58,11 +59,21 @@ class Admin(models.Model):
 
 
 class PaymentInfo(models.Model):
-    card_number = models.CharField(max_length=16)
-    expiration_date = models.DateField()
-    cvv = models.IntegerField()
+    card_number = CardNumberField('card number')
+    expiry = CardExpiryField('expiration date')
+    cvv = SecurityCodeField('security code')
     payment_info_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    postal_code = models.CharField(max_length=6, null=True, blank=True)
+
+
+class Payment(models.Model):
+    payment_id = models.AutoField(primary_key=True)
+    payment_info = models.ForeignKey(PaymentInfo, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, PaymentInfo
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -21,3 +21,20 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+
+class PaymentInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentInfo
+        fields = ['card_number', 'expiry', 'cvv', 'postal_code']
+
+    def save(self, **kwargs):
+        payment_info = PaymentInfo(
+            card_number=self.validated_data['card_number'],
+            expiry=self.validated_data['expiry'],
+            cvv=self.validated_data['cvv'],
+            postal_code=self.validated_data['postal_code'],
+            user=self.context['user']
+        )
+        payment_info.save()
+        return payment_info

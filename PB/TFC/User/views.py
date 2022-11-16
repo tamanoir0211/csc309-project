@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import UserSerializer
+from .serializers import UserSerializer, PaymentInfoSerializer
 from rest_framework.authtoken.models import Token
 
 # Create your views here.
@@ -55,3 +55,40 @@ def user_profile(request):
         user = request.user
         serializer = UserSerializer(user)
         return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def user_logout(request):
+    if request.method == 'POST':
+        request.user.auth_token.delete()
+        return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def user_update(request):
+    if request.method == 'POST':
+        user = request.user
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            data = dict()
+            data['response'] = "successfully updated user"
+            data['email'] = serializer.data['email']
+            return Response(data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def create_payment_info(request):
+    if request.method == 'POST':
+        user = request.user
+        serializer = PaymentInfoSerializer(data=request.data, context={'user': user})
+        if serializer.is_valid():
+            serializer.save()
+            data = dict()
+            data['response'] = "successfully created payment info"
+            return Response(data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
