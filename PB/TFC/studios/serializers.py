@@ -62,10 +62,10 @@ class ClassScheduleSerializer(serializers.ModelSerializer):
         fields = ['classes', 'time']
 
 
-# class ClassBookingSerializer(serializers.ModelSerializer):
-#     class_time = ClassScheduleSerializer()
-#     user = UserSerializer()
+class ClassBookingSerializer(serializers.ModelSerializer):
+    class_time = ClassScheduleSerializer()
+    user = UserSerializer()
 
-#     class Meta:
-#         model = ClassBooking
-#         fields = ['class_time', 'user']
+    class Meta:
+        model = ClassBooking
+        fields = ['class_time', 'user']

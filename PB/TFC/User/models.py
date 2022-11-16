@@ -11,7 +11,8 @@ class User(models.Model):
     email = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
     user_id = models.AutoField(primary_key=True)
-    subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, null=True, blank=True)
+    subscription = models.ForeignKey(
+        Subscription, on_delete=models.SET_NULL, null=True, blank=True)
 
 
 class Admin(models.Model):
