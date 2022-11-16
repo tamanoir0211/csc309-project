@@ -1,6 +1,7 @@
 import datetime
 
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView, CreateAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from .models import Studio, ClassTime, Class, ClassBooking
 from User.models import User
@@ -25,10 +26,9 @@ def distance(lat1, lon1, lat2, lon2):
 
 class StudioListView(ListAPIView):
     serializer_class = StudioSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
-        # input_lat = self.kwargs.get('latitude')
-        # input_long = self.kwargs.get('longitude')
         input_lat = self.request.query_params.get('latitude')
         input_long = self.request.query_params.get('longitude')
         if not input_lat or not input_long:
@@ -60,6 +60,7 @@ class StudioListView(ListAPIView):
 
 class StudioDetailView(RetrieveAPIView):
     serializer_class = StudioDetailSerializer
+    permission_classes = [AllowAny]
 
     def get_object(self):
         return get_object_or_404(Studio, id=self.kwargs['studio_id'])
@@ -87,6 +88,7 @@ class ClassScheduleView(ListAPIView):
 
 class StudioSearchFilterView(ListAPIView):
     serializer_class = StudioSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         studio_name = self.request.query_params.get('studio_name')
@@ -103,7 +105,6 @@ class StudioSearchFilterView(ListAPIView):
         if coach:
             custom_q &= Q(class__coach__name__icontains=coach)
 
-        print(Studio.objects.filter(custom_q))
         return Studio.objects.filter(custom_q).distinct()
 
 # class StudioSearchView(ListCreateAPIView):
