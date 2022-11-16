@@ -178,7 +178,8 @@ class ClassTime(models.Model):
         super().clean()
         if self.time and self.end_time and self.time >= self.end_time:
             raise ValidationError('End time cannot be earlier than start time')
-
+        if self.time.date() != self.end_time.date():
+            raise ValidationError('start time date and end time date has to be the same day')
 
 class ClassBooking(models.Model):
     class_time = models.ForeignKey(ClassTime, on_delete=CASCADE)
