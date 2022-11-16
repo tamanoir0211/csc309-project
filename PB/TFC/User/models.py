@@ -9,6 +9,7 @@ from django.contrib.auth.models import BaseUserManager
 from creditcards.models import CardNumberField, CardExpiryField, SecurityCodeField
 # Create your models here.
 
+
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None):
         if not email:
@@ -51,8 +52,7 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_admin
-    subscription = models.ForeignKey(
-        Subscription, on_delete=models.SET_NULL, null=True, blank=True)
+
 
 
 class Admin(models.Model):
@@ -62,24 +62,24 @@ class Admin(models.Model):
 
 class PaymentInfo(models.Model):
     card_number = CardNumberField('card number')
-    expiry = CardExpiryField('expiration date')
+    expiry = CardExpiryField('expiration date', null=True, blank=True)
     cvv = SecurityCodeField('security code')
     payment_info_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     postal_code = models.CharField(max_length=6, null=True, blank=True)
 
 
-class Payment(models.Model):
-    payment_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    payment_info = models.ForeignKey(PaymentInfo, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
-    processed_on = models.DateTimeField(auto_now=True)
-
-    def create(cls, user, payment_info, subscription):
-        sub = cls(user, payment_info, subscription)
-        return sub
+# class Payment(models.Model):
+#     payment_id = models.AutoField(primary_key=True, default=1)
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     payment_info = models.ForeignKey(PaymentInfo, on_delete=models.CASCADE)
+#     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
+#     processed_on = models.DateTimeField(auto_now=True)
+#
+#     def create(cls, user, payment_info, subscription):
+#         sub = cls(user, payment_info, subscription)
+#         return sub
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
