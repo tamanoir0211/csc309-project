@@ -181,6 +181,7 @@ class ClassTime(models.Model):
         if self.time.date() != self.end_time.date():
             raise ValidationError('start time date and end time date has to be the same day')
 
+
 class ClassBooking(models.Model):
     class_time = models.ForeignKey(ClassTime, on_delete=CASCADE)
     user = models.ForeignKey(User, on_delete=CASCADE)
