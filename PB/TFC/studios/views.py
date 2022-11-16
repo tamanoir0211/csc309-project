@@ -13,6 +13,9 @@ from django.db.models import Q
 
 
 def distance(lat1, lon1, lat2, lon2):
+    """function to calculate distance between two locations using
+    latitude and longitude. It uses Haversine formula.
+    """
     p = Decimal(0.017453292519943295)
     hav = 0.5 - cos((lat2-lat1)*p)/2 + cos(lat1*p) * \
         cos(lat2*p) * (1-cos((lon2-lon1)*p)) / 2
@@ -42,17 +45,19 @@ class StudioListView(ListAPIView):
             raise ValidationError(
                 {"Value Error": ["Invalid latitude/longitude"]})
 
-        studio_distance = {}
+        studio_distance = {}    # dict to store studio_id and distance between input location and corresponding studio location
         studios = Studio.objects.all()
         for studio in studios:
             studio_distance[studio.id] = distance(Decimal(input_lat), Decimal(
                 input_long), studio.location.latitude, studio.location.longitude)
+
+        # sort the distance in ascending order
         sorted_distance = {k: v for k, v in sorted(
             studio_distance.items(), key=lambda item: item[1])}
         id_list = list(sorted_distance.keys())
-        shortest_dist = Case(*[When(pk=pk, then=pos)
+        closest_studio_first = Case(*[When(pk=pk, then=pos)
                              for pos, pk in enumerate(id_list)])
-        return Studio.objects.order_by(shortest_dist)
+        return Studio.objects.order_by(closest_studio_first)
 
 
 class StudioDetailView(RetrieveAPIView):
@@ -76,13 +81,12 @@ class ClassScheduleView(ListAPIView):
     # permission_classes = [AllowAny]
 
     def get_queryset(self):
-        classes = ClassTime.objects.filter(
-            classes=self.kwargs.get('studio_id'))
+        if not Studio.objects.filter(id=self.kwargs.get('studio_id')):
+            raise NotFound(detail='Studio with given studio_id does not exist.')
+        classes = ClassTime.objects.filter(classes__studio_id=self.kwargs.get('studio_id'))
         if classes:
             classes = classes.filter(
                 status=True, time__gte=datetime.datetime.now()).order_by('time')
-        else:
-            raise NotFound()
         return classes
 
 
