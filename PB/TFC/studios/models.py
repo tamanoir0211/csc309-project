@@ -81,32 +81,53 @@ class Class(models.Model):
         verbose_name_plural = "Classes"
 
     def clean(self):
-        super(Class, self).clean()
-        if self.start_time >= self.end_time:
+        super().clean()
+        if self.start_time and self.end_time and self.start_time >= self.end_time:
             raise ValidationError('End time cannot be earlier than start time')
-        if self.range_date_start >= self.range_date_end:
+        if self.range_date_start and self.range_date_end and self.range_date_start >= self.range_date_end:
             raise ValidationError('End date cannot be earlier than start date')
 
     def save(self, *args, **kwargs):
         created = self.pk
         super().save(*args, **kwargs)
         if not created:
+            # adding a Class
             date = find_date(self.range_date_start, self.day)
-            while date < self.range_date_end:
+            while date <= self.range_date_end:
                 time = datetime.time(self.start_time, 0)
                 start = datetime.datetime.combine(date, time)
                 ClassTime.objects.create(classes=self, time=start)
                 date += datetime.timedelta(days=7)
-        else:
-            all_classes = ClassTime.objects.filter(classes=self)
-            new_range_start = self.range_date_start
-            new_range_end = self.range_date_end
-            for each_class in all_classes:
-                if not (new_range_start <= each_class.time.date() < new_range_end):
-                    each_class.status = False
-                    each_class.save()
-                else:
-                    pass
+            return
+
+        # Editing instance of Class
+        all_classes = ClassTime.objects.filter(classes=self)
+        new_range_start = self.range_date_start
+        new_range_end = self.range_date_end
+        start_time = datetime.time(self.start_time, 0)
+
+        for each_class in all_classes:
+            new_date = find_date(each_class.time.date(), self.day)
+            if new_date != each_class.time.date() or start_time != each_class.time.time():
+                # Class day or time changed so update it. i.e, Monday -> Tuesday
+                start = datetime.datetime.combine(new_date, start_time)
+                each_class.time = start
+
+            if not (new_range_start <= each_class.time.date() <= new_range_end):
+                # Class time is not within the class start date and end date, so cancel this class
+                each_class.status = False
+            each_class.save()
+
+        curr_earliest_class = ClassTime.objects.filter(classes=self).order_by('time')
+        curr_latest_class = ClassTime.objects.filter(classes=self).order_by('-time')
+        date = find_date(self.range_date_start, self.day)
+        while date <= self.range_date_end:
+            time = datetime.time(self.start_time, 0)
+            start = datetime.datetime.combine(date, time)
+            if curr_earliest_class.exists() and (date < curr_earliest_class.first().time.date()
+                                        or date > curr_latest_class.first().time.date()):
+                ClassTime.objects.create(classes=self, time=start)
+            date += datetime.timedelta(days=7)
 
     def __str__(self):
         return self.name
@@ -121,11 +142,10 @@ class ClassKeyword(models.Model):
 
 
 def find_date(date, day):
-    today = datetime.date.today()
     diff = day - date.weekday()
-    if diff <= 0:
+    if diff < 0:
         diff += 7
-    return today + datetime.timedelta(diff)
+    return date + datetime.timedelta(diff)
 
 
 class ClassTime(models.Model):
