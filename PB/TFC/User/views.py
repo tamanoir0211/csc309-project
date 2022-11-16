@@ -46,3 +46,12 @@ def user_login(request):
         data = dict()
         data['response'] = "incorrect password"
         return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated,))
+def user_profile(request):
+    if request.method == 'GET':
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
