@@ -3,13 +3,16 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import CASCADE
 import datetime
 from django.core.exceptions import ValidationError
+from User.models import User
 
 # Create your models here.
 
 
 class Location(models.Model):
-    latitude = models.DecimalField(max_digits=8, decimal_places=6, validators=[MinValueValidator(-90), MaxValueValidator(90)])
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, validators=[MinValueValidator(-180), MaxValueValidator(180)])
+    latitude = models.DecimalField(max_digits=8, decimal_places=6, validators=[
+                                   MinValueValidator(-90), MaxValueValidator(90)])
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, validators=[
+                                    MinValueValidator(-180), MaxValueValidator(180)])
     address = models.CharField(max_length=200)
     postal_code = models.CharField(max_length=50)
 
@@ -49,6 +52,9 @@ class StudioAmenities(models.Model):
 class Coach(models.Model):
     name = models.CharField(max_length=100)
 
+    class Meta:
+        verbose_name_plural = "Coaches"
+
     def __str__(self):
         return self.name
 
@@ -69,8 +75,10 @@ class Class(models.Model):
     range_date_start = models.DateField()
     range_date_end = models.DateField()
     day = models.IntegerField(choices=DAY_CHOICES)
-    start_time = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(23)])
-    end_time = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(23)])
+    start_time = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(23)])
+    end_time = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(23)])
     studio = models.ForeignKey(Studio, on_delete=CASCADE)
     coach = models.ForeignKey(Coach, on_delete=CASCADE)
 
@@ -136,3 +144,12 @@ class ClassTime(models.Model):
 
     def __str__(self):
         return self.classes.name + ' - ' + self.time.strftime("%Y-%m-%d %H:%M")
+
+
+class ClassBooking(models.Model):
+    class_time = models.ForeignKey(ClassTime, on_delete=CASCADE)
+    user = models.ForeignKey(User, on_delete=CASCADE)
+
+    def create(cls, class_time, user):
+        sub = cls(class_time, user)
+        return sub

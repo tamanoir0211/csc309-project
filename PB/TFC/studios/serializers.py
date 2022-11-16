@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Studio, Location, StudioImages, StudioAmenities, ClassTime, Class, Coach
+from .models import Studio, Location, StudioImages, StudioAmenities, ClassTime, Class, Coach, ClassBooking
+from User.serializers import UserSerializer
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -31,7 +32,8 @@ class StudioSerializer(serializers.ModelSerializer):
 class StudioDetailSerializer(serializers.ModelSerializer):
     location = LocationSerializer()
     images = StudioImagesSerializer(source='studioimages_set', many=True)
-    amenities = StudioAmenitiesSerializer(source='studioamenities_set', many=True)
+    amenities = StudioAmenitiesSerializer(
+        source='studioamenities_set', many=True)
 
     class Meta:
         model = Studio
@@ -58,3 +60,12 @@ class ClassScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClassTime
         fields = ['classes', 'time']
+
+
+class ClassBookingSerializer(serializers.ModelSerializer):
+    class_time = ClassScheduleSerializer()
+    user = UserSerializer()
+
+    class Meta:
+        model = ClassBooking
+        fields = ['class_time', 'user']

@@ -1,14 +1,17 @@
 import datetime
 
-from rest_framework.generics import RetrieveAPIView, ListAPIView
+from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView, CreateAPIView
 from rest_framework.views import APIView
-from .models import Studio, ClassTime
+from .models import Studio, ClassTime, Class, ClassBooking
+from User.models import User
 from django.shortcuts import get_object_or_404
 from .serializers import StudioSerializer, StudioDetailSerializer, ClassScheduleSerializer
 from math import cos, asin, sqrt
 from django.db.models import Case, When
 from decimal import Decimal
 from rest_framework.exceptions import ValidationError
+from django.db.models import Q
+from rest_framework import filters
 
 
 def distance(lat1, lon1, lat2, lon2):
@@ -24,8 +27,13 @@ class StudioListView(ListAPIView):
     serializer_class = StudioSerializer
 
     def get_queryset(self):
-        input_lat = self.kwargs.get('latitude')
-        input_long = self.kwargs.get('longitude')
+        # input_lat = self.kwargs.get('latitude')
+        # input_long = self.kwargs.get('longitude')
+        input_lat = self.request.query_params.get('latitude')
+        input_long = self.request.query_params.get('longitude')
+        if not input_lat or not input_long:
+            raise ValidationError(
+                {"Param error": ["Wrong parameter name or missing value of parameter"]})
         try:
             float(input_lat)
             float(input_long)
@@ -34,7 +42,8 @@ class StudioListView(ListAPIView):
                 {"Value Error": ["Invalid latitude/longitude"]})
 
         if not (-90 <= float(input_lat) <= 90) or not (-180 <= float(input_long) <= 180):
-            raise ValidationError({"Value Error": ["Invalid latitude/longitude"]})
+            raise ValidationError(
+                {"Value Error": ["Invalid latitude/longitude"]})
 
         studio_distance = {}
         studios = Studio.objects.all()
@@ -63,16 +72,94 @@ class StudioDetailView(RetrieveAPIView):
         response.data['url_direction'] = url_direction
         return response
 
-# class StudioSearchView(APIView):
-
-#     def get(self, request, format=None):
-
 
 class ClassScheduleView(ListAPIView):
     serializer_class = ClassScheduleSerializer
 
     def get_queryset(self):
-        classes = ClassTime.objects.filter(classes=self.kwargs.get('studio_id'))
+        classes = ClassTime.objects.filter(
+            classes=self.kwargs.get('studio_id'))
         if classes:
-            classes = classes.filter(status=True, time__gte=datetime.datetime.now()).order_by('time')
+            classes = classes.filter(
+                status=True, time__gte=datetime.datetime.now()).order_by('time')
         return classes
+
+
+class StudioSearchFilterView(ListAPIView):
+    serializer_class = StudioSerializer
+
+    def get_queryset(self):
+        studio_name = self.request.query_params.get('studio_name')
+        amenity = self.request.query_params.get('amenity')
+        class_name = self.request.query_params.get('class_name')
+        coach = self.request.query_params.get('coach')
+        custom_q = Q()
+        if studio_name:
+            custom_q = Q(name__icontains=studio_name)
+        if amenity:
+            custom_q &= Q(studioamenities__type__icontains=amenity)
+        if class_name:
+            custom_q &= Q(class__name__icontains=class_name)
+        if coach:
+            custom_q &= Q(class__coach__name__icontains=coach)
+
+        print(Studio.objects.filter(custom_q))
+        return Studio.objects.filter(custom_q).distinct()
+
+# class StudioSearchView(ListCreateAPIView):
+#     queryset = Studio.objects.all()
+#     serializer_class = StudioSerializer
+#     filter_backends = [filters.SearchFilter]
+#     search_fields = ['name', 'studio__StudioAmenities', 'class_name', 'coach']
+
+
+class ClassEnrollView(CreateAPIView):
+
+    def post(self, request):
+        user = request.user
+        user_id = user.id
+
+        # check if class and studio exist
+        if not Class.objects.filter(studio=self.kwargs['studio_id'], id=self.kwargs['class_id']).exists:
+            raise ValidationError(
+                {"Value Error": ["404 Not found"]})
+
+        else:
+            # check class not started yet
+            this_class = Class.objects.get(id=self.kwargs['class_id'])
+            class_started = this_class.range_date_start < datetime.datetime.now().date()
+
+            # check class is not full
+            classtime = ClassTime.objects.get(classes=self.kwargs['class_id'])
+            enrollment_count = ClassBooking.object.filter(
+                class_time=classtime.id).count()
+            capacity_reached = enrollment_count >= this_class.capacity
+
+            # check active subscription
+
+            if not class_started and not capacity_reached and not user.subscription is None:
+                # create a new ClassBooking
+                class_booking = ClassBooking(classtime.id, user_id)
+                class_booking.save()
+
+
+class ClassDropView(CreateAPIView):
+
+    def post(self, request):
+        user = request.user
+        user_id = user.id
+
+        # check if class and studio exist
+        if not Class.objects.filter(studio=self.kwargs['studio_id'], id=self.kwargs['class_id']).exists:
+            raise ValidationError(
+                {"Value Error": ["404 Not found"]})
+        else:
+            class_time = ClassTime.objects.get(classes=self.kwargs['class_id'])
+            class_booking = ClassBooking.objects.get(class_time=class_time.id)
+            class_booking.delete()
+
+
+class ClassSearchFilterView(ListAPIView):
+
+    def get_queryset(self):
+        return super().get_queryset()

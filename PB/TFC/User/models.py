@@ -39,6 +39,7 @@ class User(AbstractBaseUser):
     email = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=100)
     user_id = models.AutoField(primary_key=True)
+<<<<<<< HEAD
     subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, null=True, blank=True)
     last_login = models.DateTimeField(auto_now=True)
     is_admin = models.BooleanField(default=False)
@@ -51,6 +52,10 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_admin
+=======
+    subscription = models.ForeignKey(
+        Subscription, on_delete=models.SET_NULL, null=True, blank=True)
+>>>>>>> master
 
 
 class Admin(models.Model):

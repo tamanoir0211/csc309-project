@@ -9,7 +9,6 @@ from rest_framework.authtoken.models import Token
 
 # Create your views here.
 
-
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def user_create(request):
@@ -92,3 +91,4 @@ def create_payment_info(request):
             data['response'] = "successfully created payment info"
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
