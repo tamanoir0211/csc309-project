@@ -32,12 +32,14 @@ class StudioListView(ListAPIView):
         input_lat = self.request.query_params.get('latitude')
         input_long = self.request.query_params.get('longitude')
         if not input_lat or not input_long:
-            raise ValidationError({"Param error": ["Wrong parameter name or missing value of parameter"]})
+            raise ValidationError(
+                {"Param error": ["Wrong parameter name or missing value of parameter"]})
         try:
             float(input_lat)
             float(input_long)
         except ValueError:
-            raise ValidationError({"Value Error": ["Invalid latitude/longitude"]})
+            raise ValidationError(
+                {"Value Error": ["Invalid latitude/longitude"]})
 
         if not (-90 <= float(input_lat) <= 90) or not (-180 <= float(input_long) <= 180):
             raise ValidationError(
@@ -121,12 +123,24 @@ class ClassEnrollView(CreateAPIView):
         if not Class.objects.filter(studio=self.kwargs['studio_id'], id=self.kwargs['class_id']).exists:
             raise ValidationError(
                 {"Value Error": ["404 Not found"]})
-        else:
-            class_time = ClassTime.objects.get(classes=self.kwargs['class_id'])
 
-            # if exist, create a new ClassBooking
-            class_booking = ClassBooking(class_time.id, user_id)
-            class_booking.save()
+        else:
+            # check class not started yet
+            this_class = Class.objects.get(id=self.kwargs['class_id'])
+            class_started = this_class.range_date_start < datetime.datetime.now().date()
+
+            # check class is not full
+            classtime = ClassTime.objects.get(classes=self.kwargs['class_id'])
+            enrollment_count = ClassBooking.object.filter(
+                class_time=classtime.id).count()
+            capacity_reached = enrollment_count >= this_class.capacity
+
+            # check active subscription
+
+            if not class_started and not capacity_reached and not user.subscription is None:
+                # create a new ClassBooking
+                class_booking = ClassBooking(classtime.id, user_id)
+                class_booking.save()
 
 
 class ClassDropView(CreateAPIView):
@@ -143,3 +157,9 @@ class ClassDropView(CreateAPIView):
             class_time = ClassTime.objects.get(classes=self.kwargs['class_id'])
             class_booking = ClassBooking.objects.get(class_time=class_time.id)
             class_booking.delete()
+
+
+class ClassSearchFilterView(ListAPIView):
+
+    def get_queryset(self):
+        return super().get_queryset()
