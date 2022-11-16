@@ -136,7 +136,6 @@ class ClassEnrollView(CreateAPIView):
             capacity_reached = enrollment_count >= this_class.capacity
 
             # check active subscription
-
             if not class_started and not capacity_reached and not user.subscription is None:
                 # create a new ClassBooking
                 class_booking = ClassBooking(classtime.id, user_id)
@@ -162,4 +161,23 @@ class ClassDropView(CreateAPIView):
 class ClassSearchFilterView(ListAPIView):
 
     def get_queryset(self):
-        return super().get_queryset()
+        class_name = self.request.query_params.get('class_name')
+        coach_name = self.request.query_params.get('coach_name')
+        date = self.request.query_params.get('date')
+        time_start = self.request.query_params.get('time_start')
+        time_end = self.request.query_params.get('time_end')
+
+        custom_q = Q()
+        if class_name:
+            custom_q = Q(class__name__icontains=class_name)
+        if coach_name:
+            custom_q &= Q(class__coach__name__icontains=coach_name)
+        if date:
+            custom_q &= Q(class__range_date_start__lte=date,
+                          class__range_date_end__gte=date)
+        if time_start:
+            custom_q &= Q(class__start_timet__gte=time_start)
+        if time_end:
+            custom_q &= Q(class__end_timet__lte=time_end)
+
+        return Class.objects.filter(custom_q).distinct()

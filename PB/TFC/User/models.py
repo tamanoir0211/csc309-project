@@ -71,10 +71,15 @@ class PaymentInfo(models.Model):
 
 class Payment(models.Model):
     payment_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     payment_info = models.ForeignKey(PaymentInfo, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
+    processed_on = models.DateTimeField(auto_now=True)
+
+    def create(cls, user, payment_info, subscription):
+        sub = cls(user, payment_info, subscription)
+        return sub
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
