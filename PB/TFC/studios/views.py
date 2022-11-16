@@ -2,7 +2,7 @@ import datetime
 
 from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView, CreateAPIView
 from rest_framework.views import APIView
-from .models import Studio, ClassTime, Class  # , ClassBooking
+from .models import Studio, ClassTime, Class, ClassBooking
 from User.models import User
 from django.shortcuts import get_object_or_404
 from .serializers import StudioSerializer, StudioDetailSerializer, ClassScheduleSerializer
