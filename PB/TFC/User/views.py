@@ -7,7 +7,6 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import UserSerializer, PaymentInfoSerializer
 from rest_framework.authtoken.models import Token
 
-# Create your views here.
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
