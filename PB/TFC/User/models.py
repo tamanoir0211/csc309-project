@@ -26,3 +26,14 @@ class PaymentInfo(models.Model):
     cvv = models.IntegerField()
     payment_info_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class Payment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    payment_info = models.ForeignKey(PaymentInfo, on_delete=models.CASCADE)
+    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
+    processed_on = models.DateTimeField(auto_now=True)
+
+    def create(cls, user, payment_info, subscription):
+        sub = cls(user, payment_info, subscription)
+        return sub
