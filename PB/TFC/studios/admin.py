@@ -29,6 +29,7 @@ class ClassKeywordInline(admin.TabularInline):
 
 class ClassTimeInline(admin.TabularInline):
     model = ClassTime
+    ordering = ['time']
     # readonly_fields = ['time']
 
 
