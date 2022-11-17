@@ -103,7 +103,8 @@ class Class(models.Model):
                 start = datetime.datetime.combine(date, time_start)
                 time_end = datetime.time(self.end_time, 0)
                 end = datetime.datetime.combine(date, time_end)
-                ClassTime.objects.create(classes=self, time=start, end_time=end)
+                ClassTime.objects.create(
+                    classes=self, time=start, end_time=end)
                 date += datetime.timedelta(days=7)
             return
 
@@ -129,8 +130,10 @@ class Class(models.Model):
                 each_class.status = False
             each_class.save()
 
-        curr_earliest_class = ClassTime.objects.filter(classes=self).order_by('time')
-        curr_latest_class = ClassTime.objects.filter(classes=self).order_by('-time')
+        curr_earliest_class = ClassTime.objects.filter(
+            classes=self).order_by('time')
+        curr_latest_class = ClassTime.objects.filter(
+            classes=self).order_by('-time')
         date = find_date(self.range_date_start, self.day)
         while date <= self.range_date_end:
             time_start = datetime.time(self.start_time, 0)
@@ -138,8 +141,9 @@ class Class(models.Model):
             time_end = datetime.time(self.end_time, 0)
             end = datetime.datetime.combine(date, time_end)
             if curr_earliest_class.exists() and (date < curr_earliest_class.first().time.date()
-                                        or date > curr_latest_class.first().time.date()):
-                ClassTime.objects.create(classes=self, time=start, end_time=end)
+                                                 or date > curr_latest_class.first().time.date()):
+                ClassTime.objects.create(
+                    classes=self, time=start, end_time=end)
             date += datetime.timedelta(days=7)
 
     def __str__(self):
@@ -185,5 +189,5 @@ class ClassBooking(models.Model):
     user = models.ForeignKey(User, on_delete=CASCADE)
 
     def create(cls, class_time, user):
-        sub = cls(class_time, user)
+        sub = cls(class_time=class_time, user=user)
         return sub

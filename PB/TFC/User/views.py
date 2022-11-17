@@ -6,8 +6,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import UserSerializer, PaymentInfoSerializer
 from rest_framework.authtoken.models import Token
+from rest_framework.generics import ListAPIView
+from studios.serializers import ClassSerializer
+from studios.models import ClassBooking
 
 # Create your views here.
+
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -84,7 +88,8 @@ def user_update(request):
 def create_payment_info(request):
     if request.method == 'POST':
         user = request.user
-        serializer = PaymentInfoSerializer(data=request.data, context={'user': user})
+        serializer = PaymentInfoSerializer(
+            data=request.data, context={'user': user})
         if serializer.is_valid():
             serializer.save()
             data = dict()
@@ -92,3 +97,12 @@ def create_payment_info(request):
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class UserClassView(ListAPIView):
+    serializer_class = ClassSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        class_bookings = ClassBooking.objects.filter(
+            user=user.id).values_list('class_time', flat=True)
