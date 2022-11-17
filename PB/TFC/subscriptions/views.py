@@ -2,13 +2,13 @@ import datetime
 from django.shortcuts import render
 from subscriptions.models import Subscription
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView
 from User.models import PaymentInfo, Payment
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from dateutil.relativedelta import *
-
+from .serializers import SubscriptionSerializer
 # Create your views here.
 
 
@@ -51,3 +51,11 @@ class SubscribeView(CreateAPIView):
                 content = {'success': 'successfully subscribed'}
 
                 return Response(content, status=status.HTTP_200_OK)
+
+
+class SubscriptionView(ListAPIView):
+    serializer_class = SubscriptionSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return Subscription.objects.all()
