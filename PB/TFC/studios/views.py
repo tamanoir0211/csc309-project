@@ -4,12 +4,14 @@ from rest_framework.generics import RetrieveAPIView, ListAPIView, CreateAPIView
 from rest_framework.permissions import AllowAny
 from .models import Studio, ClassTime, Class, ClassBooking
 from django.shortcuts import get_object_or_404
-from .serializers import StudioSerializer, StudioDetailSerializer, ClassScheduleSerializer
+from .serializers import StudioSerializer, StudioDetailSerializer, ClassScheduleSerializer, ClassSerializer
 from math import cos, asin, sqrt
 from django.db.models import Case, When
 from decimal import Decimal
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
+from rest_framework.response import Response
+from rest_framework import status
 
 
 def distance(lat1, lon1, lat2, lon2):
@@ -45,7 +47,8 @@ class StudioListView(ListAPIView):
             raise ValidationError(
                 {"Value Error": ["Invalid latitude/longitude"]})
 
-        studio_distance = {}    # dict to store studio_id and distance between input location and corresponding studio location
+        # dict to store studio_id and distance between input location and corresponding studio location
+        studio_distance = {}
         studios = Studio.objects.all()
         for studio in studios:
             studio_distance[studio.id] = distance(Decimal(input_lat), Decimal(
@@ -56,7 +59,7 @@ class StudioListView(ListAPIView):
             studio_distance.items(), key=lambda item: item[1])}
         id_list = list(sorted_distance.keys())
         closest_studio_first = Case(*[When(pk=pk, then=pos)
-                             for pos, pk in enumerate(id_list)])
+                                      for pos, pk in enumerate(id_list)])
         return Studio.objects.order_by(closest_studio_first)
 
 
@@ -82,8 +85,12 @@ class ClassScheduleView(ListAPIView):
 
     def get_queryset(self):
         if not Studio.objects.filter(id=self.kwargs.get('studio_id')):
-            raise NotFound(detail='Studio with given studio_id does not exist.')
-        classes = ClassTime.objects.filter(classes__studio_id=self.kwargs.get('studio_id'))
+            raise NotFound(
+                detail='Studio with given studio_id does not exist.')
+        classes = ClassTime.objects.filter(
+            classes__studio_id=self.kwargs.get('studio_id'))
+        print("classes")
+        print(classes)
         if classes:
             classes = classes.filter(
                 status=True, time__gte=datetime.datetime.now()).order_by('time')
@@ -112,52 +119,9 @@ class StudioSearchFilterView(ListAPIView):
         return Studio.objects.filter(custom_q).distinct()
 
 
-class ClassEnrollView(CreateAPIView):
-
-    def post(self, request):
-        user = request.user
-        user_id = user.id
-
-        # check if class and studio exist
-        if not Class.objects.filter(studio=self.kwargs['studio_id'], id=self.kwargs['class_id']).exists:
-            raise ValidationError(
-                {"Value Error": ["404 Not found"]})
-
-        else:
-            # check class not started yet
-            this_class = Class.objects.get(id=self.kwargs['class_id'])
-            class_started = this_class.range_date_start < datetime.datetime.now().date()
-
-            # check class is not full
-            classtime = ClassTime.objects.get(classes=self.kwargs['class_id'])
-            enrollment_count = ClassBooking.object.filter(
-                class_time=classtime.id).count()
-            capacity_reached = enrollment_count >= this_class.capacity
-
-            # check active subscription
-            if not class_started and not capacity_reached and not user.subscription is None:
-                # create a new ClassBooking
-                class_booking = ClassBooking(classtime.id, user_id)
-                class_booking.save()
-
-
-class ClassDropView(CreateAPIView):
-
-    def post(self, request):
-        user = request.user
-        user_id = user.id
-
-        # check if class and studio exist
-        if not Class.objects.filter(studio=self.kwargs['studio_id'], id=self.kwargs['class_id']).exists:
-            raise ValidationError(
-                {"Value Error": ["404 Not found"]})
-        else:
-            class_time = ClassTime.objects.get(classes=self.kwargs['class_id'])
-            class_booking = ClassBooking.objects.get(class_time=class_time.id)
-            class_booking.delete()
-
-
 class ClassSearchFilterView(ListAPIView):
+    serializer_class = ClassSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         class_name = self.request.query_params.get('class_name')
@@ -168,15 +132,83 @@ class ClassSearchFilterView(ListAPIView):
 
         custom_q = Q()
         if class_name:
-            custom_q = Q(class__name__icontains=class_name)
+            custom_q = Q(name__icontains=class_name)
         if coach_name:
-            custom_q &= Q(class__coach__name__icontains=coach_name)
+            custom_q &= Q(coach__name__icontains=coach_name)
         if date:
-            custom_q &= Q(class__range_date_start__lte=date,
-                          class__range_date_end__gte=date)
+            custom_q &= Q(range_date_start__lte=date,
+                          range_date_end__gte=date)
         if time_start:
-            custom_q &= Q(class__start_timet__gte=time_start)
+            custom_q &= Q(start_time__gte=time_start)
         if time_end:
-            custom_q &= Q(class__end_timet__lte=time_end)
+            custom_q &= Q(end_time__lte=time_end)
 
         return Class.objects.filter(custom_q).distinct()
+
+
+class ClassEnrollView(CreateAPIView):
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+
+        # check if class and studio exist
+        if not Class.objects.filter(studio=self.kwargs['studio_id'], id=self.kwargs['class_id']).exists():
+            raise ValidationError(
+                {"Value Error": ["404 Not found"]})
+
+        else:
+            # check class not started yet
+            this_class = Class.objects.get(id=self.kwargs['class_id'])
+            class_started = this_class.range_date_start < datetime.datetime.now().date()
+
+            # check class is not full
+            classtime = ClassTime.objects.get(classes=self.kwargs['class_id'])
+            enrollment_count = ClassBooking.objects.filter(
+                class_time=classtime.id).count()
+            capacity_reached = enrollment_count >= this_class.capacity
+
+            # check active subscription
+            if class_started:
+                content = {'class started': 'class already started'}
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            elif ClassBooking.objects.filter(class_time=classtime.id, user=user.user_id):
+                content = {
+                    'already booked': 'user already enrolled in this class'}
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            elif capacity_reached:
+                content = {'capacity': 'class capacity reached'}
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            elif not user.subscription is None:
+                content = {'subscription': 'user does not have a subscription'}
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                # create a new ClassBooking
+                class_booking = ClassBooking(
+                    class_time=classtime, user=user)
+                class_booking.save()
+                content = {'success': 'class booked'}
+                return Response(content, status=status.HTTP_200_OK)
+
+
+class ClassDropView(CreateAPIView):
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+
+        # check if class and studio exist
+        if not Class.objects.filter(studio=self.kwargs['studio_id'], id=self.kwargs['class_id']).exists():
+            raise ValidationError(
+                {"Value Error": ["404 Not found"]})
+        else:
+            class_time = ClassTime.objects.get(
+                classes=self.kwargs['class_id'])
+            if not ClassBooking.objects.filter(class_time=class_time.id).exists():
+                raise ValidationError(
+                    {"Value Error": ["404 Not found"]})
+            else:
+
+                class_booking = ClassBooking.objects.get(
+                    class_time=class_time.id)
+                class_booking.delete()
+                content = {'success': 'class dropped'}
+                return Response(content, status=status.HTTP_200_OK)

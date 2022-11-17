@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.shortcuts import render
 from .models import User
 from rest_framework import status
@@ -6,6 +7,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import UserSerializer, PaymentInfoSerializer
 from rest_framework.authtoken.models import Token
+from rest_framework.generics import ListAPIView, CreateAPIView
+from studios.serializers import ClassSerializer, ClassScheduleSerializer
+from studios.models import ClassBooking, ClassTime, Class
 
 
 @api_view(['POST'])
@@ -100,7 +104,8 @@ def user_update(request):
 def create_payment_info(request):
     if request.method == 'POST':
         user = request.user
-        serializer = PaymentInfoSerializer(data=request.data, context={'user': user})
+        serializer = PaymentInfoSerializer(
+            data=request.data, context={'user': user})
         if serializer.is_valid():
             serializer.save()
             data = dict()
@@ -108,3 +113,46 @@ def create_payment_info(request):
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class UserClassView(ListAPIView):
+    serializer_class = ClassScheduleSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        historical_classes = ClassTime.objects.none()
+        classes = ClassTime.objects.none()
+
+        class_bookings = ClassBooking.objects.filter(
+            user=user.user_id).values_list('class_time', flat=True)
+        for class_time_id in class_bookings:
+            classes = classes | ClassTime.objects.filter(id=class_time_id)
+
+        #     class_temp = ClassTime.objects.filter(id=class_time_id)
+        #     if ClassTime.objects.get(id=class_time_id).time.replace(tzinfo=None) > datetime.now().replace(tzinfo=None):
+        #         classes = classes | class_temp
+        #     else:
+        #         historical_classes = historical_classes | class_temp
+        # print(classes.order_by("time"))
+
+        # res = {
+        #     "current classes": ClassScheduleSerializer(classes.order_by("time")).data,
+        #     "history": ClassScheduleSerializer(historical_classes.order_by("time")).data
+        # }
+
+        return classes
+
+
+class UnsubscribeView(CreateAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request,  *args, **kwargs):
+        user = request.user
+        if user.subscription is None:
+            content = {'failed': 'no current subscriptions'}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user.subscription = None
+            user.save()
+            content = {'success': 'successfully unsubscribed'}
+            return Response(content, status=status.HTTP_200_OK)
