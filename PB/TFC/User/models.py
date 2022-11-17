@@ -56,9 +56,10 @@ class User(AbstractBaseUser):
     subscription = models.ForeignKey(
         Subscription, on_delete=models.SET_NULL, null=True, blank=True)
 
+
 class PaymentInfo(models.Model):
     card_number = CardNumberField('card number')
-    expiry = CardExpiryField('expiration date')
+    expiry = CardExpiryField('expiration date', null=True, blank=True)
     cvv = SecurityCodeField('security code')
     payment_info_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
