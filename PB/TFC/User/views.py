@@ -153,6 +153,7 @@ class UnsubscribeView(CreateAPIView):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         else:
             user.subscription = None
+            user.next_billing_date = None
             user.save()
             content = {'success': 'successfully unsubscribed'}
             return Response(content, status=status.HTTP_200_OK)

@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render
 from subscriptions.models import Subscription
 from rest_framework.exceptions import ValidationError
@@ -6,6 +7,7 @@ from User.models import PaymentInfo, Payment
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+from dateutil.relativedelta import *
 
 # Create your views here.
 
@@ -42,6 +44,8 @@ class SubscribeView(CreateAPIView):
                 payment.save()
                 print(user.subscription)
                 user.subscription = subscription
+                num_months = subscription.length_months
+                user.next_billing_date = datetime.date.today() + relativedelta(months=+num_months)
                 user.save()
                 print(user.subscription)
                 content = {'success': 'successfully subscribed'}

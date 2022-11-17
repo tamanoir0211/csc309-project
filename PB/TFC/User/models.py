@@ -42,6 +42,7 @@ class User(AbstractBaseUser):
     user_id = models.AutoField(primary_key=True)
     subscription = models.ForeignKey(
         Subscription, on_delete=models.SET_NULL, null=True, blank=True)
+    next_billing_date = models.DateField(null=True)
     last_login = models.DateTimeField(auto_now=True)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -70,7 +71,8 @@ class Payment(models.Model):
     payment_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     payment_info = models.ForeignKey(PaymentInfo, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    amount = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0)
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
     processed_on = models.DateTimeField(auto_now=True)
 
