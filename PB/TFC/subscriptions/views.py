@@ -4,14 +4,15 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView
 from User.models import PaymentInfo, Payment
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
 
 
 class SubscribeView(CreateAPIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request,  *args, **kwargs):
-
         user = request.user
         user_id = user.user_id
 

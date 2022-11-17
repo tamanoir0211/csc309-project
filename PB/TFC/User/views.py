@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import UserSerializer, PaymentInfoSerializer
 from rest_framework.authtoken.models import Token
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView
 from studios.serializers import ClassSerializer, ClassScheduleSerializer
 from studios.models import ClassBooking, ClassTime, Class
 
@@ -113,3 +113,17 @@ class UserClassView(ListAPIView):
                 id=class_time_id)
 
         return classes.order_by("time")
+
+
+class UnsubscribeView(CreateAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request,  *args, **kwargs):
+        user = request.user
+        if user.subscription is None:
+            content = {'failed': 'no current subscriptions'}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user.subscription = None
+            content = {'success': 'successfully unsubscribed'}
+            return Response(content, status=status.HTTP_200_OK)
