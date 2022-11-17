@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.shortcuts import render
 from .models import User
 from rest_framework import status
@@ -9,7 +10,6 @@ from rest_framework.authtoken.models import Token
 from rest_framework.generics import ListAPIView, CreateAPIView
 from studios.serializers import ClassSerializer, ClassScheduleSerializer
 from studios.models import ClassBooking, ClassTime, Class
-
 
 
 @api_view(['POST'])
@@ -120,15 +120,27 @@ class UserClassView(ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
+        historical_classes = ClassTime.objects.none()
         classes = ClassTime.objects.none()
 
         class_bookings = ClassBooking.objects.filter(
             user=user.user_id).values_list('class_time', flat=True)
         for class_time_id in class_bookings:
-            classes = classes | ClassTime.objects.filter(
-                id=class_time_id)
+            classes = classes | ClassTime.objects.filter(id=class_time_id)
 
-        return classes.order_by("time")
+        #     class_temp = ClassTime.objects.filter(id=class_time_id)
+        #     if ClassTime.objects.get(id=class_time_id).time.replace(tzinfo=None) > datetime.now().replace(tzinfo=None):
+        #         classes = classes | class_temp
+        #     else:
+        #         historical_classes = historical_classes | class_temp
+        # print(classes.order_by("time"))
+
+        # res = {
+        #     "current classes": ClassScheduleSerializer(classes.order_by("time")).data,
+        #     "history": ClassScheduleSerializer(historical_classes.order_by("time")).data
+        # }
+
+        return classes
 
 
 class UnsubscribeView(CreateAPIView):
@@ -141,5 +153,6 @@ class UnsubscribeView(CreateAPIView):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         else:
             user.subscription = None
+            user.save()
             content = {'success': 'successfully unsubscribed'}
             return Response(content, status=status.HTTP_200_OK)
