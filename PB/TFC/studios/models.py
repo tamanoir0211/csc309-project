@@ -99,9 +99,11 @@ class Class(models.Model):
             # adding a Class
             date = find_date(self.range_date_start, self.day)
             while date <= self.range_date_end:
-                time = datetime.time(self.start_time, 0)
-                start = datetime.datetime.combine(date, time)
-                ClassTime.objects.create(classes=self, time=start)
+                time_start = datetime.time(self.start_time, 0)
+                start = datetime.datetime.combine(date, time_start)
+                time_end = datetime.time(self.end_time, 0)
+                end = datetime.datetime.combine(date, time_end)
+                ClassTime.objects.create(classes=self, time=start, end_time=end)
                 date += datetime.timedelta(days=7)
             return
 
@@ -110,13 +112,17 @@ class Class(models.Model):
         new_range_start = self.range_date_start
         new_range_end = self.range_date_end
         start_time = datetime.time(self.start_time, 0)
+        end_time = datetime.time(self.end_time, 0)
 
         for each_class in all_classes:
             new_date = find_date(each_class.time.date(), self.day)
-            if new_date != each_class.time.date() or start_time != each_class.time.time():
+            if new_date != each_class.time.date() or start_time != each_class.time.time() or \
+                    end_time != each_class.end_time.time():
                 # Class day or time changed so update it. i.e, Monday -> Tuesday
                 start = datetime.datetime.combine(new_date, start_time)
+                end = datetime.datetime.combine(new_date, end_time)
                 each_class.time = start
+                each_class.end_time = end
 
             if not (new_range_start <= each_class.time.date() <= new_range_end):
                 # Class time is not within the class start date and end date, so cancel this class
@@ -127,11 +133,13 @@ class Class(models.Model):
         curr_latest_class = ClassTime.objects.filter(classes=self).order_by('-time')
         date = find_date(self.range_date_start, self.day)
         while date <= self.range_date_end:
-            time = datetime.time(self.start_time, 0)
-            start = datetime.datetime.combine(date, time)
+            time_start = datetime.time(self.start_time, 0)
+            start = datetime.datetime.combine(date, time_start)
+            time_end = datetime.time(self.end_time, 0)
+            end = datetime.datetime.combine(date, time_end)
             if curr_earliest_class.exists() and (date < curr_earliest_class.first().time.date()
                                         or date > curr_latest_class.first().time.date()):
-                ClassTime.objects.create(classes=self, time=start)
+                ClassTime.objects.create(classes=self, time=start, end_time=end)
             date += datetime.timedelta(days=7)
 
     def __str__(self):
@@ -160,10 +168,18 @@ class ClassTime(models.Model):
     )
     classes = models.ForeignKey(Class, on_delete=CASCADE)
     status = models.BooleanField(default=True, choices=STATUS_CHOICES)
-    time = models.DateTimeField()
+    time = models.DateTimeField(verbose_name='start time')
+    end_time = models.DateTimeField()
 
     def __str__(self):
         return self.classes.name + ' - ' + self.time.strftime("%Y-%m-%d %H:%M")
+
+    def clean(self):
+        super().clean()
+        if self.time and self.end_time and self.time >= self.end_time:
+            raise ValidationError('End time cannot be earlier than start time')
+        if self.time.date() != self.end_time.date():
+            raise ValidationError('start time date and end time date has to be the same day')
 
 
 class ClassBooking(models.Model):

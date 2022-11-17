@@ -1,9 +1,8 @@
 import datetime
-
-from rest_framework.generics import RetrieveAPIView, ListAPIView, ListCreateAPIView, CreateAPIView
-from rest_framework.views import APIView
+from rest_framework.exceptions import NotFound
+from rest_framework.generics import RetrieveAPIView, ListAPIView, CreateAPIView
+from rest_framework.permissions import AllowAny
 from .models import Studio, ClassTime, Class, ClassBooking
-from User.models import User
 from django.shortcuts import get_object_or_404
 from .serializers import StudioSerializer, StudioDetailSerializer, ClassScheduleSerializer
 from math import cos, asin, sqrt
@@ -11,10 +10,12 @@ from django.db.models import Case, When
 from decimal import Decimal
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
-from rest_framework import filters
 
 
 def distance(lat1, lon1, lat2, lon2):
+    """function to calculate distance between two locations using
+    latitude and longitude. It uses Haversine formula.
+    """
     p = Decimal(0.017453292519943295)
     hav = 0.5 - cos((lat2-lat1)*p)/2 + cos(lat1*p) * \
         cos(lat2*p) * (1-cos((lon2-lon1)*p)) / 2
@@ -25,10 +26,9 @@ def distance(lat1, lon1, lat2, lon2):
 
 class StudioListView(ListAPIView):
     serializer_class = StudioSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
-        # input_lat = self.kwargs.get('latitude')
-        # input_long = self.kwargs.get('longitude')
         input_lat = self.request.query_params.get('latitude')
         input_long = self.request.query_params.get('longitude')
         if not input_lat or not input_long:
@@ -45,21 +45,24 @@ class StudioListView(ListAPIView):
             raise ValidationError(
                 {"Value Error": ["Invalid latitude/longitude"]})
 
-        studio_distance = {}
+        studio_distance = {}    # dict to store studio_id and distance between input location and corresponding studio location
         studios = Studio.objects.all()
         for studio in studios:
             studio_distance[studio.id] = distance(Decimal(input_lat), Decimal(
                 input_long), studio.location.latitude, studio.location.longitude)
+
+        # sort the distance in ascending order
         sorted_distance = {k: v for k, v in sorted(
             studio_distance.items(), key=lambda item: item[1])}
         id_list = list(sorted_distance.keys())
-        shortest_dist = Case(*[When(pk=pk, then=pos)
+        closest_studio_first = Case(*[When(pk=pk, then=pos)
                              for pos, pk in enumerate(id_list)])
-        return Studio.objects.order_by(shortest_dist)
+        return Studio.objects.order_by(closest_studio_first)
 
 
 class StudioDetailView(RetrieveAPIView):
     serializer_class = StudioDetailSerializer
+    permission_classes = [AllowAny]
 
     def get_object(self):
         return get_object_or_404(Studio, id=self.kwargs['studio_id'])
@@ -75,10 +78,12 @@ class StudioDetailView(RetrieveAPIView):
 
 class ClassScheduleView(ListAPIView):
     serializer_class = ClassScheduleSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
-        classes = ClassTime.objects.filter(
-            classes=self.kwargs.get('studio_id'))
+        if not Studio.objects.filter(id=self.kwargs.get('studio_id')):
+            raise NotFound(detail='Studio with given studio_id does not exist.')
+        classes = ClassTime.objects.filter(classes__studio_id=self.kwargs.get('studio_id'))
         if classes:
             classes = classes.filter(
                 status=True, time__gte=datetime.datetime.now()).order_by('time')
@@ -87,6 +92,7 @@ class ClassScheduleView(ListAPIView):
 
 class StudioSearchFilterView(ListAPIView):
     serializer_class = StudioSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         studio_name = self.request.query_params.get('studio_name')
@@ -103,14 +109,7 @@ class StudioSearchFilterView(ListAPIView):
         if coach:
             custom_q &= Q(class__coach__name__icontains=coach)
 
-        print(Studio.objects.filter(custom_q))
         return Studio.objects.filter(custom_q).distinct()
-
-# class StudioSearchView(ListCreateAPIView):
-#     queryset = Studio.objects.all()
-#     serializer_class = StudioSerializer
-#     filter_backends = [filters.SearchFilter]
-#     search_fields = ['name', 'studio__StudioAmenities', 'class_name', 'coach']
 
 
 class ClassEnrollView(CreateAPIView):
