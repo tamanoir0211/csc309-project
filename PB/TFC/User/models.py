@@ -79,7 +79,7 @@ class Payment(models.Model):
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
     processed_on = models.DateTimeField(auto_now=True)
 
-    def create(cls, user, payment_info, amount, subscription):
+    def create(cls, self, user, payment_info, amount, subscription):
         sub = cls(user, payment_info, amount, subscription)
         return sub
 

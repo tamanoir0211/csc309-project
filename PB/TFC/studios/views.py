@@ -4,7 +4,7 @@ from rest_framework.generics import RetrieveAPIView, ListAPIView, CreateAPIView
 from rest_framework.permissions import AllowAny
 from .models import Studio, ClassTime, Class, ClassBooking
 from django.shortcuts import get_object_or_404
-from .serializers import StudioSerializer, StudioDetailSerializer, ClassScheduleSerializer
+from .serializers import StudioSerializer, StudioDetailSerializer, ClassScheduleSerializer, ClassSerializer
 from math import cos, asin, sqrt
 from django.db.models import Case, When
 from decimal import Decimal
@@ -119,6 +119,33 @@ class StudioSearchFilterView(ListAPIView):
         return Studio.objects.filter(custom_q).distinct()
 
 
+class ClassSearchFilterView(ListAPIView):
+    serializer_class = ClassSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        class_name = self.request.query_params.get('class_name')
+        coach_name = self.request.query_params.get('coach_name')
+        date = self.request.query_params.get('date')
+        time_start = self.request.query_params.get('time_start')
+        time_end = self.request.query_params.get('time_end')
+
+        custom_q = Q()
+        if class_name:
+            custom_q = Q(name__icontains=class_name)
+        if coach_name:
+            custom_q &= Q(coach__name__icontains=coach_name)
+        if date:
+            custom_q &= Q(range_date_start__lte=date,
+                          range_date_end__gte=date)
+        if time_start:
+            custom_q &= Q(start_time__gte=time_start)
+        if time_end:
+            custom_q &= Q(end_time__lte=time_end)
+
+        return Class.objects.filter(custom_q).distinct()
+
+
 class ClassEnrollView(CreateAPIView):
 
     def post(self, request, *args, **kwargs):
@@ -185,28 +212,3 @@ class ClassDropView(CreateAPIView):
                 class_booking.delete()
                 content = {'success': 'class dropped'}
                 return Response(content, status=status.HTTP_200_OK)
-
-
-class ClassSearchFilterView(ListAPIView):
-
-    def get_queryset(self):
-        class_name = self.request.query_params.get('class_name')
-        coach_name = self.request.query_params.get('coach_name')
-        date = self.request.query_params.get('date')
-        time_start = self.request.query_params.get('time_start')
-        time_end = self.request.query_params.get('time_end')
-
-        custom_q = Q()
-        if class_name:
-            custom_q = Q(class__name__icontains=class_name)
-        if coach_name:
-            custom_q &= Q(class__coach__name__icontains=coach_name)
-        if date:
-            custom_q &= Q(class__range_date_start__lte=date,
-                          class__range_date_end__gte=date)
-        if time_start:
-            custom_q &= Q(class__start_timet__gte=time_start)
-        if time_end:
-            custom_q &= Q(class__end_timet__lte=time_end)
-
-        return Class.objects.filter(custom_q).distinct()
