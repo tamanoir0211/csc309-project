@@ -38,8 +38,11 @@ def user_login(request):
             data = dict()
             data['response'] = "successfully logged in"
             data['email'] = user.email
-            token = Token.objects.get(user=user).key
-            data['token'] = token
+            try:
+                token = Token.objects.get(user=user)
+            except Token.DoesNotExist:
+                token = Token.objects.create(user=user)
+            data['token'] = token.key
             return Response(data, status=status.HTTP_200_OK)
         data = dict()
         data['response'] = "incorrect password"
@@ -68,14 +71,28 @@ def user_logout(request):
 def user_update(request):
     if request.method == 'POST':
         user = request.user
-        serializer = UserSerializer(user, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
+
+        if 'first_name' in request.data:
+            user.first_name = request.data['first_name']
+
+        if 'last_name' in request.data:
+            user.last_name = request.data['last_name']
+
+        if 'phone_number' in request.data:
+            user.phone_number = request.data['phone_number']
+
+        if 'avatar' in request.data:
+            user.avatar = request.data['avatar']
+
+        if 'password' in request.data:
+            user.set_password(request.data['password'])
+        try:
+            user.save()
+        except Exception as e:
             data = dict()
-            data['response'] = "successfully updated user"
-            data['email'] = serializer.data['email']
-            return Response(data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            data['response'] = "failed to update user"
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
