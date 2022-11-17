@@ -199,12 +199,15 @@ class ClassDropView(CreateAPIView):
         if not Class.objects.filter(studio=self.kwargs['studio_id'], id=self.kwargs['class_id']).exists():
             raise ValidationError(
                 {"Value Error": ["404 Not found"]})
+        elif not ClassTime.objects.filter(classes=self.kwargs['class_id']).exists():
+            raise ValidationError(
+                {"Value Error": ["404 Not found"]})
         else:
             class_time = ClassTime.objects.get(
                 classes=self.kwargs['class_id'])
             if not ClassBooking.objects.filter(class_time=class_time.id).exists():
-                raise ValidationError(
-                    {"Value Error": ["404 Not found"]})
+                content = {'error': 'not enrolled in this class'}
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
             else:
 
                 class_booking = ClassBooking.objects.get(
