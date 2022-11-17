@@ -54,12 +54,6 @@ class User(AbstractBaseUser):
         return self.is_admin
 
 
-
-class Admin(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    admin_id = models.AutoField(primary_key=True)
-
-
 class PaymentInfo(models.Model):
     card_number = CardNumberField('card number')
     expiry = CardExpiryField('expiration date', null=True, blank=True)
