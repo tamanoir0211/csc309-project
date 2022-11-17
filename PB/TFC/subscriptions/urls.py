@@ -5,5 +5,5 @@ app_name = 'subscriptions'
 
 urlpatterns = [
     path('<int:subs_id>/subscribe/',
-         SubscribeView.as_view())
+         SubscribeView.as_view(), name='subscribe')
 ]

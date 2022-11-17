@@ -144,6 +144,10 @@ class ClassEnrollView(CreateAPIView):
             if class_started:
                 content = {'class started': 'class already started'}
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            elif ClassBooking.objects.filter(class_time=classtime.id, user=user.user_id):
+                content = {
+                    'already booked': 'user already enrolled in this class'}
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
             elif capacity_reached:
                 content = {'capacity': 'class capacity reached'}
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)

@@ -7,8 +7,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import UserSerializer, PaymentInfoSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import ListAPIView
-from studios.serializers import ClassSerializer
-from studios.models import ClassBooking
+from studios.serializers import ClassSerializer, ClassScheduleSerializer
+from studios.models import ClassBooking, ClassTime, Class
 
 # Create your views here.
 
@@ -99,10 +99,17 @@ def create_payment_info(request):
 
 
 class UserClassView(ListAPIView):
-    serializer_class = ClassSerializer
+    serializer_class = ClassScheduleSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
+        classes = ClassTime.objects.none()
+
         class_bookings = ClassBooking.objects.filter(
-            user=user.id).values_list('class_time', flat=True)
+            user=user.user_id).values_list('class_time', flat=True)
+        for class_time_id in class_bookings:
+            classes = classes | ClassTime.objects.filter(
+                id=class_time_id)
+
+        return classes.order_by("time")
