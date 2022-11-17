@@ -78,7 +78,7 @@ class StudioDetailView(RetrieveAPIView):
 
 class ClassScheduleView(ListAPIView):
     serializer_class = ClassScheduleSerializer
-    # permission_classes = [AllowAny]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         if not Studio.objects.filter(id=self.kwargs.get('studio_id')):
