@@ -858,72 +858,9 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "first_name",
-									"value": "J",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "last_name",
-									"value": "Y",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "email",
-									"value": "joyee@joyee.com",
-									"type": "text"
-								},
-								{
-									"key": "phone_number",
-									"value": "1230000000",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "password",
-									"value": "joyee123",
-									"type": "text"
-								},
-								{
-									"key": "avatar",
-									"type": "file",
-									"src": "JByjcdBVM/Thumbnail.jpeg",
-									"disabled": true
-								},
-								{
-									"key": "token",
-									"value": "",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "card_number",
-									"value": "5191230212238381",
-									"type": "text"
-								},
-								{
-									"key": "cvv",
-									"value": "123",
-									"type": "text"
-								},
-								{
-									"key": "expiry",
-									"value": "2023-04-28",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "coach",
-									"value": "john",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "name",
-									"value": "jump",
-									"type": "text",
-									"disabled": true
+									"key": "payment_info",
+									"value": "1",
+									"type": "default"
 								}
 							]
 						},
