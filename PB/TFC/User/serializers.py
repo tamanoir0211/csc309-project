@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, PaymentInfo
+from .models import User, PaymentInfo, Payment
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -39,3 +39,16 @@ class PaymentInfoSerializer(serializers.ModelSerializer):
         payment_info.save()
         return payment_info
 
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ['user', 'payment_info', 'amount', 'processed_on', 'subscription', ]
+
+    def save(self, **kwargs):
+        payment = Payment(
+            user=self.context.get('user'),
+            payment_info=self.context.get(self.context.get('user')['payment_info']),
+        )
+        payment.save()
+        return payment

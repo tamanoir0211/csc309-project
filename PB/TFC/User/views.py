@@ -1,11 +1,11 @@
 from datetime import datetime
 from django.shortcuts import render
-from .models import User
+from .models import User, Payment
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import UserSerializer, PaymentInfoSerializer
+from .serializers import UserSerializer, PaymentInfoSerializer, PaymentSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import ListAPIView, CreateAPIView
 from studios.serializers import ClassSerializer, ClassScheduleSerializer
@@ -104,8 +104,7 @@ def user_update(request):
 def create_payment_info(request):
     if request.method == 'POST':
         user = request.user
-        serializer = PaymentInfoSerializer(
-            data=request.data, context={'user': user})
+        serializer = PaymentInfoSerializer(data=request.data, context={'user': user})
         if serializer.is_valid():
             serializer.save()
             data = dict()
@@ -153,6 +152,16 @@ class UnsubscribeView(CreateAPIView):
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         else:
             user.subscription = None
+            user.next_billing_date = None
             user.save()
             content = {'success': 'successfully unsubscribed'}
             return Response(content, status=status.HTTP_200_OK)
+
+
+class PaymentHistoryView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PaymentSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Payment.objects.filter(user=user.user_id)

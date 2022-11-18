@@ -40,8 +40,8 @@ class User(AbstractBaseUser):
     email = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=100)
     user_id = models.AutoField(primary_key=True)
-    subscription = models.ForeignKey(
-        Subscription, on_delete=models.SET_NULL, null=True, blank=True)
+    subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, null=True, blank=True)
+    next_billing_date = models.DateField(null=True)
     last_login = models.DateTimeField(auto_now=True)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
