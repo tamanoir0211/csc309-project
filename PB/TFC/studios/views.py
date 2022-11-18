@@ -12,6 +12,7 @@ from rest_framework.exceptions import ValidationError
 from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 
 def distance(lat1, lon1, lat2, lon2):
@@ -146,7 +147,8 @@ class ClassSearchFilterView(ListAPIView):
         return Class.objects.filter(custom_q).distinct()
 
 
-class ClassEnrollView(CreateAPIView):
+class ClassEnrolAllView(CreateAPIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         user = request.user
@@ -157,15 +159,75 @@ class ClassEnrollView(CreateAPIView):
                 {"Value Error": ["404 Not found"]})
 
         else:
-            # check class not started yet
             this_class = Class.objects.get(id=self.kwargs['class_id'])
-            class_started = this_class.range_date_start < datetime.datetime.now().date()
 
             # check class is not full
-            classtime = ClassTime.objects.get(classes=self.kwargs['class_id'])
+            classtimes = ClassTime.objects.filter(
+                classes=self.kwargs['class_id']).values_list('id')
+            for classtime in classtimes:
+                enrollment_count = ClassBooking.objects.filter(
+                    class_time=classtime).count()
+                capacity_reached = enrollment_count >= this_class.capacity
+                if capacity_reached:
+                    content = {
+                        'capacity': 'class capacity reached for one or more classes, cannot enrol all'}
+                    return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+            if user.subscription is None:
+                content = {'subscription': 'user does not have a subscription'}
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                # create a new ClassBooking for each classTime of this Class
+                print("class times")
+                print(classtimes)
+                count = 0
+                for classtime in classtimes:
+                    classtime_obj = ClassTime.objects.get(id=classtime[0])
+                    if ClassBooking.objects.filter(class_time=classtime[0], user=user.user_id):
+                        # if user already enrolled in one of the ClassTimes, do not enrol user
+                        pass
+                    elif classtime_obj.time.replace(tzinfo=None) < datetime.datetime.now().replace(tzinfo=None):
+                        # if class already started, don't enroll in that class
+                        pass
+                    else:
+                        class_booking = ClassBooking(
+                            class_time=classtime_obj, user=user)
+                        class_booking.save()
+                        count += 1
+
+                if count == 0:
+                    content = {
+                        'no class booked': 'They have either all currently enrolled or all passed.'}
+                    return Response(content, status=status.HTTP_200_OK)
+
+                content = {'success': str(count) + ' class booked'}
+                return Response(content, status=status.HTTP_200_OK)
+
+
+class ClassTimeEnrolView(CreateAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+
+        # check if this classtime exists
+        if not ClassTime.objects.filter(id=self.kwargs['classtime_id']).exists():
+            raise ValidationError(
+                {"Value Error": ["404 Not found"]})
+
+        else:
+
+            # check class is not full
+            classtime = ClassTime.objects.get(
+                id=self.kwargs['classtime_id'])
+            class_capacity = classtime.classes.capacity
             enrollment_count = ClassBooking.objects.filter(
                 class_time=classtime.id).count()
-            capacity_reached = enrollment_count >= this_class.capacity
+            capacity_reached = enrollment_count >= class_capacity
+
+            # check class not started yet
+            class_started = classtime.time.replace(
+                tzinfo=None) < datetime.datetime.now().replace(tzinfo=None)
 
             # check active subscription
             if class_started:
@@ -178,7 +240,7 @@ class ClassEnrollView(CreateAPIView):
             elif capacity_reached:
                 content = {'capacity': 'class capacity reached'}
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
-            elif not user.subscription is None:
+            elif user.subscription is None:
                 content = {'subscription': 'user does not have a subscription'}
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
             else:
@@ -190,7 +252,8 @@ class ClassEnrollView(CreateAPIView):
                 return Response(content, status=status.HTTP_200_OK)
 
 
-class ClassDropView(CreateAPIView):
+class ClassDropAllView(CreateAPIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         user = request.user
@@ -199,19 +262,47 @@ class ClassDropView(CreateAPIView):
         if not Class.objects.filter(studio=self.kwargs['studio_id'], id=self.kwargs['class_id']).exists():
             raise ValidationError(
                 {"Value Error": ["404 Not found"]})
-        elif not ClassTime.objects.filter(classes=self.kwargs['class_id']).exists():
+        else:
+            classtimes = ClassTime.objects.filter(
+                classes=self.kwargs['class_id']).values_list('id')
+            count = 0
+            for classtime in classtimes:
+                if not ClassBooking.objects.filter(class_time=classtime).exists():
+                    # if there's no booking for that class time, just ignore
+                    pass
+                else:
+                    class_booking = ClassBooking.objects.get(
+                        class_time=classtime)
+                    class_booking.delete()
+                    count += 1
+            if count == 0:
+                content = {'error': 'no class can be dropped currently'}
+                return Response(content, status=status.HTTP_200_OK)
+            content = {'success': str(count) + ' class dropped'}
+            return Response(content, status=status.HTTP_200_OK)
+
+
+class ClassTimeDropView(CreateAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+
+        # check if class and studio exist
+        if not ClassTime.objects.filter(id=self.kwargs['classtime_id']).exists():
+            raise ValidationError(
+                {"Value Error": ["404 Not found"]})
+        elif not ClassTime.objects.filter(id=self.kwargs['classtime_id']).exists():
             raise ValidationError(
                 {"Value Error": ["404 Not found"]})
         else:
-            class_time = ClassTime.objects.get(
-                classes=self.kwargs['class_id'])
-            if not ClassBooking.objects.filter(class_time=class_time.id).exists():
+            if not ClassBooking.objects.filter(class_time=self.kwargs['classtime_id']).exists():
                 content = {'error': 'not enrolled in this class'}
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
             else:
 
                 class_booking = ClassBooking.objects.get(
-                    class_time=class_time.id)
+                    class_time=self.kwargs['classtime_id'])
                 class_booking.delete()
                 content = {'success': 'class dropped'}
                 return Response(content, status=status.HTTP_200_OK)
