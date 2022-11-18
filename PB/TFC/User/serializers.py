@@ -25,7 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class PaymentInfoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Payment
+        model = PaymentInfo
         fields = ['card_number', 'expiry', 'cvv', 'postal_code']
 
     def save(self, **kwargs):
