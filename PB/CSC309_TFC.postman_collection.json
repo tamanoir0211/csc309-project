@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "25adf5da-a3a4-4546-8a7d-1904c56244d9",
+		"_postman_id": "4fcba58b-1474-4a97-a4ef-f05c71a786c3",
 		"name": "CSC309_TFC",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "24172988"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -328,6 +327,42 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "List Payment info",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/user/profile/payment_info/list",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"user",
+								"profile",
+								"payment_info",
+								"list"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -480,72 +515,9 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "first_name",
-									"value": "J",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "last_name",
-									"value": "Y",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "email",
-									"value": "joyee@joyee.com",
-									"type": "text"
-								},
-								{
-									"key": "phone_number",
-									"value": "1230000000",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "password",
-									"value": "joyee123",
-									"type": "text"
-								},
-								{
-									"key": "avatar",
-									"type": "file",
-									"src": "JByjcdBVM/Thumbnail.jpeg",
-									"disabled": true
-								},
-								{
-									"key": "token",
-									"value": "",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "card_number",
-									"value": "5191230212238381",
-									"type": "text"
-								},
-								{
-									"key": "cvv",
-									"value": "123",
-									"type": "text"
-								},
-								{
-									"key": "expiry",
-									"value": "2023-04-28",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "coach",
-									"value": "john",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "name",
-									"value": "jump",
-									"type": "text",
-									"disabled": true
+									"key": "payment_info",
+									"value": "1",
+									"type": "default"
 								}
 							]
 						},
@@ -586,6 +558,16 @@
 						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "payment_info",
+									"value": "1",
+									"type": "default"
+								}
+							]
+						},
 						"url": {
 							"raw": "http://localhost:8000/subscriptions/1/subscribe/",
 							"protocol": "http",
@@ -624,7 +606,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8000/subscriptions/4/subscribe/",
+							"raw": "http://localhost:8000/subscriptions/4/subscribe/?payment_info=1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -635,6 +617,12 @@
 								"4",
 								"subscribe",
 								""
+							],
+							"query": [
+								{
+									"key": "payment_info",
+									"value": "1"
+								}
 							]
 						}
 					},
