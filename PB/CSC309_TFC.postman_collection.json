@@ -1,0 +1,1140 @@
+{
+	"info": {
+		"_postman_id": "0b95df76-46f9-4c9d-b533-a6cb39f25eff",
+		"name": "CSC309_TFC",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24172988"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "first_name",
+									"value": "test",
+									"description": "User Firstname",
+									"type": "default"
+								},
+								{
+									"key": "last_name",
+									"value": "test",
+									"description": "User Lastname",
+									"type": "default"
+								},
+								{
+									"key": "email",
+									"value": "test@test.ac",
+									"description": "User Email",
+									"type": "default"
+								},
+								{
+									"key": "password",
+									"value": "hihi888",
+									"description": "User Password",
+									"type": "default"
+								},
+								{
+									"key": "phone_number",
+									"value": "8828828828",
+									"description": "User Phone Number",
+									"type": "default"
+								},
+								{
+									"key": "avatar",
+									"description": "User Avatar",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:8000/user/register/",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"user",
+								"register",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Store token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"auth_token\", \"Token \" + jsonData[\"token\"])",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"followAuthorizationHeader": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "test@test.ac",
+									"type": "default"
+								},
+								{
+									"key": "password",
+									"value": "hihi888",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:8000/user/login/",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"user",
+								"login",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "profile",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/user/profile/",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"user",
+								"profile",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update profile",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "first_name",
+									"value": "foobar",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:8000/user/update/",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"user",
+								"update",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create_payment_info",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "card_number",
+									"value": "374245455400126",
+									"type": "default"
+								},
+								{
+									"key": "expiry",
+									"value": "2023-05-01",
+									"type": "default"
+								},
+								{
+									"key": "cvv",
+									"value": "1234",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:8000/user/profile/payment_info/create/",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"user",
+								"profile",
+								"payment_info",
+								"create",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/user/logout/",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"user",
+								"logout",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "payment_history",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/user/payment/history",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"user",
+								"payment",
+								"history"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "studios",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/studios/list/?latitude=43.666956&longitude=-79.392040",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"list",
+								""
+							],
+							"query": [
+								{
+									"key": "latitude",
+									"value": "43.666956"
+								},
+								{
+									"key": "longitude",
+									"value": "-79.392040"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/studios/1/details/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"1",
+								"details",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/studios/search/?studio_name=house&amenity=rope&class_name=zumba&coach=ryota",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"search",
+								""
+							],
+							"query": [
+								{
+									"key": "studio_name",
+									"value": "house"
+								},
+								{
+									"key": "amenity",
+									"value": "rope",
+									"description": "provide name of amenity"
+								},
+								{
+									"key": "class_name",
+									"value": "zumba"
+								},
+								{
+									"key": "coach",
+									"value": "ryota",
+									"description": "provide name of coach"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "classes schedule",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/studios/1/classes/schedule/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"1",
+								"classes",
+								"schedule",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "subscriptions",
+			"item": [
+				{
+					"name": "subscribe",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "first_name",
+									"value": "J",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "last_name",
+									"value": "Y",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "joyee@joyee.com",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "phone_number",
+									"value": "1230000000",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "joyee123",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "JByjcdBVM/Thumbnail.jpeg",
+									"disabled": true
+								},
+								{
+									"key": "token",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "card_number",
+									"value": "5191230212238381",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "cvv",
+									"value": "123",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "expiry",
+									"value": "2023-04-28",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "coach",
+									"value": "john",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "jump",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/subscriptions/1/subscribe/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"subscriptions",
+								"1",
+								"subscribe",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "subscribe again when user already has active subscription",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/subscriptions/2/subscribe/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"subscriptions",
+								"2",
+								"subscribe",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "subscribe to a subscription that doesn't exist",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/subscriptions/4/subscribe/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"subscriptions",
+								"4",
+								"subscribe",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unsubscribe",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/user/unsubscribe/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"user",
+								"unsubscribe",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unsubscribe when user has no current subscription",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/user/unsubscribe/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"user",
+								"unsubscribe",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/subscriptions/list",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"subscriptions",
+								"list"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "classes",
+			"item": [
+				{
+					"name": "enroll in class",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/studios/1/classes/1/enroll/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"1",
+								"classes",
+								"1",
+								"enroll",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enrol in class that's already enrolled",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/studios/1/classes/1/enroll/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"1",
+								"classes",
+								"1",
+								"enroll",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enrol in class with an invalid studio",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/studios/2/classes/1/enroll/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"2",
+								"classes",
+								"1",
+								"enroll",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enrol in class with an valid studio but invalid class id",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/studios/1/classes/100/enroll/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"1",
+								"classes",
+								"100",
+								"enroll",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enrol in class with no capacity",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/studios/1/classes/3/enroll/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"1",
+								"classes",
+								"3",
+								"enroll",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enrol in class that's already started",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/studios/1/classes/4/enroll/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"1",
+								"classes",
+								"4",
+								"enroll",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "drop class",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/studios/1/classes/1/drop/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"1",
+								"classes",
+								"1",
+								"drop",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "drop a class that's not currently enrolled in",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/studios/1/classes/1/drop/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"1",
+								"classes",
+								"1",
+								"drop",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "a list of classes",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/studios/classes/search/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"classes",
+								"search",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "a list of classes user is enrolled in",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/user/classes/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"user",
+								"classes",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "auth_token",
+			"value": ""
+		}
+	]
+}
