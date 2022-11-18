@@ -1,11 +1,11 @@
 from datetime import datetime
 from django.shortcuts import render
-from .models import User, Payment
+from .models import User, Payment, PaymentInfo
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import UserSerializer, PaymentInfoSerializer, PaymentSerializer
+from .serializers import UserSerializer, PaymentInfoSerializer, PaymentSerializer, PaymentInfoListSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import ListAPIView, CreateAPIView
 from studios.serializers import ClassSerializer, ClassScheduleSerializer
@@ -165,3 +165,12 @@ class PaymentHistoryView(ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return Payment.objects.filter(user=user.user_id)
+
+
+class PaymentInfoView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PaymentInfoListSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return PaymentInfo.objects.filter(user=user.user_id)
