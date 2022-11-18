@@ -6,8 +6,7 @@ from django.db import models
 
 class Subscription(models.Model):
 
-    price = models.DecimalField(
-        max_digits=20, decimal_places=2, default=Decimal(0.00))
+    price = models.DecimalField(max_digits=20, decimal_places=2, default=Decimal(0.00))
     length_months = models.IntegerField(default=0)
     sub_id = models.AutoField(primary_key=True)
 

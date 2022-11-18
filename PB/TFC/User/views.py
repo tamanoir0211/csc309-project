@@ -104,8 +104,7 @@ def user_update(request):
 def create_payment_info(request):
     if request.method == 'POST':
         user = request.user
-        serializer = PaymentInfoSerializer(
-            data=request.data, context={'user': user})
+        serializer = PaymentInfoSerializer(data=request.data, context={'user': user})
         if serializer.is_valid():
             serializer.save()
             data = dict()
