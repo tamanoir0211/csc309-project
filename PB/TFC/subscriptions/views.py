@@ -17,6 +17,7 @@ class SubscribeView(CreateAPIView):
 
     def post(self, request,  *args, **kwargs):
         user = request.user
+        payment_info_id = request.data.get('payment_info')
         user_id = user.user_id
 
         if not Subscription.objects.filter(sub_id=self.kwargs['subs_id']).exists():
@@ -26,21 +27,17 @@ class SubscribeView(CreateAPIView):
             content = {'error': 'user already has an active subscription'}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         else:
-            subscription = Subscription.objects.get(
-                sub_id=self.kwargs['subs_id'])
+            subscription = Subscription.objects.get(sub_id=self.kwargs['subs_id'])
             price = float(subscription.price)
-            payment_frequency = int(subscription.length_months)
-            payment_amount = price/payment_frequency
+            payment_amount = price
 
             # check if user has payment info set up
-            if not PaymentInfo.objects.filter(user=user_id).exists():
+            if payment_info_id is None:
                 return Response({'Payment_info': 'payment info missing'})
-
             else:
-                payment_info = PaymentInfo.objects.get(
-                    user=user_id)
-                payment = Payment(user=user, payment_info=payment_info,
-                                  amount=payment_amount, subscription=subscription)
+                payment_info = PaymentInfo.objects.get(payment_info_id=payment_info_id)
+                payment = Payment(user=user, payment_info=payment_info, amount=payment_amount,
+                                  subscription=subscription)
                 payment.save()
                 print(user.subscription)
                 user.subscription = subscription
