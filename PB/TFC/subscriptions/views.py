@@ -37,6 +37,7 @@ class SubscribeView(CreateAPIView):
                 return Response({'Payment_info': 'payment info missing'})
 
             else:
+                #subscribe the user with payment info
                 payment_info = PaymentInfo.objects.get(
                     user=user_id)
                 payment = Payment(user=user, payment_info=payment_info,
@@ -48,6 +49,15 @@ class SubscribeView(CreateAPIView):
                 user.next_billing_date = datetime.date.today() + relativedelta(months=+num_months)
                 user.save()
                 print(user.subscription)
+
+                #if user has any classes lost due to unsubscription, add them back again
+                classbooking_archives = ClassBookingArchive.objects.filter(user=user.user_id).values_list('id')
+                for archive in classbooking_archives:
+                    obj = ClassBookingArchive.objects.get(id=archive)
+                    classbooking = ClassBooking(class_time = obj.class_time, user=archive.user)
+                    classbooking.save()
+                    obj.delete()
+
                 content = {'success': 'successfully subscribed'}
 
                 return Response(content, status=status.HTTP_200_OK)
@@ -59,3 +69,4 @@ class SubscriptionView(ListAPIView):
 
     def get_queryset(self):
         return Subscription.objects.all()
+

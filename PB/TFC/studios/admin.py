@@ -32,6 +32,18 @@ class ClassTimeInline(admin.TabularInline):
     ordering = ['time']
     # readonly_fields = ['time']
 
+    
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        #check if status has been changed. If status changed, remove user from classbooking associated with the classtime
+        if obj.status == False:
+            classbookings = ClassBooking.objects.filter(
+                    class_time=classtime.id)
+            for classbooking in classbookings:
+                lassBooking.objects.filter(id=classbooking).delete()
+            
+            
+
 
 class ClassAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'studio']

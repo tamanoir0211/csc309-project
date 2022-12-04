@@ -119,7 +119,6 @@ class UserClassView(ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        historical_classes = ClassTime.objects.none()
         classes = ClassTime.objects.none()
 
         class_bookings = ClassBooking.objects.filter(
@@ -127,17 +126,6 @@ class UserClassView(ListAPIView):
         for class_time_id in class_bookings:
             classes = classes | ClassTime.objects.filter(id=class_time_id)
 
-        #     class_temp = ClassTime.objects.filter(id=class_time_id)
-        #     if ClassTime.objects.get(id=class_time_id).time.replace(tzinfo=None) > datetime.now().replace(tzinfo=None):
-        #         classes = classes | class_temp
-        #     else:
-        #         historical_classes = historical_classes | class_temp
-        # print(classes.order_by("time"))
-
-        # res = {
-        #     "current classes": ClassScheduleSerializer(classes.order_by("time")).data,
-        #     "history": ClassScheduleSerializer(historical_classes.order_by("time")).data
-        # }
 
         return classes
 
@@ -156,6 +144,17 @@ class UnsubscribeView(CreateAPIView):
             user.save()
             content = {'success': 'successfully unsubscribed'}
             return Response(content, status=status.HTTP_200_OK)
+
+            #move bookings to archive and delete bookings
+            classbookings = ClassBooking.objects.filter(user=user.user_id).values_list('id')
+            for classbooking in classbookings:
+                obj = ClassBooking.objects.get(id=classbooking)
+                if ClassTime.objects.filter(id=obj.class_time).end_time.replace(tzinfo=None) > datetime.datetime.now().replace(tzinfo=None):
+                    classbooking_archive = ClassBookingArchive(class_time = obj.class_time, user=classbooking.user)
+                    classbooking_archive.save()
+                    obj.delete()
+
+
 
 
 class PaymentHistoryView(ListAPIView):

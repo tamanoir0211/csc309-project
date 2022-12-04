@@ -194,3 +194,12 @@ class ClassBooking(models.Model):
     def create(cls, class_time, user):
         sub = cls(class_time=class_time, user=user)
         return sub
+
+
+class ClassBookingArchive(models.Model):
+    class_time = models.ForeignKey(ClassTime, on_delete=CASCADE)
+    user = models.ForeignKey(User, on_delete=CASCADE)
+
+    def create(cls, class_time, user):
+        sub = cls(class_time=class_time, user=user)
+        return sub
