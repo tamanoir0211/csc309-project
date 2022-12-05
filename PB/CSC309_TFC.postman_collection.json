@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "0b95df76-46f9-4c9d-b533-a6cb39f25eff",
+		"_postman_id": "4fcba58b-1474-4a97-a4ef-f05c71a786c3",
 		"name": "CSC309_TFC",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "24172988"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -328,6 +327,42 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "List Payment info",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/user/profile/payment_info/list",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"user",
+								"profile",
+								"payment_info",
+								"list"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -480,76 +515,9 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "first_name",
-									"value": "J",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "last_name",
-									"value": "Y",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "email",
-									"value": "joyee@joyee.com",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "phone_number",
-									"value": "1230000000",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "password",
-									"value": "joyee123",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "avatar",
-									"type": "file",
-									"src": "JByjcdBVM/Thumbnail.jpeg",
-									"disabled": true
-								},
-								{
-									"key": "token",
-									"value": "",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "card_number",
-									"value": "5191230212238381",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "cvv",
-									"value": "123",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "expiry",
-									"value": "2023-04-28",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "coach",
-									"value": "john",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "name",
-									"value": "jump",
-									"type": "text",
-									"disabled": true
+									"key": "payment_info",
+									"value": "1",
+									"type": "default"
 								}
 							]
 						},
@@ -590,8 +558,18 @@
 						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "payment_info",
+									"value": "1",
+									"type": "default"
+								}
+							]
+						},
 						"url": {
-							"raw": "http://localhost:8000/subscriptions/2/subscribe/",
+							"raw": "http://localhost:8000/subscriptions/1/subscribe/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -599,7 +577,7 @@
 							"port": "8000",
 							"path": [
 								"subscriptions",
-								"2",
+								"1",
 								"subscribe",
 								""
 							]
@@ -628,7 +606,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8000/subscriptions/4/subscribe/",
+							"raw": "http://localhost:8000/subscriptions/4/subscribe/?payment_info=1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -639,6 +617,12 @@
 								"4",
 								"subscribe",
 								""
+							],
+							"query": [
+								{
+									"key": "payment_info",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -744,7 +728,7 @@
 			"name": "classes",
 			"item": [
 				{
-					"name": "enroll in class",
+					"name": "enroll in all class times for a class, unsubscribed",
 					"request": {
 						"auth": {
 							"type": "apikey",
@@ -763,8 +747,23 @@
 						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "joyee@joyee.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "joyee123",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "http://localhost:8000/studios/1/classes/1/enroll/",
+							"raw": "http://localhost:8000/studios/1/classes/1/enrol_all/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -775,7 +774,7 @@
 								"1",
 								"classes",
 								"1",
-								"enroll",
+								"enrol_all",
 								""
 							]
 						}
@@ -783,7 +782,7 @@
 					"response": []
 				},
 				{
-					"name": "enrol in class that's already enrolled",
+					"name": "enrol in a single class time of a class, unsubscribed",
 					"request": {
 						"auth": {
 							"type": "apikey",
@@ -802,8 +801,23 @@
 						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "joyee@joyee.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "joyee123",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "http://localhost:8000/studios/1/classes/1/enroll/",
+							"raw": "http://localhost:8000/studios/classtime/1/enrol/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -811,10 +825,9 @@
 							"port": "8000",
 							"path": [
 								"studios",
+								"classtime",
 								"1",
-								"classes",
-								"1",
-								"enroll",
+								"enrol",
 								""
 							]
 						}
@@ -822,7 +835,7 @@
 					"response": []
 				},
 				{
-					"name": "enrol in class with an invalid studio",
+					"name": "subscribe again",
 					"request": {
 						"auth": {
 							"type": "apikey",
@@ -841,19 +854,27 @@
 						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "payment_info",
+									"value": "1",
+									"type": "default"
+								}
+							]
+						},
 						"url": {
-							"raw": "http://localhost:8000/studios/2/classes/1/enroll/",
+							"raw": "http://localhost:8000/subscriptions/1/subscribe/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8000",
 							"path": [
-								"studios",
-								"2",
-								"classes",
+								"subscriptions",
 								"1",
-								"enroll",
+								"subscribe",
 								""
 							]
 						}
@@ -861,7 +882,7 @@
 					"response": []
 				},
 				{
-					"name": "enrol in class with an valid studio but invalid class id",
+					"name": "enroll in all class times for a class",
 					"request": {
 						"auth": {
 							"type": "apikey",
@@ -880,8 +901,23 @@
 						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "joyee@joyee.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "joyee123",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "http://localhost:8000/studios/1/classes/100/enroll/",
+							"raw": "http://localhost:8000/studios/1/classes/1/enrol_all/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -891,8 +927,168 @@
 								"studios",
 								"1",
 								"classes",
+								"1",
+								"enrol_all",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enrol in a single class time of a class",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "joyee@joyee.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "joyee123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/studios/classtime/1/enrol/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"classtime",
+								"1",
+								"enrol",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enrol in all class times for a class after having enrolled in one of it ",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "joyee@joyee.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "joyee123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/studios/1/classes/1/enrol_all/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"1",
+								"classes",
+								"1",
+								"enrol_all",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enrol in a single class time of a class, class time doesn't exist",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "joyee@joyee.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "joyee123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/studios/classtime/100/enrol/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"classtime",
 								"100",
-								"enroll",
+								"enrol",
 								""
 							]
 						}
@@ -900,7 +1096,7 @@
 					"response": []
 				},
 				{
-					"name": "enrol in class with no capacity",
+					"name": "enroll in all classes with one or more reached capacity",
 					"request": {
 						"auth": {
 							"type": "apikey",
@@ -919,8 +1115,23 @@
 						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "joyee@joyee.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "joyee123",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "http://localhost:8000/studios/1/classes/3/enroll/",
+							"raw": "http://localhost:8000/studios/1/classes/3/enrol_all/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -931,7 +1142,7 @@
 								"1",
 								"classes",
 								"3",
-								"enroll",
+								"enrol_all",
 								""
 							]
 						}
@@ -939,7 +1150,7 @@
 					"response": []
 				},
 				{
-					"name": "enrol in class that's already started",
+					"name": "enrol in a single class time which has reached capacity",
 					"request": {
 						"auth": {
 							"type": "apikey",
@@ -958,8 +1169,76 @@
 						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "joyee@joyee.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "joyee123",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "http://localhost:8000/studios/1/classes/4/enroll/",
+							"raw": "http://localhost:8000/studios/classtime/14/enrol/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"classtime",
+								"14",
+								"enrol",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enroll in all classes with some class times already started and some not",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "joyee@joyee.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "joyee123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/studios/1/classes/4/enrol_all/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -970,7 +1249,7 @@
 								"1",
 								"classes",
 								"4",
-								"enroll",
+								"enrol_all",
 								""
 							]
 						}
@@ -978,7 +1257,7 @@
 					"response": []
 				},
 				{
-					"name": "drop class",
+					"name": "enroll in all classes either all currently enrolled or all passed",
 					"request": {
 						"auth": {
 							"type": "apikey",
@@ -997,8 +1276,23 @@
 						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "joyee@joyee.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "joyee123",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "http://localhost:8000/studios/1/classes/1/drop/",
+							"raw": "http://localhost:8000/studios/1/classes/4/enrol_all/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1008,6 +1302,112 @@
 								"studios",
 								"1",
 								"classes",
+								"4",
+								"enrol_all",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enrol in a single class time of a class, class already started",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "joyee@joyee.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "joyee123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/studios/classtime/17/enrol/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"classtime",
+								"17",
+								"enrol",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "drop a single class time of a class",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "joyee@joyee.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "joyee123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/studios/classtime/1/drop/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"classtime",
 								"1",
 								"drop",
 								""
@@ -1017,7 +1417,7 @@
 					"response": []
 				},
 				{
-					"name": "drop a class that's not currently enrolled in",
+					"name": "drop all class times for a class",
 					"request": {
 						"auth": {
 							"type": "apikey",
@@ -1036,8 +1436,23 @@
 						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "joyee@joyee.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "joyee123",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "http://localhost:8000/studios/1/classes/1/drop/",
+							"raw": "http://localhost:8000/studios/1/classes/1/drop_all/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1048,6 +1463,113 @@
 								"1",
 								"classes",
 								"1",
+								"drop_all",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "drop all class times of a class after having dropped one already",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "joyee@joyee.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "joyee123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/studios/1/classes/1/drop_all/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"1",
+								"classes",
+								"1",
+								"drop_all",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "drop  a single class time that doesn't exist",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "{{auth_token}}",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "joyee@joyee.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "joyee123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/studios/classtime/100/drop/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"studios",
+								"classtime",
+								"100",
 								"drop",
 								""
 							]

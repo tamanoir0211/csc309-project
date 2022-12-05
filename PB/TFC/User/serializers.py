@@ -40,6 +40,12 @@ class PaymentInfoSerializer(serializers.ModelSerializer):
         return payment_info
 
 
+class PaymentInfoListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentInfo
+        fields = '__all__'
+
+
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
