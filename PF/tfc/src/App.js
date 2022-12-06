@@ -10,6 +10,10 @@ import {
 import {useState, useEffect} from 'react';
 import SignInModal from './components/SignInModal';
 
+
+// Views
+import Account from './views/Account';
+
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -41,13 +45,10 @@ function App() {
       <Router>
         <div>
           <Switch>
-            <Route path="/login">
-              <div>login</div>
+            <Route path="/account" children={<Account/>}>
+              <h1>Home</h1>
             </Route>
-            <Route path="/signup">
-              <div>signup</div>
-            </Route>
-          <Switch>
+          </Switch>
         </div>
       </Router>
     </StylesProvider>
