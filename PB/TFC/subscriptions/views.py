@@ -1,6 +1,7 @@
 import datetime
 from django.shortcuts import render
 from subscriptions.models import Subscription
+from studios.models import ClassBooking, ClassBookingArchive
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView, ListAPIView
 from User.models import PaymentInfo, Payment
