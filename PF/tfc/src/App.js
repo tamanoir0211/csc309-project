@@ -26,6 +26,8 @@
 import React from 'react';
 import './App.css';
 import StudiosSearch from "./components/StudiosSearch";
+import StudiosList from "./components/StudiosList";
+import StudioDetails from "./components/StudioDetails";
 import APIContext, {useAPIContext} from "./Contexts/APIContext";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Layout from "./components/Layout";
@@ -37,12 +39,26 @@ function App() {
         </APIContext.Provider>
     )
 
+    const studio_list = (
+        <APIContext.Provider value={useAPIContext()}>
+            <StudiosList />
+        </APIContext.Provider>
+    )
+
+    const studio_details = (
+        <APIContext.Provider value={useAPIContext()}>
+            <StudioDetails />
+        </APIContext.Provider>
+    )
+
     return (
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Layout />}>
                     <Route index element={studio_search} />
                     <Route path="studios/search" element={studio_search} />
+                    <Route path="studios/list" element={studio_list} />
+                    <Route path='studios/list/details/:id' element={studio_details} />
                 </Route>
             </Routes>
         </BrowserRouter>

@@ -80,6 +80,30 @@ class StudioDetailView(RetrieveAPIView):
         return response
 
 
+class ClassListView(ListAPIView):
+    serializer_class = ClassSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        if not Studio.objects.filter(id=self.kwargs.get('studio_id')):
+            raise NotFound(
+                detail='Studio with given studio_id does not exist.')
+        classes = Class.objects.filter(studio_id=self.kwargs.get('studio_id'))
+        if classes:
+            classes = classes.filter(
+                classtime__status=True,
+                classtime__time__gte=datetime.datetime.now()).order_by('classtime__time')
+            ids = []
+            print(classes)
+            for item in classes:
+                if item.id not in ids:
+                    ids.append(item.id)
+            order = Case(*[When(pk=pk, then=pos)
+                                for pos, pk in enumerate(ids)])
+            classes = Class.objects.filter(id__in=ids).order_by(order)
+        return classes
+
+
 class ClassScheduleView(ListAPIView):
     serializer_class = ClassScheduleSerializer
     permission_classes = [AllowAny]
@@ -90,8 +114,6 @@ class ClassScheduleView(ListAPIView):
                 detail='Studio with given studio_id does not exist.')
         classes = ClassTime.objects.filter(
             classes__studio_id=self.kwargs.get('studio_id'))
-        print("classes")
-        print(classes)
         if classes:
             classes = classes.filter(
                 status=True, time__gte=datetime.datetime.now()).order_by('time')
