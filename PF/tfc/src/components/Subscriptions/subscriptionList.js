@@ -28,13 +28,6 @@ export default function Subscribe(props) {
             })    
     }
 
-    function CheckError(response) {
-        if (response.status >= 200 && response.status <= 299) {
-          return response.json();
-        } else {
-          throw Error(response.statusText);
-        }
-      }
 
     const handleSubscription = async (subNum) => {
         const response = await fetch('http://localhost:8000/subscriptions/'+subNum+'/subscribe/', {

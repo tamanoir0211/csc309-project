@@ -97,6 +97,26 @@ class ClassScheduleView(ListAPIView):
                 status=True, time__gte=datetime.datetime.now()).order_by('time')
         return classes
 
+class ClassTimesView(ListAPIView):
+    serializer_class = ClassScheduleSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        if not Studio.objects.filter(id=self.kwargs.get('studio_id')):
+            raise NotFound(
+                detail='Studio with given studio_id does not exist.')
+        elif not Class.objects.filter(id=self.kwargs.get('class_id')):
+            raise NotFound(
+                detail='Class with given class_id does not exist.')
+        classes = ClassTime.objects.filter(
+            classes=self.kwargs.get('class_id'))
+        print("classes")
+        print(classes)
+        if classes:
+            classes = classes.filter(
+                status=True, time__gte=datetime.datetime.now()).order_by('time')
+        return classes
+
 
 class StudioSearchFilterView(ListAPIView):
     serializer_class = StudioSerializer
@@ -174,7 +194,7 @@ class ClassEnrolAllView(CreateAPIView):
                     return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
             if user.subscription is None:
-                content = {'subscription': 'user does not have a subscription'}
+                content = {'unsubscribed': 'user does not have a subscription'}
                 return Response(content, status=status.HTTP_400_BAD_REQUEST)
             else:
                 # create a new ClassBooking for each classTime of this Class
