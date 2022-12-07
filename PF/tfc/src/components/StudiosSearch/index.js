@@ -24,7 +24,7 @@ const StudiosSearch = () => {
             .then(res => res.json())
             .then(json => {
                 setStudios(json.results);
-                setCount(Math.ceil(json.count/perPage))
+                setCount(Math.ceil(json.count/perPage));
             })
     }, [params, offset])
 
