@@ -15,9 +15,10 @@ const StudioDetails = () => {
             })
     }, [])
 
+
     return (
         <>
-            <StudioDetailTable />
+            <StudioDetailTable params={studio_id}/>
         </>
     )
 }

@@ -94,7 +94,6 @@ class ClassListView(ListAPIView):
                 classtime__status=True,
                 classtime__time__gte=datetime.datetime.now()).order_by('classtime__time')
             ids = []
-            print(classes)
             for item in classes:
                 if item.id not in ids:
                     ids.append(item.id)

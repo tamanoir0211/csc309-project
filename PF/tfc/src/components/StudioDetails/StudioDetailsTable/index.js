@@ -1,4 +1,4 @@
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import APIContext from "../../../Contexts/APIContext";
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
@@ -14,6 +14,9 @@ import { blue } from '@mui/material/colors';
 import ImageList from '@mui/material/ImageList';
 import TablePagination from '@mui/material/TablePagination';
 import ImageListItem from '@mui/material/ImageListItem';
+import Stack from "@mui/material/Stack";
+import Pagination from "@mui/material/Pagination";
+import {styled} from "@mui/material/styles";
 // import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 
 const color = blue[500];
@@ -27,11 +30,33 @@ function createData(amenity, quantity) {
     return { amenity, quantity };
 }
 
-const StudioDetailTable = () => {
+const StudioDetailTable = ({ params }) => {
     const {studios} = useContext(APIContext);
+    const studio_id = params;
 
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(3);
+
+    const perPage = 5;
+    const [offset, setOffset] = useState(0);
+    const [count, setCount] = useState(0);
+    const [pages, setPages] = useState(1);
+    const [classes, setClasses] = useState(null)
+
+    const StyledTableCell = styled(TableCell)(({ theme }) => ({
+        [`&.${tableCellClasses.head}`]: {
+            backgroundColor: theme.palette.common.black,
+            color: theme.palette.common.white,
+        },
+        [`&.${tableCellClasses.body}`]: {
+            fontSize: 14,
+        },
+    }));
+
+    const handleChange = (event, value) => {
+        setPages(value);
+        setOffset((value - 1) * perPage);
+    };
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -41,6 +66,15 @@ const StudioDetailTable = () => {
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
+
+    useEffect(() => {
+        fetch(`http://localhost:8000/studios/${studio_id}/classes/list/?limit=${perPage}&offset=`+offset)
+            .then(res => res.json())
+            .then(json => {
+                setClasses(json.results);
+                setCount(Math.ceil(json.count/perPage));
+            })
+    }, [offset])
 
     if (studios.length === 0) {
         return (<Paper></Paper>);
@@ -107,7 +141,7 @@ const StudioDetailTable = () => {
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row) => {
                                     return (
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.amenity}>
                                             <TableCell align="center">
                                                 {row.amenity}
                                             </TableCell>
@@ -129,6 +163,50 @@ const StudioDetailTable = () => {
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
+
+                <Paper
+                    sx={{
+                        p: 2,
+                        margin: 'auto',
+                        maxWidth: 800,
+                        flexGrow: 1,
+                        backgroundColor: (theme) =>
+                            theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+                    }}
+                >
+                    <div align="center" style={{fontSize: "20px"}}> List of Classes </div>
+                    <TableContainer component={Paper} style={{marginTop: "20px"}} >
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <StyledTableCell align="center">Name</StyledTableCell>
+                                    <StyledTableCell align="center">Description</StyledTableCell>
+                                    <StyledTableCell align="center">Capacity</StyledTableCell>
+                                    <StyledTableCell align="center">Coach</StyledTableCell>
+                                    <StyledTableCell align="center"></StyledTableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {classes?.map((each_class) => (
+                                    <TableRow
+                                        key={each_class.id}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <StyledTableCell align="center">{ each_class.name }</StyledTableCell>
+                                        <StyledTableCell align="center">{ each_class.description }</StyledTableCell>
+                                        <StyledTableCell align="center">{ each_class.capacity }</StyledTableCell>
+                                        <StyledTableCell align="center">{ each_class.coach.name }</StyledTableCell>
+                                        <StyledTableCell align="center">See here for all available schedules</StyledTableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Paper>
+                <Stack spacing={2} style={{marginLeft: "30rem", marginBottom: "5rem"}}>
+                    <Pagination count={count} page={pages} onChange={handleChange} variant="outlined" color="primary"/>
+                </Stack>
+
                 <div>Studio Images</div>
                 <ImageList sx={{ width: "100%", height: "100%" }} variant="woven" cols={2} gap={8}>
                     {itemData.map((item) => (

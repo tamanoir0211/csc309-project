@@ -51,7 +51,7 @@ class ClassSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Class
-        fields = ['name', 'description', 'capacity', 'coach']
+        fields = ['id', 'name', 'description', 'capacity', 'coach']
 
 
 class ClassScheduleSerializer(serializers.ModelSerializer):
