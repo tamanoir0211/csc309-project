@@ -5,7 +5,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 
 const StudiosSearch = () => {
-    const perPage = 5;
+    const perPage = 2;
     const [params, setParams] = useState({name: "", amenity: "", class_name: "", coach: ""})
 
     const [offset, setOffset] = useState(0);
@@ -95,7 +95,7 @@ const StudiosSearch = () => {
             </div>
 
             <StudiosSearchTable perPage={perPage} params={params} />
-            <Stack spacing={2} style={{marginLeft: "30rem"}}>
+            <Stack spacing={2} style={{marginTop: "1rem", display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <Pagination count={count} page={page} onChange={handleChange} variant="outlined" color="primary"/>
             </Stack>
         </>

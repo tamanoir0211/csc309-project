@@ -114,8 +114,8 @@ class ClassScheduleView(ListAPIView):
         classes = ClassTime.objects.filter(
             classes__studio_id=self.kwargs.get('studio_id'))
         if classes:
-            classes = classes.filter(
-                status=True, time__gte=datetime.datetime.now()).order_by('time')
+            classes = classes.filter(classes__id=self.kwargs.get('class_id'),
+                                     status=True, time__gte=datetime.datetime.now()).order_by('time')
         return classes
 
 

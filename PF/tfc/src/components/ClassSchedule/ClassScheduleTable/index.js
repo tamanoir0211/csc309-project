@@ -1,5 +1,5 @@
 import {useContext} from "react";
-import APIContext from "../../../Contexts/APIContext";
+import APIClassesContext from "../../../Contexts/APIClassesContext";
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
@@ -10,13 +10,19 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { grey } from '@mui/material/colors';
-import {Link} from "react-router-dom";
 
 const color = grey[700];
 
+function formatDate(string, end){
+    if (end){
+        const date = new Date(string)
+        return String(date.getHours()).padStart(2, '0') + ':' + String(date.getMinutes()).padStart(2, '0') + ':00';
+    }
+    return new Date(string).toString().replace("GMT-0500 (Eastern Standard Time)", '');
+}
 
-const StudiosSearchTable = ({ params }) => {
-    const { studios } = useContext(APIContext);
+const ClassScheduleTable = () => {
+    const { classes } = useContext(APIClassesContext);
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -33,18 +39,16 @@ const StudiosSearchTable = ({ params }) => {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
-                        <StyledTableCell align="center" style={{width: "40%"}}>Name</StyledTableCell>
-                        <StyledTableCell align="center" style={{width: "60%"}}>Address</StyledTableCell>
+                        <StyledTableCell align="center">Time</StyledTableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {studios.map((studio) => (
+                    {classes.map((each_class) => (
                         <TableRow
-                            key={studio.location.id}
+                            key={each_class.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            <StyledTableCell align="center"><Link to={`/studios/list/details/${studio.id}`} align={"center"}>{studio.name}</Link></StyledTableCell>
-                            <StyledTableCell align="center">{ studio.location.address }, { studio.location.postal_code }</StyledTableCell>
+                            <StyledTableCell align="center">{ formatDate(each_class.time, false) } - {formatDate(each_class.end_time, true)}</StyledTableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -52,4 +56,4 @@ const StudiosSearchTable = ({ params }) => {
         </TableContainer>
     );
 }
-export default StudiosSearchTable;
+export default ClassScheduleTable;

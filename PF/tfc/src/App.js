@@ -28,7 +28,9 @@ import './App.css';
 import StudiosSearch from "./components/StudiosSearch";
 import StudiosList from "./components/StudiosList";
 import StudioDetails from "./components/StudioDetails";
+import ClassSchedule from "./components/ClassSchedule";
 import APIContext, {useAPIContext} from "./Contexts/APIContext";
+import APIClassesContext, {useAPIClassesContext} from "./Contexts/APIClassesContext";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Layout from "./components/Layout";
 
@@ -51,6 +53,12 @@ function App() {
         </APIContext.Provider>
     )
 
+    const class_schedule = (
+        <APIClassesContext.Provider value={useAPIClassesContext()}>
+            <ClassSchedule />
+        </APIClassesContext.Provider>
+    )
+
     return (
         <BrowserRouter>
             <Routes>
@@ -59,6 +67,7 @@ function App() {
                     <Route path="studios/search" element={studio_search} />
                     <Route path="studios/list" element={studio_list} />
                     <Route path='studios/list/details/:id' element={studio_details} />
+                    <Route path='studios/:studio_id/classes/:class_id/schedule' element={class_schedule} />
                 </Route>
             </Routes>
         </BrowserRouter>

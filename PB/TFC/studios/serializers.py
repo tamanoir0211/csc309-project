@@ -59,7 +59,7 @@ class ClassScheduleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClassTime
-        fields = ['classes', 'time']
+        fields = ['id', 'classes', 'time', 'end_time']
 
 
 class ClassBookingSerializer(serializers.ModelSerializer):

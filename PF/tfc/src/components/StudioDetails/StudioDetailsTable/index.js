@@ -17,6 +17,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 import Stack from "@mui/material/Stack";
 import Pagination from "@mui/material/Pagination";
 import {styled} from "@mui/material/styles";
+import {Link} from "react-router-dom";
 // import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 
 const color = blue[500];
@@ -37,7 +38,7 @@ const StudioDetailTable = ({ params }) => {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(3);
 
-    const perPage = 5;
+    const perPage = 3;
     const [offset, setOffset] = useState(0);
     const [count, setCount] = useState(0);
     const [pages, setPages] = useState(1);
@@ -196,14 +197,14 @@ const StudioDetailTable = ({ params }) => {
                                         <StyledTableCell align="center">{ each_class.description }</StyledTableCell>
                                         <StyledTableCell align="center">{ each_class.capacity }</StyledTableCell>
                                         <StyledTableCell align="center">{ each_class.coach.name }</StyledTableCell>
-                                        <StyledTableCell align="center">See here for all available schedules</StyledTableCell>
+                                        <StyledTableCell align="center"><Link to={`/studios/${studio_id}/classes/${each_class.id}/schedule`} align={"center"}>See here for all available schedules</Link></StyledTableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
                     </TableContainer>
                 </Paper>
-                <Stack spacing={2} style={{marginLeft: "30rem", marginBottom: "5rem"}}>
+                <Stack spacing={2} style={{marginTop: "1rem", marginBottom: "1rem", display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                     <Pagination count={count} page={pages} onChange={handleChange} variant="outlined" color="primary"/>
                 </Stack>
 
