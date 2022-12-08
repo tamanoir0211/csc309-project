@@ -3,9 +3,16 @@ import StudiosListTable from "./StudiosListTable";
 import APIContext from "../../Contexts/APIContext";
 import Stack from "@mui/material/Stack";
 import Pagination from "@mui/material/Pagination";
+import Button from '@mui/material/Button';
+import { indigo } from '@mui/material/colors';
+import NearMeIcon from '@mui/icons-material/NearMe';
+import Typography from "@mui/material/Typography";
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+
+const button_color = indigo[900];
 
 const StudiosList = () => {
-    const perPage = 2;
+    const perPage = 8;
     const [params, setParams] = useState({latitude: 0, longitude: 0})
 
     const [offset, setOffset] = useState(0);
@@ -29,8 +36,13 @@ const StudiosList = () => {
     }, [params, offset])
     return (
         <>
-            <button
-                style={{width: 400, height: 20, fontSize: 14, alignItems:"center", cursor: "pointer"}}
+        <div align="center">
+        <Typography variant="h2" gutterBottom style={{marginTop: "1rem"}}>
+            List of Studios <FitnessCenterIcon style={{width: "50px", height: "40px"}}/>
+        </Typography>
+        <Button variant="contained"
+                endIcon={<NearMeIcon />}
+                style={{backgroundColor: button_color, marginBottom: "1rem"}}
                 value="Use my current location"
 
                 onClick={(event) => {
@@ -44,11 +56,13 @@ const StudiosList = () => {
                         setOffset(0);
                         setPage(1);
                     });
-                }}
-            >Use my current location to list studios from the closest one</button>
+                }}>
+            Use my current location to list studios from the closest one
+        </Button>
+        </div>
 
-            <StudiosListTable  />
-            <Stack spacing={2} style={{marginTop: "1rem", display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <StudiosListTable params={params} />
+            <Stack spacing={2} style={{marginTop: "1rem", marginLeft: "1rem", marginBottom: "3rem"}}>
                 <Pagination count={count} page={page} onChange={handleChange} variant="outlined" color="primary"/>
             </Stack>
         </>

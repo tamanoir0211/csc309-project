@@ -1,0 +1,13 @@
+.splitScreen {
+    display: flex;
+    flex-direction: row;
+}
+.left {
+    width: 50%;
+    /*min-height: 500px;*/
+}
+.right {
+    width: 50%;
+    min-height: 38rem;
+    margin: 1rem;
+}

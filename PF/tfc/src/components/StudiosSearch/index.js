@@ -3,6 +3,8 @@ import StudiosSearchTable from "./StudiosSearchTable";
 import APIContext from "../../Contexts/APIContext";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import Typography from "@mui/material/Typography";
+import SearchIcon from '@mui/icons-material/Search';
 
 const StudiosSearch = () => {
     const perPage = 2;
@@ -30,7 +32,10 @@ const StudiosSearch = () => {
 
     return (
         <>
-            <div style={{marginLeft: 20}}>
+            <Typography variant="h2" gutterBottom align="center" style={{marginTop: "1rem"}}>
+                Studio Search <SearchIcon style={{width: "50px", height: "40px"}}/>
+            </Typography>
+            <div align="center" style={{marginLeft: 20}}>
                 Studio name
                 <input
                     style={{width: 150, height: 20, fontSize: 18, margin: 5}}
@@ -95,7 +100,7 @@ const StudiosSearch = () => {
             </div>
 
             <StudiosSearchTable perPage={perPage} params={params} />
-            <Stack spacing={2} style={{marginTop: "1rem", display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <Stack spacing={2} style={{marginTop: "1rem", display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: "3rem"}}>
                 <Pagination count={count} page={page} onChange={handleChange} variant="outlined" color="primary"/>
             </Stack>
         </>
