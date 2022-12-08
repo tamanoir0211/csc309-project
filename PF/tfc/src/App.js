@@ -6,16 +6,9 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 
 
 function App(){
-    const class_search = (
-        <APIContext.Provider value={useAPIContext()}>
-            <ClassSearch />
-        </APIContext.Provider>
-    )
 
     return (
-        <APIContext.Provider value={useAPIContext()}>
-            <ClassSearch />
-        </APIContext.Provider>
+        <SubscriptionList />
     )
     
 }
