@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import TextField from '@material-ui/core/TextField';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -23,6 +17,8 @@ export default function Subscribe(props) {
     const [sub, setSubscription] = useState(null);
     const [error, setError] = useState(null);
     const [subscribed, setIfSubscribed] = useState(null);
+    const { authTokens } = useContext(AuthProvider);
+
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -35,7 +31,15 @@ export default function Subscribe(props) {
     }));
 
     const fetchSubData = async () => {
-        fetch('http://localhost:8000/subscriptions/list/')
+        fetch('http://localhost:8000/subscriptions/list/', {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + authTokens
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+              },
+        })
             .then(response => {
                 console.log("print response")
                 console.log(response)
