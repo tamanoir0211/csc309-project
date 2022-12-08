@@ -139,13 +139,13 @@ class UnsubscribeView(CreateAPIView):
     def post(self, request,  *args, **kwargs):
         user = request.user
         if user.subscription is None:
-            content = {'failed': 'no current subscriptions'}
+            content = {'message': 'no current subscriptions'}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         else:
             user.subscription = None
             user.next_billing_date = None
             user.save()
-            content = {'success': 'successfully unsubscribed'}
+            content = {'message': 'Success. User unsubscribed'}
             
 
             #move bookings to archive and delete bookings
