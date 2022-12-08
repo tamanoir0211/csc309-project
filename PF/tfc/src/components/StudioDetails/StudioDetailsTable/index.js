@@ -21,7 +21,6 @@ import {Link} from "react-router-dom";
 import DirectionsIcon from '@mui/icons-material/Directions';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 
-
 const color = blue[500];
 
 const columns = [
