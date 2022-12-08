@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
+import AuthContext from "../../context/AuthContext";
 import Button from '@material-ui/core/Button';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -17,7 +18,7 @@ export default function Subscribe(props) {
     const [sub, setSubscription] = useState(null);
     const [error, setError] = useState(null);
     const [subscribed, setIfSubscribed] = useState(null);
-    const { authTokens } = useContext(AuthProvider);
+    const { authTokens } = useContext(AuthContext);
 
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
