@@ -19,7 +19,6 @@ const LoginPage = () => {
     const handleSubmit = (e) => {
 
         setLoading(true);
-        setIncorrectCreds(true);
         e.preventDefault();
         const email = e.target.email.value;
         const password = e.target.password.value;
@@ -80,6 +79,7 @@ const LoginPage = () => {
                         autoFocus
                         onChange={handleEmailInput}
                         error={emailError}
+                        helperText={emailError && "Please enter a valid email"}
                     />
                     <TextField
                         margin="normal"
@@ -92,6 +92,7 @@ const LoginPage = () => {
                         autoComplete="current-password"
                         onChange={handlepasswordInput}
                         error={passwordError}
+                        helperText={passwordError && "Password must be at least 6 characters"}
                     />
                     <Button
                         type="submit"

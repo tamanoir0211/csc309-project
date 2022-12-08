@@ -96,7 +96,8 @@ def user_update(request):
             data = dict()
             data['response'] = "failed to update user"
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_200_OK)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
 
 
 @api_view(['POST'])
