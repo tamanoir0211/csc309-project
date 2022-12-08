@@ -1,11 +1,15 @@
 from django.urls import path
-from .views import StudioListView, StudioDetailView, ClassScheduleView, StudioSearchFilterView, ClassEnrolAllView, ClassTimeEnrolView, ClassTimeDropView, ClassDropAllView, ClassSearchFilterView, ClassListView
+from .views import StudioListView, StudioDetailView, ClassScheduleView, StudioSearchFilterView, ClassEnrolAllView, ClassTimeEnrolView, ClassTimeDropView, ClassDropAllView, ClassSearchFilterView, ClassTimesView, ClassListView
+
 
 app_name = 'studios'
 urlpatterns = [
     # path('list/lat=<str:latitude>&long=<str:longitude>', StudioListView.as_view()),
     path('list/', StudioListView.as_view()),
     path('<int:studio_id>/details/', StudioDetailView.as_view()),
+    # path('<int:studio_id>/classes/schedule/', ClassScheduleView.as_view()),
+    path('<int:studio_id>/classes/<int:class_id>/', ClassTimesView.as_view()),
+
     path('<int:studio_id>/classes/<int:class_id>/schedule/', ClassScheduleView.as_view()),
     path('<int:studio_id>/classes/list/', ClassListView.as_view()),
     path('search/', StudioSearchFilterView.as_view()),
