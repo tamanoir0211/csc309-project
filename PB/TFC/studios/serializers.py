@@ -26,7 +26,7 @@ class StudioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Studio
-        fields = ['name', 'location']
+        fields = ['id', 'name', 'location']
 
 
 class StudioDetailSerializer(serializers.ModelSerializer):
@@ -51,7 +51,7 @@ class ClassSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Class
-        fields = ['name', 'description', 'capacity', 'coach']
+        fields = ['id', 'name', 'description', 'capacity', 'coach']
 
 
 class ClassScheduleSerializer(serializers.ModelSerializer):
@@ -59,7 +59,7 @@ class ClassScheduleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClassTime
-        fields = ['classes', 'time']
+        fields = ['id', 'classes', 'time', 'end_time']
 
 
 class ClassBookingSerializer(serializers.ModelSerializer):

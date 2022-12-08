@@ -1,71 +1,81 @@
-import logo from './logo.svg';
+import React, { Children } from 'react';
 import './App.css';
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Redirect
-} from "react-router-dom";
-import {useState, useEffect} from 'react';
-import SignInModal from './components/SignInModal';
+import {useState, useEffect, useContext} from 'react';
 import Login from './views/Login';
 import {StyledEngineProvider } from '@mui/material/styles';
 // Views
 import Account from './views/Account';
 import { AuthProvider } from './context/AuthContext';
 import CssBaseline from '@mui/material/CssBaseline';
+import StudiosSearch from "./components/StudiosSearch";
+import StudiosList from "./components/StudiosList";
+import StudioDetails from "./components/StudioDetails";
+import ClassSchedule from "./components/ClassSchedule";
+import APIContext, {useAPIContext} from "./Contexts/APIContext";
+import APIClassesContext, {useAPIClassesContext} from "./Contexts/APIClassesContext";
+import {BrowserRouter, Route, Routes, Navigate, useLocation} from "react-router-dom";
+import Layout from "./components/Layout";
+
+
+
+function PrivateRoute({children}){
+    const { authTokens } = useContext(AuthProvider);
+    let location = useLocation();
+    if(!authTokens){
+        return <Navigate to="/login" state={{ from: location}} replace/>
+    } else {
+      return Children;
+    }
+};
+//<PrivateRoute element={<Account/>} path="account" />
 
 function App() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(false);
+    //const {authTokens} = useContext(AuthProvider);
+    const studio_search = (
+        <APIContext.Provider value={useAPIContext()}>
+            <StudiosSearch />
+        </APIContext.Provider>
+    )
 
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: '',
-    color: 'black',
-  });
+    const studio_list = (
+        <APIContext.Provider value={useAPIContext()}>
+            <StudiosList />
+        </APIContext.Provider>
+    )
 
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setSnackbar({ ...snackbar, open: false });
-  };
+    const studio_details = (
+        <APIContext.Provider value={useAPIContext()}>
+            <StudioDetails />
+        </APIContext.Provider>
+    )
 
-  return (
-    <StyledEngineProvider injectFirst>
-    <Router>
+    const class_schedule = (
+        <APIClassesContext.Provider value={useAPIClassesContext()}>
+            <ClassSchedule />
+        </APIClassesContext.Provider>
+    )
 
-      <AuthProvider>
-        <Routes>
-          <Route element={<Login/>} path="/login" />
-          <Route element={<Account/>} path="/account" />
-        </Routes>
+    return (
+      <StyledEngineProvider injectFirst>
 
-      </AuthProvider>
-    </Router>
-    </StyledEngineProvider>
+        <BrowserRouter>
+        <AuthProvider>
+            <Routes>
+                <Route path="/" element={<Layout />}>
+                    <Route element={<Login/>} path="login" />
+                    <Route index element={studio_search} />
+                    <Route path="studios/search" element={studio_search} />
+                    <Route path="studios/list" element={studio_list} />
+                    <Route path='studios/list/details/:id' element={studio_details} />
+                    <Route path='studios/:studio_id/classes/:class_id/schedule' element={class_schedule} />
+                </Route>
+            </Routes>
+          </AuthProvider>
+        </BrowserRouter>
 
-  );
+      </StyledEngineProvider>
+
+    )
 }
 
 export default App;
-
-    {/*<StyledEngineProvider injectFirst>*/}
-      {/* <SignInModal 
-        open={open} 
-        handleClose={() => setOpen(false)}
-        setCurrUser={setUser}
-        handleSnackbarClick={(newState) => setSnackbar({ open: true, ...newState})}
-        handleSnackbarClose={handleSnackbarClose}
-      /> */}
-
-          {/* <Routes>
-            <Route path="/account" children={<Account/>}>
-              <h1>Home</h1>
-            </Route>
-            <Route component={<Login/>} path="/login" />
-          </Routes> */}
-          // <Login/>
-    // </StyledEngineProvider>
