@@ -1,40 +1,36 @@
-// import logo from './logo.svg';
-// import './App.css';
-//
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-//
-// export default App;
-import React from 'react';
+import React, { Children } from 'react';
 import './App.css';
+import {useState, useEffect, useContext} from 'react';
+import Login from './views/Login';
+import {StyledEngineProvider } from '@mui/material/styles';
+// Views
+import Account from './views/Account';
+import { AuthProvider } from './context/AuthContext';
+import CssBaseline from '@mui/material/CssBaseline';
 import StudiosSearch from "./components/StudiosSearch";
 import StudiosList from "./components/StudiosList";
 import StudioDetails from "./components/StudioDetails";
 import ClassSchedule from "./components/ClassSchedule";
 import APIContext, {useAPIContext} from "./Contexts/APIContext";
 import APIClassesContext, {useAPIClassesContext} from "./Contexts/APIClassesContext";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {BrowserRouter, Route, Routes, Navigate, useLocation} from "react-router-dom";
 import Layout from "./components/Layout";
 
+
+
+function PrivateRoute({children}){
+    const { authTokens } = useContext(AuthProvider);
+    let location = useLocation();
+    if(!authTokens){
+        return <Navigate to="/login" state={{ from: location}} replace/>
+    } else {
+      return Children;
+    }
+};
+//<PrivateRoute element={<Account/>} path="account" />
+
 function App() {
+    //const {authTokens} = useContext(AuthProvider);
     const studio_search = (
         <APIContext.Provider value={useAPIContext()}>
             <StudiosSearch />
@@ -60,9 +56,13 @@ function App() {
     )
 
     return (
+      <StyledEngineProvider injectFirst>
+
         <BrowserRouter>
+        <AuthProvider>
             <Routes>
                 <Route path="/" element={<Layout />}>
+                    <Route element={<Login/>} path="login" />
                     <Route index element={studio_search} />
                     <Route path="studios/search" element={studio_search} />
                     <Route path="studios/list" element={studio_list} />
@@ -70,7 +70,11 @@ function App() {
                     <Route path='studios/:studio_id/classes/:class_id/schedule' element={class_schedule} />
                 </Route>
             </Routes>
+          </AuthProvider>
         </BrowserRouter>
+
+      </StyledEngineProvider>
+
     )
 }
 
