@@ -1,5 +1,7 @@
 from datetime import datetime
 from django.shortcuts import render
+from studios.models import ClassBookingArchive
+from subscriptions.serializers import SubscriptionSerializer
 from .models import User, Payment, PaymentInfo
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -124,7 +126,8 @@ class UserClassView(ListAPIView):
         class_bookings = ClassBooking.objects.filter(
             user=user.user_id).values_list('class_time', flat=True)
         for class_time_id in class_bookings:
-            classes = classes | ClassTime.objects.filter(id=class_time_id)
+            if ClassTime.objects.get(id=class_time_id).status:
+                classes = classes | ClassTime.objects.filter(id=class_time_id)
 
 
         return classes
@@ -143,17 +146,28 @@ class UnsubscribeView(CreateAPIView):
             user.next_billing_date = None
             user.save()
             content = {'success': 'successfully unsubscribed'}
-            return Response(content, status=status.HTTP_200_OK)
+            
 
             #move bookings to archive and delete bookings
             classbookings = ClassBooking.objects.filter(user=user.user_id).values_list('id')
             for classbooking in classbookings:
-                obj = ClassBooking.objects.get(id=classbooking)
-                if ClassTime.objects.filter(id=obj.class_time).end_time.replace(tzinfo=None) > datetime.datetime.now().replace(tzinfo=None):
-                    classbooking_archive = ClassBookingArchive(class_time = obj.class_time, user=classbooking.user)
+                obj = ClassBooking.objects.get(id=classbooking[0])
+                classtime_obj = ClassTime.objects.get(id=obj.class_time_id)
+                if classtime_obj.end_time.replace(tzinfo=None) > datetime.now().replace(tzinfo=None):
+                    classbooking_archive = ClassBookingArchive(class_time = obj.class_time, user=obj.user)
                     classbooking_archive.save()
                     obj.delete()
 
+            return Response(content, status=status.HTTP_200_OK)
+
+
+class CurrentSubscriptionView(CreateAPIView):
+    serializer_class = SubscriptionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return user.subscription
 
 
 

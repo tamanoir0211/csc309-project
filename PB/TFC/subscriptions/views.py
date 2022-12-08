@@ -8,6 +8,7 @@ from User.models import PaymentInfo, Payment
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
+from django.db.models import Max
 from dateutil.relativedelta import *
 from .serializers import SubscriptionSerializer
 # Create your views here.
@@ -18,8 +19,9 @@ class SubscribeView(CreateAPIView):
 
     def post(self, request,  *args, **kwargs):
         user = request.user
-        payment_info_id = request.data.get('payment_info')
         user_id = user.user_id
+        
+        
 
         if not Subscription.objects.filter(sub_id=self.kwargs['subs_id']).exists():
             raise ValidationError(
@@ -33,13 +35,12 @@ class SubscribeView(CreateAPIView):
             payment_amount = price
 
             # check if user has payment info set up
-            if payment_info_id is None:
+            if not PaymentInfo.objects.filter(user=user_id).exists():
                 return Response({'Payment_info': 'payment info missing'})
             else:
-
                 #subscribe the user with payment info
-                payment_info = PaymentInfo.objects.get(
-                    user=user_id)
+                user_payment_info = PaymentInfo.objects.filter(user=user_id).values_list('payment_info_id').order_by('payment_info_id').last()[0]
+                payment_info = PaymentInfo.objects.get(payment_info_id = user_payment_info)
                 payment = Payment(user=user, payment_info=payment_info,
                                   amount=payment_amount, subscription=subscription)
 
@@ -52,10 +53,11 @@ class SubscribeView(CreateAPIView):
                 print(user.subscription)
 
                 #if user has any classes lost due to unsubscription, add them back again
+
                 classbooking_archives = ClassBookingArchive.objects.filter(user=user.user_id).values_list('id')
                 for archive in classbooking_archives:
-                    obj = ClassBookingArchive.objects.get(id=archive)
-                    classbooking = ClassBooking(class_time = obj.class_time, user=archive.user)
+                    obj = ClassBookingArchive.objects.get(id=archive[0])
+                    classbooking = ClassBooking(class_time = obj.class_time, user=obj.user)
                     classbooking.save()
                     obj.delete()
 

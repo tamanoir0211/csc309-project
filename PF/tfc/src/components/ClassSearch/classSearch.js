@@ -1,7 +1,7 @@
 import {useContext, useEffect, useState} from "react";
 import {createContext} from "react";
 import ClassSearchTable from "./classSearchTable";
-import APIContext from "./APIContext";
+import APIContext from "../../Contexts/APIContext";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 
