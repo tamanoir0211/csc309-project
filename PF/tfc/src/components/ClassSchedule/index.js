@@ -25,6 +25,7 @@ const ClassSchedule = () => {
             .then(res => res.json())
             .then(json => {
                 setClasses(json.results);
+                //console.log(json.results)
                 setCount(Math.ceil(json.count/perPage))
             })
     }, [offset])
