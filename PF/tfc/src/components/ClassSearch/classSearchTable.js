@@ -17,6 +17,7 @@ const color = grey[700];
 
 const ClassSearchTable = ({ params }) => {
     const { classes } = useContext(APIContext);
+    console.log()
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -34,20 +35,27 @@ const ClassSearchTable = ({ params }) => {
                 <TableHead>
                     <TableRow>
                         <StyledTableCell align="center">Name</StyledTableCell>
-                        <StyledTableCell align="center">Address</StyledTableCell>
+                        <StyledTableCell align="center">Description</StyledTableCell>
+                        <StyledTableCell align="center">Coach</StyledTableCell>
+                        <StyledTableCell align="center">Capacity</StyledTableCell>
                     </TableRow>
                 </TableHead>
+
                 <TableBody>
                     {classes.map((cl) => (
                         <TableRow
-                            key={cl.location.id}
+                            key={cl.name}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            <StyledTableCell align="center"><Link to={`/studios/list/details/${cl.id}`} align={"center"}>{cl.name}</Link></StyledTableCell>
-                            <StyledTableCell align="center">{ cl.location.address }, { cl.location.postal_code }</StyledTableCell>
+                            {/* <p>{cl.name}</p> */}
+                            <StyledTableCell align="center">{cl.name}</StyledTableCell>
+                            <StyledTableCell align="center">{ cl.description}</StyledTableCell>
+                            <StyledTableCell align="center">{ cl.coach.name}</StyledTableCell>
+                            <StyledTableCell align="center">{ cl.capacity}</StyledTableCell>
                         </TableRow>
                     ))}
                 </TableBody>
+
             </Table>
         </TableContainer>
     );
