@@ -6,11 +6,13 @@ import Pagination from "@mui/material/Pagination";
 import Button from '@mui/material/Button';
 import { indigo } from '@mui/material/colors';
 import NearMeIcon from '@mui/icons-material/NearMe';
+import Typography from "@mui/material/Typography";
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 
 const button_color = indigo[900];
 
 const StudiosList = () => {
-    const perPage = 3;
+    const perPage = 8;
     const [params, setParams] = useState({latitude: 0, longitude: 0})
 
     const [offset, setOffset] = useState(0);
@@ -35,9 +37,12 @@ const StudiosList = () => {
     return (
         <>
         <div align="center">
+        <Typography variant="h2" gutterBottom style={{marginTop: "1rem"}}>
+            List of Studios <FitnessCenterIcon style={{width: "50px", height: "40px"}}/>
+        </Typography>
         <Button variant="contained"
                 endIcon={<NearMeIcon />}
-                style={{backgroundColor: button_color, marginBottom: "1rem", marginTop: "1rem"}}
+                style={{backgroundColor: button_color, marginBottom: "1rem"}}
                 value="Use my current location"
 
                 onClick={(event) => {
