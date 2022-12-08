@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-import React from 'react';
-import SubscriptionList from './components/Subscriptions/subscriptionList'
-import ClassSearch from './components/ClassSearch/classSearch'
-import APIContext, {useAPIContext} from "./components/ClassSearch/APIContext";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
-
-
-function App(){
-
-    return (
-        <SubscriptionList />
-    )
-    
-=======
 // import logo from './logo.svg';
 // import './App.css';
 //
@@ -87,7 +72,6 @@ function App() {
             </Routes>
         </BrowserRouter>
     )
->>>>>>> 82d211e80971275b7662dd37f8ba7cffac0b6b4f
 }
 
 export default App;
