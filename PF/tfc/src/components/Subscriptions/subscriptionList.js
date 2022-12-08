@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import AuthContext from "../../context/AuthContext";
+import APISubscriptionMessageContext from '../../context/SubscriptionMessageContext';
 import Button from '@material-ui/core/Button';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -10,6 +11,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { grey } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
+import { Alert } from '@mui/material';
 
 const color = grey[700];
 
@@ -19,6 +21,8 @@ export default function Subscribe(props) {
     const [error, setError] = useState(null);
     const [subscribed, setIfSubscribed] = useState(null);
     const { authTokens } = useContext(AuthContext);
+    const { setMessage } = useContext(APISubscriptionMessageContext);
+
 
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -32,15 +36,7 @@ export default function Subscribe(props) {
     }));
 
     const fetchSubData = async () => {
-        fetch('http://localhost:8000/subscriptions/list/', {
-            method: 'GET',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Token ' + authTokens
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-              },
-        })
+        fetch('http://localhost:8000/subscriptions/list/')
             .then(response => {
                 console.log("print response")
                 console.log(response)
@@ -51,7 +47,7 @@ export default function Subscribe(props) {
                 console.log("print data")
                 console.log(data)
                 setSubscription(data)
-            })    
+            })
     }
 
 
@@ -60,29 +56,43 @@ export default function Subscribe(props) {
             method: 'POST',
             mode: 'cors',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + authTokens,
                 // 'Content-Type': 'application/x-www-form-urlencoded',
               },
-        });
+        }).then(response => {
+            console.log("print response")
+            console.log(response)
+            console.log(typeof(response))
+            return response.json()
+        })
+        .then(data => {
+            console.log("print data")
+            console.log(data)
+            setMessage(data)
+        })
+        .catch(err => {
+            console.log(err.message)
+        })
 
-        if (response.status >= 200 && response.status <= 299) {
-            setError(false)
-            setIfSubscribed(true)
-            const jsonResponse = await response.json();
-            console.log(jsonResponse);
-        } else {
-            if (response.status == 401 || response.statusText == 'Unauthorized'){
-                setError(true)
-                setIfSubscribed(false)
-            }
-        }
+        // if (response.status >= 200 && response.status <= 299) {
+        //     setError(false)
+        //     setIfSubscribed(true)
+        //     const jsonResponse = await response.json();
+        //     console.log(jsonResponse);
+        // } else {
+        //     if (response.status == 401 || response.statusText == 'Unauthorized'){
+        //         setError(true)
+        //         setIfSubscribed(false)
+        //     }
+        // }
   
     }
     
 
-    console.log("before use effect ")
+    //console.log("before use effect ")
     useEffect(() => {
-        console.log("use effect ")
+        //console.log("use effect ")
         fetchSubData()
 
         
