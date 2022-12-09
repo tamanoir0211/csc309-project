@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import SearchIcon from '@mui/icons-material/Search';
 
 const StudiosSearch = () => {
-    const perPage = 2;
+    const perPage = 6;
     const [params, setParams] = useState({name: "", amenity: "", class_name: "", coach: ""})
 
     const [offset, setOffset] = useState(0);
@@ -35,10 +35,10 @@ const StudiosSearch = () => {
             <Typography variant="h2" gutterBottom align="center" style={{marginTop: "1rem"}}>
                 Studio Search <SearchIcon style={{width: "50px", height: "40px"}}/>
             </Typography>
-            <div align="center" style={{marginLeft: 20}}>
+            <div align="center" style={{marginLeft: 20, fontSize: 20}}>
                 Studio name
                 <input
-                    style={{width: 150, height: 20, fontSize: 18, margin: 5}}
+                    style={{width: 150, height: 20, fontSize: 20, margin: 5}}
                     value={params.name||''}
                     onChange={(event) => {
                         setParams({
@@ -101,7 +101,7 @@ const StudiosSearch = () => {
 
             <StudiosSearchTable perPage={perPage} params={params} />
             <Stack spacing={2} style={{marginTop: "1rem", display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: "3rem"}}>
-                <Pagination count={count} page={page} onChange={handleChange} variant="outlined" color="primary"/>
+                <Pagination count={count} page={page} onChange={handleChange} variant="outlined" color="primary" size="large"/>
             </Stack>
         </>
     )
