@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import AuthContext from "../../context/AuthContext";
 import APISubscriptionMessageContext from '../../context/SubscriptionMessageContext';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -15,7 +15,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import SubMessageHandler from './subscriptionMessageHandler';
 
-const color = grey[700];
+const thisColor = grey[700];
 
 export default function Subscribe(props) {
 
@@ -36,7 +36,7 @@ export default function Subscribe(props) {
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
-            backgroundColor: color,
+            backgroundColor: thisColor,
             color: theme.palette.common.white,
         },
         [`&.${tableCellClasses.body}`]: {

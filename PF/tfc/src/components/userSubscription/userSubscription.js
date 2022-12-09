@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import AuthContext from "../../context/AuthContext";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -180,7 +180,7 @@ export default function UserSubscriptions(props) {
                                     <StyledTableCell align="center">{data.length_months} months</StyledTableCell>
                                     <StyledTableCell align="center"><Button 
                                     variant="contained"
-                                    onClick={() => handleUnsubscription()}>Unubscribe</Button></StyledTableCell>
+                                    onClick={() => handleUnsubscription()}>Unsubscribe</Button></StyledTableCell>
     
                                 </TableRow>
     

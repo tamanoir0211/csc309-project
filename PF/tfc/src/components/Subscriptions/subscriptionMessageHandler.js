@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import APISubscriptionMessageContext from '../../context/SubscriptionMessageContext';
 import { Alert, AlertTitle } from '@mui/material';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import {Link} from "react-router-dom";
 
 
