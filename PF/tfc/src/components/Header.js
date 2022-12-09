@@ -253,6 +253,11 @@ function MyAppBar() {
                     <Typography textAlign="center" href="/account">Classes</Typography>
                     </RouterLink>
                 </MenuItem>
+                <MenuItem  onClick={handleCloseUserMenu} >
+                    <RouterLink to="/payment" style={linkStyle}>
+                    <Typography textAlign="center" href="/account">Payments</Typography>
+                    </RouterLink>
+                </MenuItem>
                 <MenuItem  onClick={handleCloseUserMenu2} >
                     <Typography textAlign="center">Logout</Typography>
                 </MenuItem>

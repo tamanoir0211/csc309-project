@@ -108,7 +108,46 @@ const PaymentPage = () => {
     }
 
     const cardInput = (e) => {
-        setCardValid(luhnCheck(e.target.value))
+        if (e.target.value.length > 16 || e.target.value.length < 15)
+            setCardValid(true);
+        else {
+            let checksum = 0; // running checksum total
+            let j = 1; // takes value of 1 or 2
+            let val = String(e.target.value);
+            // Process each digit one by one starting from the last
+            for (let i = val.length - 1; i >= 0; i--) {
+              let calc = 0;
+              // Extract the next digit and multiply by 1 or 2 on alternative digits.
+              calc = Number(val.charAt(i)) * j;
+        
+              // If the result is in two digits add 1 to the checksum total
+              if (calc > 9) {
+                checksum = checksum + 1;
+                calc = calc - 10;
+              }
+        
+              // Add the units element to the checksum total
+              checksum = checksum + calc;
+        
+              // Switch the value of j
+              if (j == 1) {
+                j = 2;
+              } else {
+                j = 1;
+              }
+            }
+          
+            //Check if it is divisible by 10 or not.
+            setCardValid(!((checksum % 10) == 0));
+        }
+        
+    }
+
+    const cvcInput = (e) => {
+        if (e.target.value.length > 4 || e.target.value.length < 3)
+            setValidCvc(true);
+        else
+            setValidCvc(false);
     }
 
     const postalInput = (e) => {
@@ -178,7 +217,7 @@ const PaymentPage = () => {
         flexDirection: 'column',
         alignItems: 'center',
     }}>
-        <TextField id="card_number" label="Card Number" variant="outlined" type="number" fullWidth required onInput={cardInput}/>
+        <TextField id="card_number" label="Card Number" variant="outlined" type="number" fullWidth required onInput={cardInput} error={cardValid}/>
         <LocalizationProvider dateAdapter={AdapterDateFns} required >
         <DesktopDatePicker 
             label="Expiry Date" 
@@ -189,13 +228,14 @@ const PaymentPage = () => {
             onChange={(newValue) => {setDateValue(newValue)}} 
             renderInput={(params) => <TextField sx={{mt:1}} fullWidth required {...params} />} 
         />
-        <TextField id="cvc" label="CVC" variant="outlined" type="number" fullWidth required error={postalValid} sx={{mt:1}}/>
-        <TextField id="postal_code" label="Postal Code" variant="outlined" fullWidth required onInput={cardInput} sx={{mt:1}}/>
+        <TextField id="cvc" label="CVC" variant="outlined" type="number" fullWidth required error={validCvc} onInput={cvcInput} sx={{mt:1}}/>
+        <TextField id="postal_code" label="Postal Code" variant="outlined" fullWidth required onInput={postalInput} error={postalValid} sx={{mt:1}}/>
         <Button
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            disabled={cardValid || postalValid}
         >Submit</Button>
         </LocalizationProvider>
 
