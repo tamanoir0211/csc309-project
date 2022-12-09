@@ -9,6 +9,7 @@ const ClassSchedule = () => {
     const perPage = 5;
     const studio_id = useParams().studio_id;
     const class_id = useParams().class_id;
+    const [error, setError]= useState(null);
 
     const [offset, setOffset] = useState(0);
     const [count, setCount] = useState(0);
@@ -29,6 +30,7 @@ const ClassSchedule = () => {
                 setCount(Math.ceil(json.count/perPage))
             })
     }, [offset])
+
 
     return (
         <>

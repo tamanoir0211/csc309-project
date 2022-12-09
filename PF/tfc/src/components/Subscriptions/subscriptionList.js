@@ -78,7 +78,7 @@ export default function Subscribe(props) {
             setShowAlert(true)
             setTimeout(() => {
                 setShowAlert(false);
-              }, 3000);
+              }, 5000);
         })
         .catch(err => {
             console.log(err.message)
