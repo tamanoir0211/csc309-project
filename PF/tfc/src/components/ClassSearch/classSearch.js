@@ -1,12 +1,13 @@
 import {useContext, useEffect, useState} from "react";
-import {createContext} from "react";
 import ClassSearchTable from "./classSearchTable";
 import APIContext from "../../Contexts/APIContext";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import Typography from "@mui/material/Typography";
+import SearchIcon from "@mui/icons-material/Search";
 
 const ClassSearch = () => {
-    const perPage = 5;
+    const perPage = 6;
     const [params, setParams] = useState({class_name: "", coach_name: "", date: "", time_start: "", time_end: ""})
 
     const [offset, setOffset] = useState(0);
@@ -36,7 +37,10 @@ const ClassSearch = () => {
 
     return (
         <>
-            <div style={{marginLeft: 20}}>
+            <Typography variant="h2" gutterBottom align="center" style={{marginTop: "1rem"}}>
+                Class Search <SearchIcon style={{width: "50px", height: "40px"}}/>
+            </Typography>
+            <div align="center" style={{marginLeft: 20, fontSize: 18}}>
                 Class name
                 <input
                     style={{width: 150, height: 20, fontSize: 18, margin: 5}}
@@ -122,7 +126,7 @@ const ClassSearch = () => {
             </div>
 
             <ClassSearchTable perPage={perPage} params={params} />
-            <Stack spacing={2} style={{marginLeft: "30rem"}}>
+            <Stack spacing={2} style={{marginTop: "1rem", display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: "5rem"}}>
                 <Pagination count={count} page={page} onChange={handleChange} variant="outlined" color="primary"/>
             </Stack>
         </>
