@@ -19,11 +19,60 @@ import UserClasses from './components/userClasses/userClasses';
 import UserSubscriptions from './components/userSubscription/userSubscription';
 import APIContext, {useAPIContext} from "./Contexts/APIContext";
 import APIClassesContext, {useAPIClassesContext} from "./Contexts/APIClassesContext";
-import {BrowserRouter, Route, Routes, Navigate, useLocation} from "react-router-dom";
+import {BrowserRouter, Route, Routes, Navigate, useLocation, Link as RouterLink, MemoryRouter} from "react-router-dom";
 import Layout from "./components/Layout";
 import APISubscriptionMessageContext, {useSubscriptionMessageContext} from './context/SubscriptionMessageContext';
 import APIDropClassContext, {useAPIDropClassContext} from './Contexts/APIDropClassContext';
 import MyAppBar from './components/Header';
+import { LinkProps } from '@mui/material/Link';
+import { StaticRouter } from 'react-router-dom/server';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import PropTypes from 'prop-types'
+
+const LinkBehavior = React.forwardRef((props, ref) => {
+    const { href, ...other } = props;
+    // Map href (MUI) -> to (react-router)
+    return <RouterLink data-testid="custom-link" ref={ref} to={href} {...other} />;
+  });
+  
+  LinkBehavior.propTypes = {
+    href: PropTypes.oneOfType([
+      PropTypes.shape({
+        hash: PropTypes.string,
+        pathname: PropTypes.string,
+        search: PropTypes.string,
+      }),
+      PropTypes.string,
+    ]).isRequired,
+  };
+  
+  function Router(props) {
+    const { children } = props;
+    if (typeof window === 'undefined') {
+      return <StaticRouter location="/">{children}</StaticRouter>;
+    }
+  
+    return <MemoryRouter>{children}</MemoryRouter>;
+  }
+  
+  Router.propTypes = {
+    children: PropTypes.node,
+  };
+  
+  const theme = createTheme({
+    components: {
+      MuiLink: {
+        defaultProps: {
+          component: LinkBehavior,
+        },
+      },
+      MuiButtonBase: {
+        defaultProps: {
+          LinkComponent: LinkBehavior,
+        },
+      },
+    },
+  });
 
 function PrivateRoute({children}){
     const { authTokens } = useContext(AuthContext);
@@ -99,10 +148,13 @@ function App() {
 
     return (
       <StyledEngineProvider injectFirst>
-
+        <ThemeProvider theme={theme}>
         <BrowserRouter>
         <AuthProvider>
-            <MyAppBar />
+            <AuthProvider>
+                <MyAppBar />
+
+            </AuthProvider>
             <Routes>
                 <Route path="/" element={<Layout />}>
                     <Route element={<Login/>} path="login" />
@@ -144,7 +196,7 @@ function App() {
             </Routes>
         </AuthProvider>
         </BrowserRouter>
-
+        </ThemeProvider>
       </StyledEngineProvider>
 
     )

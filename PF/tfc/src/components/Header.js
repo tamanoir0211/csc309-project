@@ -2,12 +2,14 @@ import { AppBar, Box, Toolbar, IconButton, Typography,
     Menu, Container, Avatar, Button, 
     Link, Tooltip, MenuItem} from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link as RouterLink, MemoryRouter} from 'react-router-dom';
+import { Link as RouterLink, MemoryRouter, useNavigate} from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import * as React from "react";
 import { LinkProps } from '@mui/material/Link';
-
+import { useContext } from "react";
+import PropTypes from 'prop-types'
+import AuthContext from "../context/AuthContext";
 const LinkBehavior = React.forwardRef((props, ref) => {
     const { href, ...other } = props;
     // Map href (MUI) -> to (react-router)
@@ -53,10 +55,14 @@ const LinkBehavior = React.forwardRef((props, ref) => {
     },
   });
 
+  const linkStyle = {
+    textDecoration: 'none',
+    color: 'inherit',
+  }
 function MyAppBar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
-    
+    const {logoutUser, authTokens} = useContext(AuthContext);
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
       };
@@ -71,6 +77,10 @@ function MyAppBar() {
       const handleCloseUserMenu = () => {
         setAnchorElUser(null);
       };
+      const handleCloseUserMenu2 = () => {
+        logoutUser();
+        setAnchorElUser(null);
+      };
 
 //     <IconButton
 //     size="large"
@@ -83,7 +93,11 @@ function MyAppBar() {
 // </IconButton>
     const pages = ['Studios', 'Classes']
     const settings = ['Profile', 'Logout']
+
+
+
     return (
+        <ThemeProvider theme={theme}>
         <AppBar position="static">
           <Container maxWidth="xl">
             <Toolbar disableGutters>
@@ -102,7 +116,7 @@ function MyAppBar() {
                   textDecoration: 'none',
                 }}
               >
-                LOGO
+                TFC
               </Typography>
     
               <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -134,11 +148,17 @@ function MyAppBar() {
                     display: { xs: 'block', md: 'none' },
                   }}
                 >
-                  {pages.map((page) => (
-                    <MenuItem key={page} onClick={handleCloseNavMenu}>
-                      <Typography textAlign="center">{page}</Typography>
+  
+                    <MenuItem onClick={handleCloseNavMenu}>
+                    <RouterLink to="/" style={linkStyle}>
+                      <Typography textAlign="center">Studios</Typography>
+                    </RouterLink>
                     </MenuItem>
-                  ))}
+                    <MenuItem onClick={handleCloseNavMenu}>
+                    <RouterLink to="/classes/search" style={linkStyle}>
+                      <Typography textAlign="center">Classes</Typography>
+                    </RouterLink>
+                    </MenuItem>
                 </Menu>
               </Box>
               <Typography
@@ -157,50 +177,96 @@ function MyAppBar() {
                   textDecoration: 'none',
                 }}
               >
-                LOGO
+                TFC
               </Typography>
               <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                {pages.map((page) => (
-                  <Button
-                    key={page}
+                <RouterLink to="/" style={linkStyle}>
+
+                    <Button
                     onClick={handleCloseNavMenu}
                     sx={{ my: 2, color: 'white', display: 'block' }}
-                  >
-                    {page}
-                  </Button>
-                ))}
+                    >
+                    Studio Search
+                    </Button>
+                </RouterLink>
+                <RouterLink to="/studios/list" style={linkStyle}>
+                    <Button
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                    >
+                        Studio List
+                    </Button>
+                </RouterLink>
+                <RouterLink to="/classes/search" style={linkStyle}>
+                    <Button
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                    >
+                    Classes
+                    </Button>
+                </RouterLink>
+                <RouterLink to="/subscriptions" style={linkStyle}>
+                    <Button
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                    >
+                    Subscriptions
+                    </Button>
+                </RouterLink>
+
               </Box>
-    
+              {authTokens ? (
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                  </IconButton>
+                    </IconButton>
                 </Tooltip>
                 <Menu
-                  sx={{ mt: '45px' }}
-                  id="menu-appbar"
-                  anchorEl={anchorElUser}
-                  anchorOrigin={{
+                    sx={{ mt: '45px' }}
+                    id="menu-appbar"
+                    anchorEl={anchorElUser}
+                    anchorOrigin={{
                     vertical: 'top',
                     horizontal: 'right',
-                  }}
-                  keepMounted
-                  transformOrigin={{
+                    }}
+                    keepMounted
+                    transformOrigin={{
                     vertical: 'top',
                     horizontal: 'right',
-                  }}
-                  open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
+                    }}
+                    open={Boolean(anchorElUser)}
+                    onClose={handleCloseUserMenu}
                 >
-                <MenuItem  onClick={handleCloseUserMenu}>
+                <MenuItem  onClick={handleCloseUserMenu} >
+                    <RouterLink to="/account" style={linkStyle}>
                     <Typography textAlign="center" href="/account">Profile</Typography>
+                    </RouterLink>
+                </MenuItem>
+                <MenuItem  onClick={handleCloseUserMenu} >
+                    <RouterLink to="/user/subscription" style={linkStyle}>
+                    <Typography textAlign="center" href="/account">Subscription</Typography>
+                    </RouterLink>
+                </MenuItem>
+                <MenuItem  onClick={handleCloseUserMenu} >
+                    <RouterLink to="/user/classes" style={linkStyle}>
+                    <Typography textAlign="center" href="/account">Classes</Typography>
+                    </RouterLink>
+                </MenuItem>
+                <MenuItem  onClick={handleCloseUserMenu2} >
+                    <Typography textAlign="center">Logout</Typography>
                 </MenuItem>
                 </Menu>
-              </Box>
+            </Box>
+            ): (
+                <RouterLink to="/login" style={linkStyle}>
+                    <Typography textAlign="center" href="/login">Login</Typography>
+                </RouterLink>
+            )}
             </Toolbar>
           </Container>
         </AppBar>
+        </ThemeProvider>
       );
 
 }

@@ -14,11 +14,13 @@ const theme = createTheme();
 const AccountPage = () => {
     const {user, authTokens, loadUser, logoutUser, updateUser, setUser} = useContext(AuthContext);
     useEffect(() => {
-        if (!user){
+
+        if (!user || !authTokens){
+            window.location.reload(false);
+
             loadUser();
         }
     }, [user]);
-
     const handleSubmit = (e) => {
         console.log("test");
         e.preventDefault();
