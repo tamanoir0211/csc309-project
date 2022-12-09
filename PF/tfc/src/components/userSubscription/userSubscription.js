@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
+import AuthContext from "../../context/AuthContext";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -23,6 +24,7 @@ export default function UserSubscriptions(props) {
     const [sub, setUserSubscription] = useState(null);
     const [error, setError] = useState(null);
     const [subscribed, setIfSubscribed] = useState(null);
+    const { authTokens } = useContext(AuthContext);
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -34,20 +36,19 @@ export default function UserSubscriptions(props) {
         },
     }));
 
-    const fetchSubData = async () => {
-        fetch('http://localhost:8000/user/subscription',
-        { method: 'GET',
-        mode: 'no-cors',
-        headers: {
-            'Content-Type': 'application/json'
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-          },
+    const fetchSubData = () => {
+        const res = fetch('http://localhost:8000/user/subscription/',{ 
+            method: 'GET',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + authTokens,
+            },
         })
             .then(response => {
                 //TODO error checking
                 console.log("print response")
                 console.log(response)
-                console.log(typeof(response))
                 return response.json()
             })
             .then(data => {
@@ -56,6 +57,24 @@ export default function UserSubscriptions(props) {
                 setUserSubscription(data)
             })    
     }
+
+    // const fetchSubData = async () => {
+    //     const res = await fetch('http://localhost:8000/subscriptions/'+1+'/subscribe/', {
+    //         method: 'POST',
+    //         mode: 'cors',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'Authorization': 'Token ' + authTokens,
+    //             // 'Content-Type': 'application/x-www-form-urlencoded',
+    //           },
+    //     }).then(response => {
+    //         return response.json()
+    //     })
+    //     .then(data => {
+    //         console.log(data)
+    //         console.log(data.message)
+    //     })
+    // }
 
 
     const handleUnsubscription = async => {
@@ -84,11 +103,8 @@ export default function UserSubscriptions(props) {
     
 
     useEffect(() => {
-        console.log("use effect ")
         fetchSubData()     
     }, [])
-
-    console.log("printing sub")
 
     
 

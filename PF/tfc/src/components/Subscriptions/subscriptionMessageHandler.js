@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 import APISubscriptionMessageContext from '../../context/SubscriptionMessageContext';
 import { Alert, AlertTitle } from '@mui/material';
+import Button from '@material-ui/core/Button';
+import {Link} from "react-router-dom";
 
 
 const SubMessageHandler = () => {
@@ -9,15 +11,7 @@ const SubMessageHandler = () => {
     console.log("the message is")
     console.log(messages)
 
-    // useEffect(() => {
-    //     if (map && latitude !== 0 && longitude !== 0) {
-    //         const bounds = new window.google.maps.LatLngBounds(user_location);
-    //         studios.map((marker) => (
-    //             bounds.extend({ lat: parseFloat(marker.location.latitude), lng: parseFloat(marker.location.longitude) })
-    //         ))
-    //         map.fitBounds(bounds);
-    //     }
-    // }, [params])
+
 
     if (messages != null){
         if (messages.includes('Success')){
@@ -29,7 +23,22 @@ const SubMessageHandler = () => {
                 </Alert>
                 </>
             )
-        } else{
+        } else if(messages.toLowerCase().includes('payment')){
+            return(
+                <Alert severity="error">
+                    <AlertTitle>You encountered a problem:</AlertTitle>
+                    {messages + ' '}<Link to={`/user/payment`}>Click here to set up payment information.</Link>
+                    </Alert>
+            )
+        } else if(messages.toLowerCase().includes('already has')){
+            return(
+                <Alert severity="clic">
+                    <AlertTitle>You encountered a problem:</AlertTitle>
+                    {messages + ' '}<Link to={`/user/subscription`}>Click here to manage current subscription.</Link>
+                    </Alert>
+            )
+        }
+        else{
             return(
                 <Alert severity="error">
                     <AlertTitle>You encountered a problem:</AlertTitle>

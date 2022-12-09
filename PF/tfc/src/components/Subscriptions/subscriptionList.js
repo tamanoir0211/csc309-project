@@ -52,7 +52,7 @@ export default function Subscribe(props) {
 
 
     const handleSubscription = async (subNum) => {
-        const response = await fetch('http://localhost:8000/subscriptions/'+subNum+'/subscribe/', {
+        const res = await fetch('http://localhost:8000/subscriptions/'+subNum+'/subscribe/', {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -98,27 +98,7 @@ export default function Subscribe(props) {
 
 
     if (sub != null){
-        // return (
-        //     <>
-        //         <h1> Below are the subscriptions available: </h1>
 
-        //             {sub.results.map((data) => (
-
-        //                 <>
-        //                     <p key={data.sub_id}> price is {data.price}, length is {data.length_months} months</p>
-        //                     <Button 
-        //                         variant="contained"
-        //                         onClick={() => handleSubscription(data.sub_id)} >Subscribe</Button>
-                            
-        //                 </>
-        //             ))}
-                    
-        //         {error? <p>User must be logged in to subscribe.</p>:""}
-        //         {subscribed? <p>Successfully subscribed!</p>:""}
-
-                
-        //     </>
-        // )
 
         return (
             <>
@@ -139,7 +119,7 @@ export default function Subscribe(props) {
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 {/* <p>{cl.name}</p> */}
-                                <StyledTableCell align="center">{data.price}</StyledTableCell>
+                                <StyledTableCell align="center">${data.price}</StyledTableCell>
                                 <StyledTableCell align="center">{data.length_months} months</StyledTableCell>
                                 <StyledTableCell align="center"><Button 
                                 variant="contained"

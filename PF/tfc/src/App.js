@@ -17,6 +17,7 @@ import UserClasses from './components/userClasses/userClasses';
 import UserSubscriptions from './components/userSubscription/userSubscription';
 import APIContext, {useAPIContext} from "./Contexts/APIContext";
 import APIClassesContext, {useAPIClassesContext} from "./Contexts/APIClassesContext";
+import APISubscriptionMessageContext, {useSubscriptionMessageContext} from './context/SubscriptionMessageContext';
 import {BrowserRouter, Route, Routes, Navigate, useLocation} from "react-router-dom";
 import Layout from "./components/Layout";
 
@@ -66,21 +67,21 @@ function App() {
     )
 
     const subscriptions_list = (
-        <APIContext.Provider value={useAPIContext()}>
+        <APISubscriptionMessageContext.Provider value={useSubscriptionMessageContext()}>
             <SubscriptionList />
-        </APIContext.Provider>
+        </APISubscriptionMessageContext.Provider>
     )
 
     const user_subscription = (
-        <APIContext.Provider value={useAPIContext()}>
+        //<APIContext.Provider value={useAPIContext()}>
             <UserSubscriptions />
-        </APIContext.Provider>
+        //</APIContext.Provider>
     )
 
     const user_classes = (
-        <APIContext.Provider value={useAPIContext()}>
+        //<APIContext.Provider value={useAPIContext()}>
             <UserClasses />
-        </APIContext.Provider>
+        //</APIContext.Provider>
     )
 
 

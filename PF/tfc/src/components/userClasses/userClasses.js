@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -15,6 +15,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { grey } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
+import AuthContext from "../../context/AuthContext";
 
 const color = grey[700];
 
@@ -23,6 +24,7 @@ export default function UserClasses(props) {
     const [classes, setUserClasses] = useState(null);
     const [error, setError] = useState(null);
     const [subscribed, setIfSubscribed] = useState(null);
+    const { authTokens } = useContext(AuthContext);
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -39,7 +41,8 @@ export default function UserClasses(props) {
         { method: 'GET',
         mode: 'no-cors',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + authTokens,
             // 'Content-Type': 'application/x-www-form-urlencoded',
           },
         })

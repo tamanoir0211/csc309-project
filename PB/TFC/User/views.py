@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.shortcuts import render
 from studios.models import ClassBookingArchive
+from subscriptions.models import Subscription
 from subscriptions.serializers import SubscriptionSerializer
 from .models import User, Payment, PaymentInfo
 from rest_framework import status
@@ -139,7 +140,7 @@ class UnsubscribeView(CreateAPIView):
     def post(self, request,  *args, **kwargs):
         user = request.user
         if user.subscription is None:
-            content = {'message': 'no current subscriptions'}
+            content = {'message': 'Cannot unsubscribe. User has no current subscriptions.'}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
         else:
             user.subscription = None
@@ -161,13 +162,16 @@ class UnsubscribeView(CreateAPIView):
             return Response(content, status=status.HTTP_200_OK)
 
 
-class CurrentSubscriptionView(CreateAPIView):
-    serializer_class = SubscriptionSerializer
+class CurrentSubscriptionView(ListAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = SubscriptionSerializer
 
     def get_queryset(self):
         user = self.request.user
-        return user.subscription
+        # if not Subscription.objects.filter(sub_id = user.subscription.sub_id).exists():
+        #     content = {'message': 'User has no current subscription.'}
+        #     return Response(content, status=status.HTTP_200_OK)
+        return Subscription.objects.filter(sub_id = user.subscription.sub_id)
 
 
 
