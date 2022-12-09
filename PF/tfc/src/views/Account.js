@@ -16,11 +16,13 @@ const AccountPage = () => {
     const [alertUpdated, setAlertUpdated] = useState(null);
 
     useEffect(() => {
-        if (!user){
+
+        if (!user || !authTokens){
+            window.location.reload(false);
+
             loadUser();
         }
     }, [user]);
-
     const handleSubmit = (e) => {
         console.log("test");
         e.preventDefault();
