@@ -168,9 +168,8 @@ class CurrentSubscriptionView(ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        # if not Subscription.objects.filter(sub_id = user.subscription.sub_id).exists():
-        #     content = {'message': 'User has no current subscription.'}
-        #     return Response(content, status=status.HTTP_200_OK)
+        if user.subscription is None:
+            return Subscription.objects.filter(sub_id = -1)
         return Subscription.objects.filter(sub_id = user.subscription.sub_id)
 
 

@@ -32,7 +32,7 @@ const SubMessageHandler = () => {
             )
         } else if(messages.toLowerCase().includes('already has')){
             return(
-                <Alert severity="clic">
+                <Alert severity="error">
                     <AlertTitle>You encountered a problem:</AlertTitle>
                     {messages + ' '}<Link to={`/user/subscription`}>Click here to manage current subscription.</Link>
                     </Alert>
