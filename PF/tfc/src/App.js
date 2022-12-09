@@ -20,7 +20,7 @@ import APIClassesContext, {useAPIClassesContext} from "./Contexts/APIClassesCont
 import {BrowserRouter, Route, Routes, Navigate, useLocation} from "react-router-dom";
 import Layout from "./components/Layout";
 import APISubscriptionMessageContext, {useSubscriptionMessageContext} from './context/SubscriptionMessageContext';
-
+import APIDropClassContext, {useAPIDropClassContext} from './Contexts/APIDropClassContext';
 
 
 function PrivateRoute({children}){
@@ -79,9 +79,9 @@ function App() {
     )
 
     const user_classes = (
-        //<APIContext.Provider value={useAPIContext()}>
+        <APIDropClassContext.Provider value={useAPIDropClassContext()}>
             <UserClasses />
-        //</APIContext.Provider>
+        </APIDropClassContext.Provider>
     )
 
 

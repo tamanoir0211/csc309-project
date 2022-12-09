@@ -148,7 +148,6 @@ class UnsubscribeView(CreateAPIView):
             user.save()
             content = {'message': 'Success. User unsubscribed'}
             
-
             #move bookings to archive and delete bookings
             classbookings = ClassBooking.objects.filter(user=user.user_id).values_list('id')
             for classbooking in classbookings:
@@ -171,6 +170,22 @@ class CurrentSubscriptionView(ListAPIView):
         if user.subscription is None:
             return Subscription.objects.filter(sub_id = -1)
         return Subscription.objects.filter(sub_id = user.subscription.sub_id)
+
+
+class DropAllClass(CreateAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+
+        if ClassBooking.objects.filter(user=user.user_id).count() == 0:
+            content = {'message': 'No classes to be dropped currently.'}
+            return Response(content, status=status.HTTP_200_OK)
+
+        ClassBooking.objects.filter(user=user.user_id).delete()
+        content = {'message': 'Success. Classes dropped.'}
+        return Response(content, status=status.HTTP_200_OK)
+        
 
 
 
