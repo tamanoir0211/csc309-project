@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useAlert } from "react";
 import AuthContext from "../context/AuthContext";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
@@ -64,6 +64,10 @@ const AccountPage = () => {
             console.log(data);
             setUser(data);
             localStorage.setItem("user", JSON.stringify(data));
+            setAlertUpdated(true);
+            setTimeout(() => {
+                setAlertUpdated(false);
+            }, 3000);
         });
 
         return ;
@@ -164,6 +168,8 @@ const AccountPage = () => {
                 error={password2Error}
                 helperText={password2Error && "Passwords don't match"}
             />
+                    {alertUpdated && <Alert severity="success"> Udate Successful </Alert>}
+
             <Button
                 type="submit"
                 fullWidth
@@ -178,6 +184,7 @@ const AccountPage = () => {
 
         </Box>
         <Button fullWidth variant="contained" onClick={logoutUser} sx={{mt: 3, mb: 2}}>Logout</Button>
+
     </Box>    
     </Container>
     </ThemeProvider>
