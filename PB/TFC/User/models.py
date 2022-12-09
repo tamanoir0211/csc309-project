@@ -64,6 +64,7 @@ class PaymentInfo(models.Model):
     payment_info_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     postal_code = models.CharField(max_length=6, null=True, blank=True)
+    visible = models.BooleanField(default=True)
 
 
 class Payment(models.Model):

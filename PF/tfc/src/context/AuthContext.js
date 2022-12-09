@@ -67,7 +67,7 @@ export const AuthProvider = ({children}) => {
         })
         const data = await res.json();
         localStorage.setItem("user", JSON.stringify(data));
-        setUser(data);
+        await setUser(data);
     }
 
     const updateUser = async (data) => {
@@ -79,11 +79,8 @@ export const AuthProvider = ({children}) => {
             },
             body: JSON.stringify(data)
         });
-        localStorage.setItem("user", "");
         const out = await res.json();
-        updateUser(out);
-        localStorage.setItem("user", JSON.stringify(out));
-        console.log(out);
+        return out;
     }
     useEffect(() => {
         if (authTokens) {

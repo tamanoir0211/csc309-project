@@ -2,6 +2,8 @@ import React, { Children } from 'react';
 import './App.css';
 import {useState, useEffect, useContext} from 'react';
 import Login from './views/Login';
+import Register from './views/Register';
+import Payment from './views/Payment';
 import {StyledEngineProvider } from '@mui/material/styles';
 // Views
 import Account from './views/Account';
@@ -28,6 +30,16 @@ function PrivateRoute({children}){
     }
 };
 //<PrivateRoute element={<Account/>} path="account" />
+
+function NonPrivateRoute({children}){
+    const { authTokens } = useContext(AuthContext);
+    let location = useLocation();
+    if(authTokens){
+        return <Navigate to="/account" state={{ from: location}} replace/>
+    } else {
+      return children;
+    }
+}
 
 function App() {
     //const {authTokens} = useContext(AuthProvider);
@@ -68,6 +80,22 @@ function App() {
                       element={
                         <PrivateRoute>
                           <Account />
+                        </PrivateRoute>
+                      }
+                    />
+                    <Route 
+                      path="register"
+                      element={
+                        <NonPrivateRoute>
+                          <Register />
+                        </NonPrivateRoute>
+                      }
+                    />
+                    <Route 
+                      path="payment"
+                      element={
+                        <PrivateRoute>
+                          <Payment />
                         </PrivateRoute>
                       }
                     />

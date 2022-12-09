@@ -9,9 +9,7 @@ import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-
 const theme = createTheme();
-
 
 const LoginPage = () => {
     const { loginUser, loading, setLoading, incorrectCreds, setIncorrectCreds } = useContext(AuthContext);

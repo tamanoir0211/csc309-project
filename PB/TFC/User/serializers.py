@@ -49,7 +49,7 @@ class PaymentInfoListSerializer(serializers.ModelSerializer):
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['user', 'payment_info', 'amount', 'processed_on', 'subscription', ]
+        fields = ['user', 'payment_info', 'amount', 'processed_on', 'subscription', 'payment_id' ]
 
     def save(self, **kwargs):
         payment = Payment(
