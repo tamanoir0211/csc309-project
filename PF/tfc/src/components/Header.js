@@ -1,7 +1,57 @@
-import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem} from "@mui/material";
+import { AppBar, Box, Toolbar, IconButton, Typography, 
+    Menu, Container, Avatar, Button, 
+    Link, Tooltip, MenuItem} from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link } from "react-router-dom";
+import { Link as RouterLink, MemoryRouter} from 'react-router-dom';
+import { StaticRouter } from 'react-router-dom/server';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import * as React from "react";
+import { LinkProps } from '@mui/material/Link';
+
+const LinkBehavior = React.forwardRef((props, ref) => {
+    const { href, ...other } = props;
+    // Map href (MUI) -> to (react-router)
+    return <RouterLink data-testid="custom-link" ref={ref} to={href} {...other} />;
+  });
+  
+  LinkBehavior.propTypes = {
+    href: PropTypes.oneOfType([
+      PropTypes.shape({
+        hash: PropTypes.string,
+        pathname: PropTypes.string,
+        search: PropTypes.string,
+      }),
+      PropTypes.string,
+    ]).isRequired,
+  };
+  
+  function Router(props) {
+    const { children } = props;
+    if (typeof window === 'undefined') {
+      return <StaticRouter location="/">{children}</StaticRouter>;
+    }
+  
+    return <MemoryRouter>{children}</MemoryRouter>;
+  }
+  
+  Router.propTypes = {
+    children: PropTypes.node,
+  };
+  
+  const theme = createTheme({
+    components: {
+      MuiLink: {
+        defaultProps: {
+          component: LinkBehavior,
+        },
+      },
+      MuiButtonBase: {
+        defaultProps: {
+          LinkComponent: LinkBehavior,
+        },
+      },
+    },
+  });
 
 function MyAppBar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -143,11 +193,9 @@ function MyAppBar() {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                      <Typography textAlign="center" href="/account">{setting}</Typography>
-                    </MenuItem>
-                  ))}
+                <MenuItem  onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center" href="/account">Profile</Typography>
+                </MenuItem>
                 </Menu>
               </Box>
             </Toolbar>
