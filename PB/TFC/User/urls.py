@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import CurrentSubscriptionView, user_create, user_login, user_profile, user_logout, user_update, create_payment_info, \
-    UserClassView, UnsubscribeView, PaymentHistoryView, PaymentInfoView
+    UserClassView, UnsubscribeView, PaymentHistoryView, PaymentInfoView, DropAllClass
 from rest_framework.authtoken.views import obtain_auth_token
 
 app_name = 'user'
@@ -13,6 +13,7 @@ urlpatterns = [
     path('update/', user_update, name='update'),
     path('profile/payment_info/create/', create_payment_info, name='create_payment_info'),
     path('classes/', UserClassView.as_view(), name='user_classes'),
+    path('classes/drop_all/', DropAllClass.as_view(), name='user_classes_dropall'),
     path('unsubscribe/', UnsubscribeView.as_view(), name='unsubscribe'),
     path('payment/history/', PaymentHistoryView.as_view(), name='payment_history'),
     path('profile/payment_info/list', PaymentInfoView.as_view(), name='payment_info'),
