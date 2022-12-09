@@ -90,16 +90,12 @@ export default function Subscribe(props) {
   
     }
     
-
     useEffect(() => {
         //console.log("use effect ")
         fetchSubData()
     }, [])
 
-
     if (sub != null){
-
-
         return (
             <>
             <TableContainer component={Paper} style={{marginTop: "20px"}} >
@@ -124,15 +120,9 @@ export default function Subscribe(props) {
                                 <StyledTableCell align="center"><Button 
                                 variant="contained"
                                 onClick={() => handleSubscription(data.sub_id)}>Subscribe</Button></StyledTableCell>
-
                             </TableRow>
-                        
-
                         ))}
-                         
-
                     </TableBody>
-    
                 </Table>
             </TableContainer>
             { showAlert? <SubMessageHandler></SubMessageHandler>: ""}

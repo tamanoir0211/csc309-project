@@ -16,6 +16,8 @@ import Paper from '@mui/material/Paper';
 import { grey } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import AuthContext from "../../context/AuthContext";
+import { Alert, AlertTitle } from '@mui/material';
+import {Link} from "react-router-dom";
 
 const color = grey[700];
 
@@ -36,10 +38,9 @@ export default function UserClasses(props) {
         },
     }));
 
-    const fetchSubData = async () => {
-        fetch('http://localhost:8000/user/classes',
+    const fetchclassData = async () => {
+        fetch('http://localhost:8000/user/classes/',
         { method: 'GET',
-        mode: 'no-cors',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Token ' + authTokens,
@@ -47,15 +48,9 @@ export default function UserClasses(props) {
           },
         })
             .then(response => {
-                //TODO error checking
-                console.log("print response")
-                console.log(response)
-                console.log(typeof(response))
                 return response.json()
             })
             .then(data => {
-                console.log("print data")
-                console.log(data)
                 setUserClasses(data)
             })    
     }
@@ -87,49 +82,58 @@ export default function UserClasses(props) {
     
 
     useEffect(() => {
-        console.log("use effect ")
-        fetchSubData()     
+        fetchclassData()     
     }, [])
 
     console.log(classes)
 
-    
+    if (classes != null){
+        if(classes.count == 0){
+            return(<>
+                <Alert severity="info">
+                    <AlertTitle>No Classes</AlertTitle>
+                    You have no classes. <Link to={`/studios/list`}>Click here to check out some classes we offer!</Link>
+                </Alert>
 
-    if (classes != null && classes.length > 0){
-
-        return (
-            <TableContainer component={Paper} style={{marginTop: "20px"}} >
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <StyledTableCell align="center">Class className</StyledTableCell>
-                            {/* <StyledTableCell align="center">Payment Period</StyledTableCell>
-                            <StyledTableCell align="center">Subscribe Now!</StyledTableCell> */}
-                        </TableRow>
-                    </TableHead>
-    
-                    <TableBody>
-                        {classes.results.map((data) => (
-                            <TableRow
-                                key={data.sub_id}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                {/* <p>{cl.name}</p> */}
-                                <StyledTableCell align="center">{data.name}</StyledTableCell>
-                                {/* <StyledTableCell align="center">{data.length_months}</StyledTableCell>
-                                <StyledTableCell align="center"><Button 
-                                variant="contained"
-                                onClick={() => handleUnsubscription(data.sub_id)}>Unubscribe</Button></StyledTableCell> */}
-
+            </>)
+            
+        }
+        else{
+            return (
+                <TableContainer component={Paper} style={{marginTop: "20px"}} >
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <StyledTableCell align="center">Class className</StyledTableCell>
+                                {/* <StyledTableCell align="center">Payment Period</StyledTableCell>
+                                <StyledTableCell align="center">Subscribe Now!</StyledTableCell> */}
                             </TableRow>
-
-                        ))}
-
-                    </TableBody>
+                        </TableHead>
+        
+                        <TableBody>
+                            {classes.results.map((data) => (
+                                <TableRow
+                                    key={data.sub_id}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    {/* <p>{cl.name}</p> */}
+                                    <StyledTableCell align="center">{data.name}</StyledTableCell>
+                                    {/* <StyledTableCell align="center">{data.length_months}</StyledTableCell>
+                                    <StyledTableCell align="center"><Button 
+                                    variant="contained"
+                                    onClick={() => handleUnsubscription(data.sub_id)}>Unubscribe</Button></StyledTableCell> */}
     
-                </Table>
-            </TableContainer>
-        );
-    }
+                                </TableRow>
+    
+                            ))}
+    
+                        </TableBody>
+        
+                    </Table>
+                </TableContainer>
+            );
+        }
+        }
+        
 
 }

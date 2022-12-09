@@ -141,7 +141,7 @@ class UnsubscribeView(CreateAPIView):
         user = request.user
         if user.subscription is None:
             content = {'message': 'Cannot unsubscribe. User has no current subscriptions.'}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            return Response(content, status=status.HTTP_200_OK)
         else:
             user.subscription = None
             user.next_billing_date = None

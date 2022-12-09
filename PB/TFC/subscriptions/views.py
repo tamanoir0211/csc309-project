@@ -28,7 +28,7 @@ class SubscribeView(CreateAPIView):
                 {"Value Error": ["404 Not found"]})
         elif not user.subscription is None:
             content = {'message': 'Subscription failed. User already has an active subscription.'}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            return Response(content, status=status.HTTP_200_OK)
         else:
             subscription = Subscription.objects.get(sub_id=self.kwargs['subs_id'])
             price = float(subscription.price)
@@ -36,7 +36,7 @@ class SubscribeView(CreateAPIView):
 
             # check if user has payment info set up
             if not PaymentInfo.objects.filter(user=user_id).exists():
-                return Response({'message': 'Subscription failed. Payment information must be set up first.'})
+                return Response({'message': 'Subscription failed. Payment information must be set up first.'}, status=status.HTTP_200_OK)
             else:
                 #subscribe the user with payment info
                 user_payment_info = PaymentInfo.objects.filter(user=user_id).values_list('payment_info_id').order_by('payment_info_id').last()[0]
