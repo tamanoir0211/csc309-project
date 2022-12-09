@@ -29,27 +29,30 @@ const StudiosSearchTable = ({ params }) => {
     }));
 
     return (
-        <TableContainer component={Paper} style={{marginTop: "20px"}} >
+        <div style={{minHeight: "28rem"}}>
+        <TableContainer component={Paper} style={{marginTop: "2rem"}} >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
-                    <TableRow>
-                        <StyledTableCell align="center" style={{width: "40%"}}>Name</StyledTableCell>
-                        <StyledTableCell align="center" style={{width: "60%"}}>Address</StyledTableCell>
+                    <TableRow style={{height: "4rem"}}>
+                        <StyledTableCell align="center" style={{width: "40%", fontSize:20}}>Name</StyledTableCell>
+                        <StyledTableCell align="center" style={{width: "60%", fontSize:20}}>Address</StyledTableCell>
                     </TableRow>
                 </TableHead>
-                <TableBody>
+                <TableBody >
                     {studios.map((studio) => (
                         <TableRow
                             key={studio.location.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            style={{height: "4rem"}}
                         >
-                            <StyledTableCell align="center"><Link to={`/studios/list/details/${studio.id}`} align={"center"}>{studio.name}</Link></StyledTableCell>
-                            <StyledTableCell align="center">{ studio.location.address }, { studio.location.postal_code }</StyledTableCell>
+                            <StyledTableCell align="center" style={{fontSize:20}}><Link to={`/studios/list/details/${studio.id}`} align={"center"}>{studio.name}</Link></StyledTableCell>
+                            <StyledTableCell align="center" style={{fontSize:20}}>{ studio.location.address }, { studio.location.postal_code }</StyledTableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
         </TableContainer>
+        </div>
     );
 }
 export default StudiosSearchTable;

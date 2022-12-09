@@ -1,0 +1,16 @@
+import {createContext, useState} from "react";
+
+export const useClassEnrollMessageContext = () => {
+    const [enrollMsg, setEnrollMsg] = useState([]);
+
+    return {
+        enrollMsg,
+        setEnrollMsg
+    }
+}
+
+const APIClassEnrollMessageContext = createContext({
+    enrollMsg: null, setEnrollMsg: () => {},
+})
+
+export default APIClassEnrollMessageContext;

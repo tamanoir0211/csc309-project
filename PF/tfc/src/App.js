@@ -13,11 +13,16 @@ import StudiosSearch from "./components/StudiosSearch";
 import StudiosList from "./components/StudiosList";
 import StudioDetails from "./components/StudioDetails";
 import ClassSchedule from "./components/ClassSchedule";
+import ClassSearch from './components/ClassSearch/classSearch';
+import SubscriptionList from './components/Subscriptions/subscriptionList';
+import UserClasses from './components/userClasses/userClasses';
+import UserSubscriptions from './components/userSubscription/userSubscription';
 import APIContext, {useAPIContext} from "./Contexts/APIContext";
 import APIClassesContext, {useAPIClassesContext} from "./Contexts/APIClassesContext";
 import {BrowserRouter, Route, Routes, Navigate, useLocation} from "react-router-dom";
 import Layout from "./components/Layout";
-
+import APISubscriptionMessageContext, {useSubscriptionMessageContext} from './context/SubscriptionMessageContext';
+import APIDropClassContext, {useAPIDropClassContext} from './Contexts/APIDropClassContext';
 
 
 function PrivateRoute({children}){
@@ -67,6 +72,31 @@ function App() {
         </APIClassesContext.Provider>
     )
 
+    const class_search = (
+        <APIContext.Provider value={useAPIContext()}>
+            <ClassSearch />
+        </APIContext.Provider>
+    )
+
+    const subscriptions_list = (
+        <APISubscriptionMessageContext.Provider value={useSubscriptionMessageContext()}>
+            <SubscriptionList />
+        </APISubscriptionMessageContext.Provider>
+    )
+
+    const user_subscription = (
+        //<APIContext.Provider value={useAPIContext()}>
+            <UserSubscriptions />
+        //</APIContext.Provider>
+    )
+
+    const user_classes = (
+        <APIDropClassContext.Provider value={useAPIDropClassContext()}>
+            <UserClasses />
+        </APIDropClassContext.Provider>
+    )
+
+
     return (
       <StyledEngineProvider injectFirst>
 
@@ -104,6 +134,11 @@ function App() {
                     <Route path="studios/list" element={studio_list} />
                     <Route path='studios/list/details/:id' element={studio_details} />
                     <Route path='studios/:studio_id/classes/:class_id/schedule' element={class_schedule} />
+                    <Route path="classes/search" element={class_search} />
+                    <Route path="subscriptions" element={subscriptions_list} />
+                    <Route path="user/subscription" element={user_subscription} />
+                    <Route path="user/classes" element={user_classes} />
+                    
                 </Route>
             </Routes>
         </AuthProvider>

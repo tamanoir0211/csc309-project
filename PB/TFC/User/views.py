@@ -1,5 +1,8 @@
 from datetime import datetime
 from django.shortcuts import render
+from studios.models import ClassBookingArchive
+from subscriptions.models import Subscription
+from subscriptions.serializers import SubscriptionSerializer
 from .models import User, Payment, PaymentInfo
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -147,7 +150,8 @@ class UserClassView(ListAPIView):
         class_bookings = ClassBooking.objects.filter(
             user=user.user_id).values_list('class_time', flat=True)
         for class_time_id in class_bookings:
-            classes = classes | ClassTime.objects.filter(id=class_time_id)
+            if ClassTime.objects.get(id=class_time_id).status:
+                classes = classes | ClassTime.objects.filter(id=class_time_id)
 
 
         return classes
@@ -159,24 +163,52 @@ class UnsubscribeView(CreateAPIView):
     def post(self, request,  *args, **kwargs):
         user = request.user
         if user.subscription is None:
-            content = {'failed': 'no current subscriptions'}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            content = {'message': 'Cannot unsubscribe. User has no current subscriptions.'}
+            return Response(content, status=status.HTTP_200_OK)
         else:
             user.subscription = None
             user.next_billing_date = None
             user.save()
-            content = {'success': 'successfully unsubscribed'}
-            return Response(content, status=status.HTTP_200_OK)
-
+            content = {'message': 'Success. User unsubscribed'}
+            
             #move bookings to archive and delete bookings
             classbookings = ClassBooking.objects.filter(user=user.user_id).values_list('id')
             for classbooking in classbookings:
-                obj = ClassBooking.objects.get(id=classbooking)
-                if ClassTime.objects.filter(id=obj.class_time).end_time.replace(tzinfo=None) > datetime.datetime.now().replace(tzinfo=None):
-                    classbooking_archive = ClassBookingArchive(class_time = obj.class_time, user=classbooking.user)
+                obj = ClassBooking.objects.get(id=classbooking[0])
+                classtime_obj = ClassTime.objects.get(id=obj.class_time_id)
+                if classtime_obj.end_time.replace(tzinfo=None) > datetime.now().replace(tzinfo=None):
+                    classbooking_archive = ClassBookingArchive(class_time = obj.class_time, user=obj.user)
                     classbooking_archive.save()
                     obj.delete()
 
+            return Response(content, status=status.HTTP_200_OK)
+
+
+class CurrentSubscriptionView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = SubscriptionSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.subscription is None:
+            return Subscription.objects.filter(sub_id = -1)
+        return Subscription.objects.filter(sub_id = user.subscription.sub_id)
+
+
+class DropAllClass(CreateAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+
+        if ClassBooking.objects.filter(user=user.user_id).count() == 0:
+            content = {'message': 'No classes to be dropped currently.'}
+            return Response(content, status=status.HTTP_200_OK)
+
+        ClassBooking.objects.filter(user=user.user_id).delete()
+        content = {'message': 'Success. Classes dropped.'}
+        return Response(content, status=status.HTTP_200_OK)
+        
 
 
 

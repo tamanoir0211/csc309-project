@@ -202,7 +202,7 @@ class ClassEnrolAllView(CreateAPIView):
         else:
             this_class = Class.objects.get(id=self.kwargs['class_id'])
 
-            # check class is not full
+            
             classtimes = ClassTime.objects.filter(
                 classes=self.kwargs['class_id']).values_list('id')
             for classtime in classtimes:
@@ -210,25 +210,29 @@ class ClassEnrolAllView(CreateAPIView):
                     class_time=classtime).count()
                 capacity_reached = enrollment_count >= this_class.capacity
                 if capacity_reached:
+                    # check class is not full for all classtime of this class, otherwise cannot enroll all
                     content = {
-                        'capacity': 'class capacity reached for one or more classes, cannot enrol all'}
-                    return Response(content, status=status.HTTP_400_BAD_REQUEST)
+                        'message': 'Cannot enrol all. Class capacity reached for one or more classes.'}
+                    return Response(content, status=status.HTTP_200_OK)
 
             if user.subscription is None:
-                content = {'unsubscribed': 'user does not have a subscription'}
-                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+                content = {'message': 'Cannot enrol all. User does not have a current subscription.'}
+                return Response(content, status=status.HTTP_200_OK)
             else:
                 # create a new ClassBooking for each classTime of this Class
-                print("class times")
-                print(classtimes)
+                # print("class times")
+                # print(classtimes)
                 count = 0
                 for classtime in classtimes:
                     classtime_obj = ClassTime.objects.get(id=classtime[0])
-                    if ClassBooking.objects.filter(class_time=classtime[0], user=user.user_id):
-                        # if user already enrolled in one of the ClassTimes, do not enrol user
+                    if ClassBooking.objects.filter(class_time=classtime[0], user=user.user_id).exists():
+                        # if user already enrolled in this ClassTimes, do not enrol user
                         pass
                     elif classtime_obj.time.replace(tzinfo=None) < datetime.datetime.now().replace(tzinfo=None):
                         # if class already started, don't enroll in that class
+                        pass
+                    elif not classtime_obj.status:
+                        #if the class is cancelled
                         pass
                     else:
                         class_booking = ClassBooking(
@@ -238,10 +242,10 @@ class ClassEnrolAllView(CreateAPIView):
 
                 if count == 0:
                     content = {
-                        'no class booked': 'They have either all currently enrolled or all passed.'}
+                        'message': 'Cannot enrol all. They are either all currently enrolled or all classes have passed.'}
                     return Response(content, status=status.HTTP_200_OK)
 
-                content = {'success': str(count) + ' class booked'}
+                content = {'message': "Success. " + str(count) + ' Classes booked.'}
                 return Response(content, status=status.HTTP_200_OK)
 
 
@@ -272,24 +276,27 @@ class ClassTimeEnrolView(CreateAPIView):
 
             # check active subscription
             if class_started:
-                content = {'class started': 'class already started'}
-                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+                content = {'message': 'Cannot enroll. Class has already started.'}
+                return Response(content, status=status.HTTP_200_OK)
             elif ClassBooking.objects.filter(class_time=classtime.id, user=user.user_id):
                 content = {
-                    'already booked': 'user already enrolled in this class'}
-                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+                    'message': 'Cannot enroll. Already enrolled in this class.'}
+                return Response(content, status=status.HTTP_200_OK)
             elif capacity_reached:
-                content = {'capacity': 'class capacity reached'}
-                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+                content = {'message': 'Cannot enroll. Class capacity reached.'}
+                return Response(content, status=status.HTTP_200_OK)
             elif user.subscription is None:
-                content = {'subscription': 'user does not have a subscription'}
-                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+                content = {'message': 'Cannot enroll. Need a current subscription in order to enroll.'}
+                return Response(content, status=status.HTTP_200_OK)
+            elif not classtime.status:
+                content = {'message': 'Cannot enroll. Class is cancelled.'}
+                return Response(content, status=status.HTTP_200_OK)
             else:
                 # create a new ClassBooking
                 class_booking = ClassBooking(
                     class_time=classtime, user=user)
                 class_booking.save()
-                content = {'success': 'class booked'}
+                content = {'message': 'Success. Class booked!'}
                 return Response(content, status=status.HTTP_200_OK)
 
 
@@ -308,18 +315,18 @@ class ClassDropAllView(CreateAPIView):
                 classes=self.kwargs['class_id']).values_list('id')
             count = 0
             for classtime in classtimes:
-                if not ClassBooking.objects.filter(class_time=classtime).exists():
+                if not ClassBooking.objects.filter(class_time=classtime, user=user.user_id).exists():
                     # if there's no booking for that class time, just ignore
                     pass
                 else:
                     class_booking = ClassBooking.objects.get(
-                        class_time=classtime)
+                        class_time=classtime, user=user.user_id)
                     class_booking.delete()
                     count += 1
             if count == 0:
-                content = {'error': 'no class can be dropped currently'}
+                content = {'message': 'No classes dropped. No class can be dropped currently.'}
                 return Response(content, status=status.HTTP_200_OK)
-            content = {'success': str(count) + ' class dropped'}
+            content = {'message': 'Success. ' + str(count) + ' classes dropped.'}
             return Response(content, status=status.HTTP_200_OK)
 
 
@@ -329,21 +336,19 @@ class ClassTimeDropView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         user = request.user
 
-        # check if class and studio exist
+        # check if class exist
         if not ClassTime.objects.filter(id=self.kwargs['classtime_id']).exists():
             raise ValidationError(
                 {"Value Error": ["404 Not found"]})
-        elif not ClassTime.objects.filter(id=self.kwargs['classtime_id']).exists():
-            raise ValidationError(
-                {"Value Error": ["404 Not found"]})
+
         else:
-            if not ClassBooking.objects.filter(class_time=self.kwargs['classtime_id']).exists():
-                content = {'error': 'not enrolled in this class'}
-                return Response(content, status=status.HTTP_400_BAD_REQUEST)
+            if not ClassBooking.objects.filter(class_time=self.kwargs['classtime_id'], user=user.user_id).exists():
+                content = {'message': 'Class drop failed. User not enrolled in this class.'}
+                return Response(content, status=status.HTTP_200_OK)
             else:
 
-                class_booking = ClassBooking.objects.get(
+                class_booking = ClassBooking.objects.get(user=user.user_id,
                     class_time=self.kwargs['classtime_id'])
                 class_booking.delete()
-                content = {'success': 'class dropped'}
+                content = {'message': 'Success. Class dropped'}
                 return Response(content, status=status.HTTP_200_OK)

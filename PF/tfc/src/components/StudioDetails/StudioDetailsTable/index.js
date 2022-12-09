@@ -18,7 +18,9 @@ import Stack from "@mui/material/Stack";
 import Pagination from "@mui/material/Pagination";
 import {styled} from "@mui/material/styles";
 import {Link} from "react-router-dom";
-// import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
+import DirectionsIcon from '@mui/icons-material/Directions';
+import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
+
 
 const color = blue[500];
 
@@ -110,13 +112,31 @@ const StudioDetailTable = ({ params }) => {
                                     {studios.name}
                                 </Typography>
                                 <Typography variant="body2" gutterBottom style={{fontSize: '20px'}}>
-                                    {studios.phone_number}
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        flexWrap: 'wrap',
+                                        justifyContent: 'center'
+                                    }}>
+                                        <LocalPhoneIcon />
+                                        {studios.phone_number}
+                                    </div>
                                 </Typography>
                                 <Typography variant="body2" gutterBottom style={{fontSize: '20px'}}>
                                     {studios.location.address} {studios.location.postal_code}
                                 </Typography>
 
-                                <a href={studios.url_direction} target="_blank" style={{fontSize: '18px'}}>Direction</a>
+                                <a href={studios.url_direction} target="_blank" style={{fontSize: '18px'}}>
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        flexWrap: 'wrap',
+                                        justifyContent: 'center'
+                                    }}>
+                                        Direction
+                                        <DirectionsIcon />
+                                    </div>
+                                </a>
 
                             </Grid>
                         </Grid>
@@ -130,7 +150,7 @@ const StudioDetailTable = ({ params }) => {
                                     <TableCell
                                         key={column.id}
                                         align="center"
-                                        style={{ minWidth: column.minWidth, backgroundColor: color}}
+                                        style={{ minWidth: column.minWidth, backgroundColor: color, fontSize: 18}}
                                     >
                                         {column.label}
                                     </TableCell>
@@ -143,10 +163,10 @@ const StudioDetailTable = ({ params }) => {
                                 .map((row) => {
                                     return (
                                         <TableRow hover role="checkbox" tabIndex={-1} key={row.amenity}>
-                                            <TableCell align="center">
+                                            <TableCell align="center" style={{fontSize: 18}}>
                                                 {row.amenity}
                                             </TableCell>
-                                            <TableCell align="center">
+                                            <TableCell align="center" style={{fontSize: 18}}>
                                                 {row.quantity}
                                             </TableCell>
                                         </TableRow>
