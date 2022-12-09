@@ -1,16 +1,16 @@
 import {createContext, useState} from "react";
 
 export const useSubscriptionMessageContext = () => {
-    const [ message, setMessage ] = useState([]);
+    const [ messages, setMessages ] = useState([]);
 
     return {
-        message,
-        setMessage,
+        messages,
+        setMessages,
     }
 }
 
 const APISubscriptionMessageContext = createContext({
-    message: null, setMessage: () => {},
+    messages: null, setMessages: () => {},
 })
 
 export default APISubscriptionMessageContext;
