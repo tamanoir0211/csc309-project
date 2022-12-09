@@ -30,11 +30,18 @@ const EnrollMessageHandler = () => {
                     {enrollMsg + ' '}<Link to={`/user/payment`}>Click here to set up payment information.</Link>
                     </Alert>
             )
-        } else if(enrollMsg.toLowerCase().includes('already has')){
+        } else if(enrollMsg.toLowerCase().includes('subscription')){
             return(
                 <Alert severity="error">
                     <AlertTitle>You encountered a problem:</AlertTitle>
-                    {enrollMsg + ' '}<Link to={`/user/subscription`}>Click here to manage current subscription.</Link>
+                    {enrollMsg + ' '}<Link to={`/subscriptions`}>Click here to see available subscription plans.</Link>
+                    </Alert>
+            )
+        } else if(enrollMsg.toLowerCase().includes('already enrolled')){
+            return(
+                <Alert severity="error">
+                    <AlertTitle>You encountered a problem:</AlertTitle>
+                    {enrollMsg + ' '}<Link to={`/user/classes`}>Click here to see currently enrolled classes.</Link>
                     </Alert>
             )
         }
@@ -47,7 +54,6 @@ const EnrollMessageHandler = () => {
             )
         }
     }
-    
 }
 
 export default EnrollMessageHandler;

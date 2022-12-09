@@ -200,7 +200,7 @@ const StudioDetailTable = ({ params }) => {
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
                             <TableHead>
                                 <TableRow>
-                                    <StyledTableCell align="center">Name</StyledTableCell>
+                                    <StyledTableCell align="center" style={{width: "25%"}}>Name</StyledTableCell>
                                     <StyledTableCell align="center">Description</StyledTableCell>
                                     <StyledTableCell align="center">Capacity</StyledTableCell>
                                     <StyledTableCell align="center">Coach</StyledTableCell>
@@ -242,7 +242,6 @@ const StudioDetailTable = ({ params }) => {
                     ))}
                 </ImageList>
             </Paper>
-
         );
     }
 }

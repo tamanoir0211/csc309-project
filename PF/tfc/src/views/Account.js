@@ -13,6 +13,8 @@ const theme = createTheme();
 
 const AccountPage = () => {
     const {user, authTokens, loadUser, logoutUser, updateUser, setUser} = useContext(AuthContext);
+    const [alertUpdated, setAlertUpdated] = useState(null);
+
     useEffect(() => {
 
         if (!user || !authTokens){
@@ -48,6 +50,7 @@ const AccountPage = () => {
             },
             body: JSON.stringify(data)
         }).then((res) => {
+            console.log("updated")
             return fetch('http://localhost:8000/user/profile/', {
             method: 'GET',
             headers: {
@@ -55,6 +58,7 @@ const AccountPage = () => {
                 'Authorization': 'Token ' + JSON.parse(localStorage.getItem('authTokens'))
             }
             });
+
         }).then((data) => {
             return data.json();
         }).then((data) => {

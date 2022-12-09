@@ -10,7 +10,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { grey } from '@mui/material/colors';
-import {Link} from "react-router-dom";
 
 const color = grey[700];
 
@@ -30,34 +29,37 @@ const ClassSearchTable = ({ params }) => {
     }));
 
     return (
-        <TableContainer component={Paper} style={{marginTop: "20px"}} >
+        <div style={{minHeight: 500}}>
+        <TableContainer component={Paper} style={{marginTop: "1rem"}} >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
-                    <TableRow>
-                        <StyledTableCell align="center">Name</StyledTableCell>
-                        <StyledTableCell align="center">Description</StyledTableCell>
-                        <StyledTableCell align="center">Coach</StyledTableCell>
-                        <StyledTableCell align="center">Capacity</StyledTableCell>
+                    <TableRow style={{height: "3.5rem"}}>
+                        <StyledTableCell align="center" style={{width: "20%"}}>Name</StyledTableCell>
+                        <StyledTableCell align="center" style={{width: "50%"}}>Description</StyledTableCell>
+                        <StyledTableCell align="center" style={{width: "18%"}}>Coach</StyledTableCell>
+                        <StyledTableCell align="center" style={{width: "12%"}}>Capacity</StyledTableCell>
                     </TableRow>
                 </TableHead>
 
                 <TableBody>
                     {classes.map((cl) => (
                         <TableRow
-                            key={cl.name}
+                            key={cl.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            style={{height: 73}}
                         >
                             {/* <p>{cl.name}</p> */}
-                            <StyledTableCell align="center">{cl.name}</StyledTableCell>
-                            <StyledTableCell align="center">{ cl.description}</StyledTableCell>
-                            <StyledTableCell align="center">{ cl.coach.name}</StyledTableCell>
-                            <StyledTableCell align="center">{ cl.capacity}</StyledTableCell>
+                            <StyledTableCell align="center" style={{fontSize: 16}}>{cl.name}</StyledTableCell>
+                            <StyledTableCell style={{width: "50%"}}>{ cl.description}</StyledTableCell>
+                            <StyledTableCell align="center" style={{fontSize: 16}}>{ cl.coach.name}</StyledTableCell>
+                            <StyledTableCell align="center" style={{fontSize: 16}}>{ cl.capacity}</StyledTableCell>
                         </TableRow>
                     ))}
                 </TableBody>
 
             </Table>
         </TableContainer>
+        </div>
     );
 }
 export default ClassSearchTable;

@@ -12,7 +12,7 @@ import { grey } from '@mui/material/colors';
 import Button from '@material-ui/core/Button';
 import {useParams} from "react-router-dom";
 import AuthContext from "../../../context/AuthContext";
-import ClassSearchMessage from './classSearchMessage';
+import EnrollMessageHandler from './classSearchMessage';
 
 const color = grey[700];
 const dark_grey = grey[800];
@@ -56,7 +56,7 @@ const ClassScheduleTable = () => {
             setShowAlert(true)
             setTimeout(() => {
                 setShowAlert(false);
-              }, 3000);
+              }, 5000);
         })  
 
         // if (response.status >= 200 && response.status <= 299) {
@@ -91,7 +91,7 @@ const ClassScheduleTable = () => {
             setShowAlert(true)
             setTimeout(() => {
                 setShowAlert(false);
-              }, 3000);
+              }, 5000);
         })  
 
         // if (response.status >= 200 && response.status <= 299) {
@@ -163,7 +163,7 @@ const ClassScheduleTable = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            { showAlert? <ClassSearchMessage></ClassSearchMessage>: ""}
+            { showAlert? <EnrollMessageHandler></EnrollMessageHandler>: ""}
             </>
         );
     }

@@ -40,6 +40,8 @@ class SubscribeView(CreateAPIView):
             else:
                 #subscribe the user with payment info
                 user_payment_info = PaymentInfo.objects.filter(user=user_id).values_list('payment_info_id').order_by('payment_info_id').last()[0]
+                print("user payment all:")
+                print(PaymentInfo.objects.all().values_list('payment_info_id'))
                 payment_info = PaymentInfo.objects.get(payment_info_id = user_payment_info)
                 payment = Payment(user=user, payment_info=payment_info,
                                   amount=payment_amount, subscription=subscription)

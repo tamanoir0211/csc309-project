@@ -28,6 +28,7 @@ import { LinkProps } from '@mui/material/Link';
 import { StaticRouter } from 'react-router-dom/server';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import PropTypes from 'prop-types'
+import UserClassesHistory from './components/userClasses/userClassesHistory';
 
 const LinkBehavior = React.forwardRef((props, ref) => {
     const { href, ...other } = props;
@@ -145,6 +146,11 @@ function App() {
         </APIDropClassContext.Provider>
     )
 
+    const user_classes_history = (
+          <UserClassesHistory />
+  )
+
+
 
     return (
       <StyledEngineProvider injectFirst>
@@ -156,7 +162,6 @@ function App() {
 
             </AuthProvider>
             <Routes>
-                <Route path="/" element={<Layout />}>
                     <Route element={<Login/>} path="login" />
                     <Route 
                       path="account"
@@ -191,8 +196,8 @@ function App() {
                     <Route path="subscriptions" element={subscriptions_list} />
                     <Route path="user/subscription" element={user_subscription} />
                     <Route path="user/classes" element={user_classes} />
+                    <Route path="user/classes/history" element={user_classes_history} />
                     
-                </Route>
             </Routes>
         </AuthProvider>
         </BrowserRouter>

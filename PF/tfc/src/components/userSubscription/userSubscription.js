@@ -13,7 +13,9 @@ import { styled } from '@mui/material/styles';
 import { Alert, AlertTitle } from '@mui/material';
 import {Link} from "react-router-dom";
 
+
 const color = grey[700];
+const dark_grey = grey[800];
 
 export default function UserSubscriptions(props) {
 
@@ -31,6 +33,16 @@ export default function UserSubscriptions(props) {
         },
         [`&.${tableCellClasses.body}`]: {
             fontSize: 14,
+        },
+    }));
+
+    const StyledTableHeader = styled(TableCell)(({ theme }) => ({
+        [`&.${tableCellClasses.head}`]: {
+            backgroundColor: dark_grey,
+            color: theme.palette.common.white,
+        },
+        [`&.${tableCellClasses.body}`]: {
+            fontSize: 20,
         },
     }));
 
@@ -79,7 +91,7 @@ export default function UserSubscriptions(props) {
             setShowAlert(true)
             setTimeout(() => {
                 setShowAlert(false);
-              }, 3000);
+              }, 5000);
         })    
 
         // if (response.status >= 200 && response.status <= 299) {
@@ -111,20 +123,45 @@ export default function UserSubscriptions(props) {
         console.log(sub)
         if(sub.count == 0){
             return(<>
-                {showAlert ? <p> You have successfully unsubscribed! </p>: ""}
-                <Alert severity="info">
-                    <AlertTitle>No Subscription</AlertTitle>
-                    You have no active subscription. <Link to={`/subscriptions`}>Click here to see a list of subscriptions.</Link>
-                </Alert>
-
+                 
+                <TableContainer component={Paper} style={{marginTop: "20px"}} >
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                        <TableRow>
+                                <StyledTableHeader align="center" colSpan={3}
+                                    sx={{
+                                        fontSize: "1rem",
+                                    }}><b>My Subscriptions</b></StyledTableHeader>        
+                            </TableRow>
+                            <TableRow>
+                                <StyledTableCell align="center">Subscription Price</StyledTableCell>
+                                <StyledTableCell align="center">Payment Period</StyledTableCell>
+                                <StyledTableCell align="center">Subscribe Now!</StyledTableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            <StyledTableCell colSpan={3} align="center">
+                                You have no current subscriptions. <Link to={`/subscriptions`}>Click here to see a list of subscription plan we offer.
+                                </Link></StyledTableCell>
+                        </TableBody>
+                    </Table>
+            </TableContainer>
+            {showAlert ? <Alert severity="success"><AlertTitle>Success</AlertTitle>Subscription dropped successfully!</Alert>: ""}
             </>)
             
         }
         else {
             return (
+                <>
                 <TableContainer component={Paper} style={{marginTop: "20px"}} >
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
+                            <TableRow>
+                                <StyledTableHeader align="center" colSpan={3}
+                                    sx={{
+                                        fontSize: "1rem",
+                                    }}><b>My Subscriptions</b></StyledTableHeader>        
+                            </TableRow>
                             <TableRow>
                                 <StyledTableCell align="center">Subscription Price</StyledTableCell>
                                 <StyledTableCell align="center">Payment Period</StyledTableCell>
@@ -153,6 +190,8 @@ export default function UserSubscriptions(props) {
         
                     </Table>
                 </TableContainer>
+                
+                </>
             );
         }
         }
