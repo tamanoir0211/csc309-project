@@ -5,6 +5,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Typography from "@mui/material/Typography";
 import SearchIcon from '@mui/icons-material/Search';
+import { TextField } from "@mui/material";
 
 const StudiosSearch = () => {
     const perPage = 6;
@@ -36,9 +37,10 @@ const StudiosSearch = () => {
                 Studio Search <SearchIcon style={{width: "50px", height: "40px"}}/>
             </Typography>
             <div align="center" style={{marginLeft: 20, fontSize: 20}}>
-                Studio name
-                <input
-                    style={{width: 150, height: 20, fontSize: 20, margin: 5}}
+                <TextField
+                    sx={{marginLeft: 2, marginRight: 2}}
+                    size="small"
+                    label="Studio name"
                     value={params.name||''}
                     onChange={(event) => {
                         setParams({
@@ -51,9 +53,10 @@ const StudiosSearch = () => {
                         setPage(1);
                     }}
                 />
-                Amenity name
-                <input
-                    style={{width: 150, height: 20, fontSize: 18, margin: 5}}
+                <TextField
+                    sx={{marginLeft: 2, marginRight: 2}}
+                    label="Amenity name"
+                    size="small"
                     value={params.amenity||''}
                     onChange={(event) => {
                         setParams({
@@ -66,9 +69,10 @@ const StudiosSearch = () => {
                         setPage(1);
                     }}
                 />
-                Class name
-                <input
-                    style={{width: 150, height: 20, fontSize: 18, margin: 5}}
+                <TextField
+                    sx={{marginLeft: 2, marginRight: 2}}
+                    label="Class name"
+                    size="small"
                     value={params.class_name||''}
                     onChange={(event) => {
                         setParams({
@@ -81,9 +85,10 @@ const StudiosSearch = () => {
                         setPage(1);
                     }}
                 />
-                Coach name
-                <input
-                    style={{width: 150, height: 20, fontSize: 18, margin: 5}}
+                <TextField
+                    sx={{marginLeft: 2, marginRight: 2}}
+                    label="Coach name"
+                    size="small"
                     value={params.coach||''}
                     onChange={(event) => {
                         setParams({
@@ -100,7 +105,7 @@ const StudiosSearch = () => {
             </div>
 
             <StudiosSearchTable perPage={perPage} params={params} />
-            <Stack spacing={2} style={{marginTop: "1rem", display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: "3rem"}}>
+            <Stack spacing={2} style={{marginTop: "1rem", display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: "5rem"}}>
                 <Pagination count={count} page={page} onChange={handleChange} variant="outlined" color="primary" size="large"/>
             </Stack>
         </>

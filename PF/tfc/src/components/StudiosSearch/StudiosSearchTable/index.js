@@ -30,7 +30,7 @@ const StudiosSearchTable = ({ params }) => {
 
     return (
         <div style={{minHeight: "28rem"}}>
-        <TableContainer component={Paper} style={{marginTop: "2rem"}} >
+        <TableContainer component={Paper} style={{marginTop: "1.5rem"}} >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow style={{height: "4rem"}}>

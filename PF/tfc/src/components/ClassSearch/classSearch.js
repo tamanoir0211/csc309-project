@@ -5,6 +5,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Typography from "@mui/material/Typography";
 import SearchIcon from "@mui/icons-material/Search";
+import {TextField} from "@mui/material";
 
 const ClassSearch = () => {
     const perPage = 6;
@@ -41,9 +42,10 @@ const ClassSearch = () => {
                 Class Search <SearchIcon style={{width: "50px", height: "40px"}}/>
             </Typography>
             <div align="center" style={{marginLeft: 20, fontSize: 18}}>
-                Class name
-                <input
-                    style={{width: 150, height: 20, fontSize: 18, margin: 5}}
+                <TextField
+                    sx={{marginLeft: 2, marginRight: 2}}
+                    size="small"
+                    label="Class Name"
                     value={params.class_name||''}
                     onChange={(event) => {
                         setParams({
@@ -57,9 +59,10 @@ const ClassSearch = () => {
                         setPage(1);
                     }}
                 />
-                Coach Name
-                <input
-                    style={{width: 150, height: 20, fontSize: 18, margin: 5}}
+                <TextField
+                    sx={{marginLeft: 1.5, marginRight: 1.5}}
+                    size="small"
+                    label="Coach Name"
                     value={params.coach_name||''}
                     onChange={(event) => {
                         setParams({
@@ -73,9 +76,10 @@ const ClassSearch = () => {
                         setPage(1);
                     }}
                 />
-                Date
-                <input
-                    style={{width: 150, height: 20, fontSize: 18, margin: 5}}
+                <TextField
+                    sx={{marginLeft: 1.5, marginRight: 1.5}}
+                    size="small"
+                    label="Date"
                     value={params.date||''}
                     onChange={(event) => {
                         setParams({
@@ -89,9 +93,10 @@ const ClassSearch = () => {
                         setPage(1);
                     }}
                 />
-                Start Time
-                <input
-                    style={{width: 150, height: 20, fontSize: 18, margin: 5}}
+                <TextField
+                    sx={{marginLeft: 1.5, marginRight: 1.5}}
+                    size="small"
+                    label="Start Time"
                     value={params.time_start||''}
                     onChange={(event) => {
                         setParams({
@@ -106,9 +111,10 @@ const ClassSearch = () => {
                     }}
 
                 />
-                End Time
-                <input
-                    style={{width: 150, height: 20, fontSize: 18, margin: 5}}
+                <TextField
+                    sx={{marginLeft: 1.5, marginRight: 1.5}}
+                    size="small"
+                    label="End Time"
                     value={params.time_end||''}
                     onChange={(event) => {
                         setParams({
