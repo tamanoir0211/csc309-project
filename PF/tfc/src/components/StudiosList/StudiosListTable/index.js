@@ -17,7 +17,7 @@ import {GoogleMap, InfoWindowF, MarkerF, useJsApiLoader} from "@react-google-map
 
 const containerStyle = {
     width: '100%',
-    height: '100%'
+    height: '100%',
 };
 
 const color = grey[700];
@@ -94,12 +94,12 @@ const StudioListTable = (params) => {
     return isLoaded ? (
         <div className="splitScreen">
             <div className="left">
-                <TableContainer component={Paper} style={{marginTop: "20px"}} >
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableContainer component={Paper} style={{marginTop: "15px"}} >
+                    <Table sx={{ minWidth: 650}} aria-label="simple table">
                         <TableHead>
-                            <TableRow>
-                                <StyledTableCell align="center" style={{width: "40%"}}>Name</StyledTableCell>
-                                <StyledTableCell align="center" style={{width: "60%"}}>Address</StyledTableCell>
+                            <TableRow style={{height: 75}}>
+                                <StyledTableCell align="center" style={{width: "40%", fontSize: 20}}>Name</StyledTableCell>
+                                <StyledTableCell align="center" style={{width: "60%", fontSize: 20}}>Address</StyledTableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -107,9 +107,10 @@ const StudioListTable = (params) => {
                                 <TableRow
                                     key={studio.location.id}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    style={{height: 80}}
                                 >
-                                    <StyledTableCell align="center"><Link to={`/studios/list/details/${studio.id}`} align={"center"}>{studio.name}</Link></StyledTableCell>
-                                    <StyledTableCell align="center">{ studio.location.address }, { studio.location.postal_code }</StyledTableCell>
+                                    <StyledTableCell align="center" style={{width: "40%", fontSize: 17}}><Link to={`/studios/list/details/${studio.id}`} align={"center"}>{studio.name}</Link></StyledTableCell>
+                                    <StyledTableCell align="center" style={{width: "40%", fontSize: 17}}>{ studio.location.address }, { studio.location.postal_code }</StyledTableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

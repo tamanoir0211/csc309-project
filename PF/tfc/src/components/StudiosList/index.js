@@ -12,7 +12,7 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 const button_color = indigo[900];
 
 const StudiosList = () => {
-    const perPage = 8;
+    const perPage = 6;
     const [params, setParams] = useState({latitude: 0, longitude: 0})
 
     const [offset, setOffset] = useState(0);
@@ -47,8 +47,6 @@ const StudiosList = () => {
 
                 onClick={(event) => {
                     navigator.geolocation.getCurrentPosition(function(position) {
-                        console.log("Latitude is :", position.coords.latitude);
-                        console.log("Longitude is :", position.coords.longitude);
                         setParams({
                             latitude: position.coords.latitude,
                             longitude: position.coords.longitude,
@@ -62,8 +60,8 @@ const StudiosList = () => {
         </div>
 
             <StudiosListTable params={params} />
-            <Stack spacing={2} style={{marginTop: "1rem", marginLeft: "1rem", marginBottom: "3rem"}}>
-                <Pagination count={count} page={page} onChange={handleChange} variant="outlined" color="primary"/>
+            <Stack spacing={2} style={{marginLeft: "1rem", marginBottom: "5rem"}}>
+                <Pagination count={count} page={page} onChange={handleChange} variant="outlined" color="primary" />
             </Stack>
         </>
     )
