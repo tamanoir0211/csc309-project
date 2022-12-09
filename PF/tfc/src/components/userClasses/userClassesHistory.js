@@ -12,7 +12,6 @@ import { styled } from '@mui/material/styles';
 import AuthContext from "../../context/AuthContext";
 import { Alert, AlertTitle } from '@mui/material';
 import {Link} from "react-router-dom";
-import APIDropClassContext from '../../Contexts/APIDropClassContext';
 import {useParams} from "react-router-dom";
 import ClassDropMessage from './classDropMessage';
 import Pagination from '@mui/material/Pagination';
@@ -31,14 +30,12 @@ function formatDate(string, end){
     return new Date(string).toString().replace("GMT-0500 (Eastern Standard Time)", '');
 }
 
-const UserClasses = () => {
+const UserClassesHistory = () => {
 
     const perPage = 5;
     const [classes, setUserClasses] = useState(null);
     const { authTokens } = useContext(AuthContext);
-    const [ showAlert, setShowAlert] = useState(null)
-    const { setDropMsg } = useContext(APIDropClassContext)
-    const [dropped, SetDropped] = useState(null)
+
 
     const [offset, setOffset] = useState(0);
     const [count, setCount] = useState(0);
@@ -69,7 +66,7 @@ const UserClasses = () => {
     }));
 
     const fetchclassData = async () => {
-        fetch(`http://localhost:8000/user/classes/?limit=${perPage}&offset=`+offset,
+        fetch(`http://localhost:8000/user/classes/history/?limit=${perPage}&offset=`+offset,
         { method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -85,86 +82,17 @@ const UserClasses = () => {
                 console.log(data.results)
                 setUserClasses(data.results)
                 setCount(Math.ceil(data.count/perPage))
-                SetDropped(false)
             })    
     }
 
 
-    const handleClassDrop = async (classtime_id) => {
-        const response =  fetch('http://localhost:8000/studios/classtime/'+classtime_id+'/drop/', {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Token ' + authTokens,
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-              },
-        })
-        .then(response => {
-            return response.json()
-        })
-        .then(data => {
-            console.log(data.message)
-            setDropMsg(data.message)
-            SetDropped(true)
-            setShowAlert(true)
-            setTimeout(() => {
-                setShowAlert(false);
-              }, 4000);
-        })  
-
-        // if (response.status >= 200 && response.status <= 299) {
-        //     setError(false)
-        //     setIfSubscribed(true)
-        //     const jsonResponse =  response.json();
-        //     console.log(jsonResponse);
-        // } else {
-        //     if (response.status == 401 || response.statusText == 'Unauthorized'){
-        //         setError(true)
-        //         setIfSubscribed(false)
-        //     }
-        // }
-  
-    }
-
-    const handleDropAll = async () => {
-        const response = await fetch('http://localhost:8000/user/classes/drop_all/', {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Token ' + authTokens,
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-              },
-        })          
-        .then(response => {
-            return response.json()
-        })
-        .then(data => {
-            console.log(data.message)
-            setDropMsg(data.message)
-            setShowAlert(true)
-            SetDropped(true)
-            setTimeout(() => {
-                setShowAlert(false);
-              }, 3000);
-        })  
-    }
-    
     useEffect(() => {
         fetchclassData()     
     }, [])
 
     useEffect(() => {
         fetchclassData()     
-    }, [dropped])
-
-    useEffect(() => {
-        fetchclassData()     
     }, [offset])
-
-    console.log("classes are")
-    console.log(classes)
 
     if (classes != null){
         
@@ -175,30 +103,22 @@ const UserClasses = () => {
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                             <TableRow>
-                                <StyledTableHeader align="center"> </StyledTableHeader>
-                                <StyledTableHeader align="center"
+                                <StyledTableHeader align="center" colSpan={2}
                                 sx={{
                                     fontSize: "1rem",
-                                  }}><b>Classes</b></StyledTableHeader>
-                                <StyledTableHeader align="center"><Button 
-                                        variant="contained"
-                                        onClick={() => handleDropAll()}>Drop ALL!</Button></StyledTableHeader>
-        
+                                  }}><b>Past Classes</b></StyledTableHeader> 
                             </TableRow>
                             <TableRow>
                                 <StyledTableCell align="center">Class Name</StyledTableCell>
                                 <StyledTableCell align="center">Time</StyledTableCell>
-                                <StyledTableCell align="center">Drop Now</StyledTableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            <StyledTableCell colSpan={3} align="center">
-                                You are not currently enrolled in any classes. <Link to={`/studios/search`}>Click here to see classes offered by our studios.
-                                </Link></StyledTableCell>
+                            <StyledTableCell colSpan={2} align="center">
+                                You have no past classes. </StyledTableCell>
                         </TableBody>
                     </Table>
             </TableContainer>
-            { showAlert? <ClassDropMessage></ClassDropMessage>: ""}
             <Stack spacing={2} style={{marginTop: "1rem", marginBottom: "1rem", display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <Pagination count={count} page={page} onChange={handleChange} variant="outlined" color="primary"/>
             </Stack>
@@ -208,26 +128,19 @@ const UserClasses = () => {
             return (
             <>
             <TableContainer component={Paper} style={{marginTop: "20px"}} >
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <StyledTableHeader></StyledTableHeader>
-                            <StyledTableHeader align="center"
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <StyledTableHeader align="center" colSpan={2}
                                 sx={{
                                     fontSize: "1rem",
-
-                                  }}><b>Classes</b></StyledTableHeader>
-                                <StyledTableHeader align="center"><Button 
-                                    variant="contained"
-                                    onClick={() => handleDropAll()}>Drop ALL!</Button></StyledTableHeader>
-    
-                        </TableRow>
-                        <TableRow>
-                            <StyledTableCell align="center">Class Name</StyledTableCell>
-                            <StyledTableCell align="center">Time</StyledTableCell>
-                            <StyledTableCell align="center">Drop Now</StyledTableCell>
-                        </TableRow>
-                    </TableHead>
+                                  }}><b>Past Classes</b></StyledTableHeader> 
+                            </TableRow>
+                            <TableRow>
+                                <StyledTableCell align="center">Class Name</StyledTableCell>
+                                <StyledTableCell align="center">Time</StyledTableCell>
+                            </TableRow>
+                        </TableHead>
                     <TableBody>
                         {classes.map((each_class) => (
                             <TableRow
@@ -235,15 +148,11 @@ const UserClasses = () => {
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                 <StyledTableCell align="center">{ each_class.classes.name }</StyledTableCell>
                                 <StyledTableCell align="center">{ formatDate(each_class.time, false) } - {formatDate(each_class.end_time, true)}</StyledTableCell>
-                                <StyledTableCell align="center"><Button 
-                                    variant="contained"
-                                    onClick={() => handleClassDrop(each_class.id)}>Drop</Button></StyledTableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-            { showAlert? <ClassDropMessage></ClassDropMessage>: ""}
             <Stack spacing={2} style={{marginTop: "1rem", marginBottom: "1rem", display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <Pagination count={count} page={page} onChange={handleChange} variant="outlined" color="primary"/>
             </Stack>
@@ -253,5 +162,5 @@ const UserClasses = () => {
         }
 }
 
-export default UserClasses;
+export default UserClassesHistory;
 
