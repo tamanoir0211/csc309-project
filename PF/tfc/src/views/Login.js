@@ -9,9 +9,7 @@ import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-
 const theme = createTheme();
-
 
 const LoginPage = () => {
     const { loginUser, loading, setLoading, incorrectCreds, setIncorrectCreds } = useContext(AuthContext);
@@ -19,7 +17,6 @@ const LoginPage = () => {
     const handleSubmit = (e) => {
 
         setLoading(true);
-        setIncorrectCreds(true);
         e.preventDefault();
         const email = e.target.email.value;
         const password = e.target.password.value;
@@ -80,6 +77,7 @@ const LoginPage = () => {
                         autoFocus
                         onChange={handleEmailInput}
                         error={emailError}
+                        helperText={emailError && "Please enter a valid email"}
                     />
                     <TextField
                         margin="normal"
@@ -92,6 +90,7 @@ const LoginPage = () => {
                         autoComplete="current-password"
                         onChange={handlepasswordInput}
                         error={passwordError}
+                        helperText={passwordError && "Password must be at least 6 characters"}
                     />
                     <Button
                         type="submit"

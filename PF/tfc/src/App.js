@@ -2,10 +2,12 @@ import React, { Children } from 'react';
 import './App.css';
 import {useState, useEffect, useContext} from 'react';
 import Login from './views/Login';
+import Register from './views/Register';
+import Payment from './views/Payment';
 import {StyledEngineProvider } from '@mui/material/styles';
 // Views
 import Account from './views/Account';
-import { AuthProvider } from './context/AuthContext';
+import {AuthContext, AuthProvider} from './context/AuthContext';
 import CssBaseline from '@mui/material/CssBaseline';
 import StudiosSearch from "./components/StudiosSearch";
 import StudiosList from "./components/StudiosList";
@@ -24,15 +26,25 @@ import APIDropClassContext, {useAPIDropClassContext} from './Contexts/APIDropCla
 
 
 function PrivateRoute({children}){
-    const { authTokens } = useContext(AuthProvider);
+    const { authTokens } = useContext(AuthContext);
     let location = useLocation();
     if(!authTokens){
         return <Navigate to="/login" state={{ from: location}} replace/>
     } else {
-      return Children;
+      return children;
     }
 };
 //<PrivateRoute element={<Account/>} path="account" />
+
+function NonPrivateRoute({children}){
+    const { authTokens } = useContext(AuthContext);
+    let location = useLocation();
+    if(authTokens){
+        return <Navigate to="/account" state={{ from: location}} replace/>
+    } else {
+      return children;
+    }
+}
 
 function App() {
     //const {authTokens} = useContext(AuthProvider);
@@ -93,6 +105,30 @@ function App() {
             <Routes>
                 <Route path="/" element={<Layout />}>
                     <Route element={<Login/>} path="login" />
+                    <Route 
+                      path="account"
+                      element={
+                        <PrivateRoute>
+                          <Account />
+                        </PrivateRoute>
+                      }
+                    />
+                    <Route 
+                      path="register"
+                      element={
+                        <NonPrivateRoute>
+                          <Register />
+                        </NonPrivateRoute>
+                      }
+                    />
+                    <Route 
+                      path="payment"
+                      element={
+                        <PrivateRoute>
+                          <Payment />
+                        </PrivateRoute>
+                      }
+                    />
                     <Route index element={studio_search} />
                     <Route path="studios/search" element={studio_search} />
                     <Route path="studios/list" element={studio_list} />
@@ -105,7 +141,7 @@ function App() {
                     
                 </Route>
             </Routes>
-          </AuthProvider>
+        </AuthProvider>
         </BrowserRouter>
 
       </StyledEngineProvider>

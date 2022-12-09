@@ -35,11 +35,11 @@ export const AuthProvider = ({children}) => {
         const data = await res.json();
         setIncorrectCreds(true);
         if (res.status === 200) {
-            setAuthTokens(data.token);
-
             if (data.token) {
-                setAuthTokens(data.token);
                 localStorage.setItem("authTokens", JSON.stringify(data.token));
+                setAuthTokens(data.token);
+                console.log(data.token);
+                await loadUser();
                 navigate('/account');
             } else {
                 alert("Something went wrong. Please try again later.");
@@ -48,23 +48,40 @@ export const AuthProvider = ({children}) => {
             setIncorrectCreds(true);
             console.log("Incorrect credentials");
         }
-        loadUser();
     };
 
+    const logoutUser = () => {
+        setAuthTokens(null);
+        localStorage.removeItem("authTokens");
+        localStorage.removeItem("user");
+        setUser(null);
+        navigate('/');
+    }
     const loadUser = async () => {
         const res = await fetch('http://localhost:8000/user/profile/', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Token ' + authTokens
+                'Authorization': 'Token ' + JSON.parse(localStorage.getItem('authTokens'))
             }
         })
         const data = await res.json();
         localStorage.setItem("user", JSON.stringify(data));
-        setUser(data);
+        await setUser(data);
     }
 
-
+    const updateUser = async (data) => {
+        const res = await fetch('http://localhost:8000/user/update/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + JSON.parse(localStorage.getItem('authTokens'))
+            },
+            body: JSON.stringify(data)
+        });
+        const out = await res.json();
+        return out;
+    }
     useEffect(() => {
         if (authTokens) {
             setLoading(false);
@@ -78,6 +95,8 @@ export const AuthProvider = ({children}) => {
         authTokens,
         setAuthTokens,
         loginUser,
+        logoutUser,
+        updateUser,
         loading,
         setLoading,
         incorrectCreds,

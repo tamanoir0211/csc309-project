@@ -6,7 +6,9 @@ const Layout = () => {
         <>
             <nav>
                 <Link to="/studios/search">Studio Search</Link>
+                <Link to="/account">Account</Link>
             </nav>
+
             <Outlet />
         </>
     )

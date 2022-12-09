@@ -99,7 +99,8 @@ def user_update(request):
             data = dict()
             data['response'] = "failed to update user"
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_200_OK)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
 
 
 @api_view(['POST'])
@@ -114,6 +115,28 @@ def create_payment_info(request):
             data['response'] = "successfully created payment info"
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def delete_payment_info(request):
+    if request.method == 'POST':
+        user = request.user
+        payment_info_id = request.data['payment_info_id']
+        payment_info = PaymentInfo.objects.get(payment_info_id=payment_info_id)
+        if payment_info.user == user:
+            if Payment.objects.filter(payment_info=payment_info).exists():
+                payment_info.visible = False
+                payment_info.save()
+            else:
+                payment_info.delete()
+            data = dict()
+            data['response'] = "successfully deleted payment info"
+            return Response(data, status=status.HTTP_200_OK)
+        data = dict()
+        data['response'] = "payment info does not belong to user"
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)
+    
 
 
 class UserClassView(ListAPIView):
@@ -205,3 +228,5 @@ class PaymentInfoView(ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return PaymentInfo.objects.filter(user=user.user_id)
+
+
