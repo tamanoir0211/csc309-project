@@ -157,10 +157,8 @@ function App() {
         <ThemeProvider theme={theme}>
         <BrowserRouter>
         <AuthProvider>
-            <AuthProvider>
                 <MyAppBar />
 
-            </AuthProvider>
             <Routes>
                     <Route element={<Login/>} path="login" />
                     <Route 
