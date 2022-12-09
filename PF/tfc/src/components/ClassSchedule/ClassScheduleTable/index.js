@@ -9,7 +9,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { grey } from '@mui/material/colors';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import {useParams} from "react-router-dom";
 import AuthContext from "../../../context/AuthContext";
 import EnrollMessageHandler from './classSearchMessage';
