@@ -61,7 +61,7 @@ const StudiosList = () => {
 
             <StudiosListTable params={params} />
             <Stack spacing={2} style={{marginLeft: "1rem", marginBottom: "5rem"}}>
-                <Pagination count={count} page={page} onChange={handleChange} variant="outlined" color="primary" />
+                <Pagination count={count} page={page} onChange={handleChange} variant="outlined" color="primary" size="large"/>
             </Stack>
         </>
     )
