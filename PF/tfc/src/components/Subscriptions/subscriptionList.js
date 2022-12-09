@@ -11,7 +11,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { grey } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
-
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 import SubMessageHandler from './subscriptionMessageHandler';
 
 const color = grey[700];
@@ -20,9 +21,17 @@ export default function Subscribe(props) {
 
     const [sub, setSubscription] = useState(null);
     const [showAlert, setShowAlert] = useState(null);
-    const [subscribed, setIfSubscribed] = useState(null);
     const { authTokens } = useContext(AuthContext);
     const { setMessages } = useContext(APISubscriptionMessageContext);
+
+    const perPage = 5;
+    const [offset, setOffset] = useState(0);
+    const [count, setCount] = useState(0);
+    const [page, setPage] = useState(1);
+    const handleChange = (event, value) => {
+        setPage(value);
+        setOffset((value - 1) * perPage);
+    };
 
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -47,6 +56,7 @@ export default function Subscribe(props) {
                 console.log("print data")
                 console.log(data)
                 setSubscription(data)
+                setCount(Math.ceil(data.count/perPage))
             })
     }
 
@@ -64,8 +74,6 @@ export default function Subscribe(props) {
             return response.json()
         })
         .then(data => {
-            console.log(data)
-            console.log(data.message)
             setMessages(data.message)
             setShowAlert(true)
             setTimeout(() => {
@@ -95,6 +103,10 @@ export default function Subscribe(props) {
         fetchSubData()
     }, [])
 
+    useEffect(() => {
+        fetchSubData()     
+    }, [offset])
+
     if (sub != null){
         return (
             <>
@@ -102,9 +114,9 @@ export default function Subscribe(props) {
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <StyledTableCell align="center">Subscription Price</StyledTableCell>
-                            <StyledTableCell align="center">Payment Period</StyledTableCell>
-                            <StyledTableCell align="center">Subscribe Now!</StyledTableCell>
+                            <StyledTableCell align="center" sx={{fontSize: "1rem",}}>Subscription Price</StyledTableCell>
+                            <StyledTableCell align="center" sx={{fontSize: "1rem",}}>Payment Period</StyledTableCell>
+                            <StyledTableCell align="center" sx={{fontSize: "1rem",}}>Subscribe Now!</StyledTableCell>
                         </TableRow>
                     </TableHead>
     
@@ -126,6 +138,9 @@ export default function Subscribe(props) {
                 </Table>
             </TableContainer>
             { showAlert? <SubMessageHandler></SubMessageHandler>: ""}
+            <Stack spacing={2} style={{marginTop: "1rem", marginBottom: "1rem", display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                <Pagination count={count} page={page} onChange={handleChange} variant="outlined" color="primary"/>
+            </Stack>
             
             </>
         );

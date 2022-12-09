@@ -23,7 +23,7 @@ import {BrowserRouter, Route, Routes, Navigate, useLocation} from "react-router-
 import Layout from "./components/Layout";
 import APISubscriptionMessageContext, {useSubscriptionMessageContext} from './context/SubscriptionMessageContext';
 import APIDropClassContext, {useAPIDropClassContext} from './Contexts/APIDropClassContext';
-
+import UserClassesHistory from './components/userClasses/userClassesHistory';
 
 function PrivateRoute({children}){
     const { authTokens } = useContext(AuthContext);
@@ -96,6 +96,11 @@ function App() {
         </APIDropClassContext.Provider>
     )
 
+    const user_classes_history = (
+          <UserClassesHistory />
+  )
+
+
 
     return (
       <StyledEngineProvider injectFirst>
@@ -138,6 +143,7 @@ function App() {
                     <Route path="subscriptions" element={subscriptions_list} />
                     <Route path="user/subscription" element={user_subscription} />
                     <Route path="user/classes" element={user_classes} />
+                    <Route path="user/classes/history" element={user_classes_history} />
                     
                 </Route>
             </Routes>

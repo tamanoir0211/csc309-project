@@ -152,10 +152,27 @@ class UserClassView(ListAPIView):
         for class_time_id in class_bookings:
             if ClassTime.objects.get(id=class_time_id).status:
                 classes = classes | ClassTime.objects.filter(id=class_time_id)
-
-
+        if classes:
+            classes = classes.filter(
+                status=True, time__gte=datetime.now()).order_by('time')
         return classes
 
+
+class UserClassHistoryView(ListAPIView):
+    serializer_class = ClassScheduleSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        classes = ClassTime.objects.none()
+
+        class_bookings = ClassBooking.objects.filter(
+            user=user.user_id).values_list('class_time', flat=True)
+        for class_time_id in class_bookings:
+                classes = classes | ClassTime.objects.filter(id=class_time_id)
+        if classes:
+            classes = classes.filter(time__lt=datetime.now()).order_by('time')
+        return classes
 
 class UnsubscribeView(CreateAPIView):
     permission_classes = [IsAuthenticated]
