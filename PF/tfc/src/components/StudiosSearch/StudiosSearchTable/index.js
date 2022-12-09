@@ -29,11 +29,11 @@ const StudiosSearchTable = ({ params }) => {
     }));
 
     return (
-        <div style={{minHeight: 525}}>
+        <div style={{minHeight: "28rem"}}>
         <TableContainer component={Paper} style={{marginTop: "2rem"}} >
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
-                    <TableRow style={{height: 75}}>
+                    <TableRow style={{height: "4rem"}}>
                         <StyledTableCell align="center" style={{width: "40%", fontSize:20}}>Name</StyledTableCell>
                         <StyledTableCell align="center" style={{width: "60%", fontSize:20}}>Address</StyledTableCell>
                     </TableRow>
@@ -43,7 +43,7 @@ const StudiosSearchTable = ({ params }) => {
                         <TableRow
                             key={studio.location.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            style={{height: 75}}
+                            style={{height: "4rem"}}
                         >
                             <StyledTableCell align="center" style={{fontSize:20}}><Link to={`/studios/list/details/${studio.id}`} align={"center"}>{studio.name}</Link></StyledTableCell>
                             <StyledTableCell align="center" style={{fontSize:20}}>{ studio.location.address }, { studio.location.postal_code }</StyledTableCell>

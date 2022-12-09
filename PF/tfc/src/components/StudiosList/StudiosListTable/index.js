@@ -97,9 +97,9 @@ const StudioListTable = (params) => {
                 <TableContainer component={Paper} style={{marginTop: "15px"}} >
                     <Table sx={{ minWidth: 650}} aria-label="simple table">
                         <TableHead>
-                            <TableRow style={{height: 75}}>
-                                <StyledTableCell align="center" style={{width: "40%", fontSize: 20}}>Name</StyledTableCell>
-                                <StyledTableCell align="center" style={{width: "60%", fontSize: 20}}>Address</StyledTableCell>
+                            <TableRow style={{height: 60}}>
+                                <StyledTableCell align="center" style={{width: "40%", fontSize: 18}}>Name</StyledTableCell>
+                                <StyledTableCell align="center" style={{width: "60%", fontSize: 18}}>Address</StyledTableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -107,10 +107,10 @@ const StudioListTable = (params) => {
                                 <TableRow
                                     key={studio.location.id}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                    style={{height: 80}}
+                                    style={{height: 65}}
                                 >
-                                    <StyledTableCell align="center" style={{width: "40%", fontSize: 17}}><Link to={`/studios/list/details/${studio.id}`} align={"center"}>{studio.name}</Link></StyledTableCell>
-                                    <StyledTableCell align="center" style={{width: "40%", fontSize: 17}}>{ studio.location.address }, { studio.location.postal_code }</StyledTableCell>
+                                    <StyledTableCell align="center" style={{width: "40%", fontSize: 15}}><Link to={`/studios/list/details/${studio.id}`} align={"center"}>{studio.name}</Link></StyledTableCell>
+                                    <StyledTableCell align="center" style={{width: "40%", fontSize: 15}}>{ studio.location.address }, { studio.location.postal_code }</StyledTableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
