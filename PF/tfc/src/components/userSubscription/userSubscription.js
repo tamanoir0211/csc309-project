@@ -91,7 +91,7 @@ export default function UserSubscriptions(props) {
             setShowAlert(true)
             setTimeout(() => {
                 setShowAlert(false);
-              }, 3000);
+              }, 5000);
         })    
 
         // if (response.status >= 200 && response.status <= 299) {

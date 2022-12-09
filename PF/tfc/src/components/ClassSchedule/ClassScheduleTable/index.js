@@ -56,7 +56,7 @@ const ClassScheduleTable = () => {
             setShowAlert(true)
             setTimeout(() => {
                 setShowAlert(false);
-              }, 3000);
+              }, 5000);
         })  
 
         // if (response.status >= 200 && response.status <= 299) {
@@ -91,7 +91,7 @@ const ClassScheduleTable = () => {
             setShowAlert(true)
             setTimeout(() => {
                 setShowAlert(false);
-              }, 4000);
+              }, 5000);
         })  
 
         // if (response.status >= 200 && response.status <= 299) {

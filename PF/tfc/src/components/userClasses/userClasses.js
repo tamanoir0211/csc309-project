@@ -110,7 +110,7 @@ const UserClasses = () => {
             setShowAlert(true)
             setTimeout(() => {
                 setShowAlert(false);
-              }, 4000);
+              }, 5000);
         })  
 
         // if (response.status >= 200 && response.status <= 299) {
