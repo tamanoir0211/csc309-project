@@ -150,7 +150,7 @@ const StudioDetailTable = ({ params }) => {
                                     <TableCell
                                         key={column.id}
                                         align="center"
-                                        style={{ minWidth: column.minWidth, backgroundColor: color}}
+                                        style={{ minWidth: column.minWidth, backgroundColor: color, fontSize: 18}}
                                     >
                                         {column.label}
                                     </TableCell>
@@ -163,10 +163,10 @@ const StudioDetailTable = ({ params }) => {
                                 .map((row) => {
                                     return (
                                         <TableRow hover role="checkbox" tabIndex={-1} key={row.amenity}>
-                                            <TableCell align="center">
+                                            <TableCell align="center" style={{fontSize: 18}}>
                                                 {row.amenity}
                                             </TableCell>
-                                            <TableCell align="center">
+                                            <TableCell align="center" style={{fontSize: 18}}>
                                                 {row.quantity}
                                             </TableCell>
                                         </TableRow>
