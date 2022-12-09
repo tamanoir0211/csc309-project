@@ -18,8 +18,6 @@ const AccountPage = () => {
     useEffect(() => {
 
         if (!user || !authTokens){
-            window.location.reload(false);
-
             loadUser();
         }
     }, [user]);

@@ -63,6 +63,7 @@ function MyAppBar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const {logoutUser, authTokens} = useContext(AuthContext);
+    const [authed, setAuthed] = React.useState(false);
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
       };
@@ -93,7 +94,9 @@ function MyAppBar() {
 // </IconButton>
     const pages = ['Studios', 'Classes']
     const settings = ['Profile', 'Logout']
-
+    React.useEffect(() => {
+        setAuthed(authTokens)
+    }, [authTokens])
 
 
     return (
@@ -251,6 +254,11 @@ function MyAppBar() {
                 <MenuItem  onClick={handleCloseUserMenu} >
                     <RouterLink to="/user/classes" style={linkStyle}>
                     <Typography textAlign="center" href="/account">Classes</Typography>
+                    </RouterLink>
+                </MenuItem>
+                <MenuItem  onClick={handleCloseUserMenu} >
+                    <RouterLink to="/payment" style={linkStyle}>
+                    <Typography textAlign="center" href="/account">Payments</Typography>
                     </RouterLink>
                 </MenuItem>
                 <MenuItem  onClick={handleCloseUserMenu2} >
