@@ -23,7 +23,7 @@ import {BrowserRouter, Route, Routes, Navigate, useLocation} from "react-router-
 import Layout from "./components/Layout";
 import APISubscriptionMessageContext, {useSubscriptionMessageContext} from './context/SubscriptionMessageContext';
 import APIDropClassContext, {useAPIDropClassContext} from './Contexts/APIDropClassContext';
-
+import MyAppBar from './components/Header';
 
 function PrivateRoute({children}){
     const { authTokens } = useContext(AuthContext);
@@ -102,6 +102,7 @@ function App() {
 
         <BrowserRouter>
         <AuthProvider>
+            <MyAppBar />
             <Routes>
                 <Route path="/" element={<Layout />}>
                     <Route element={<Login/>} path="login" />

@@ -33,7 +33,6 @@ export const AuthProvider = ({children}) => {
             }),
         });
         const data = await res.json();
-        setIncorrectCreds(true);
         if (res.status === 200) {
             if (data.token) {
                 localStorage.setItem("authTokens", JSON.stringify(data.token));
@@ -42,6 +41,7 @@ export const AuthProvider = ({children}) => {
                 await loadUser();
                 navigate('/account');
             } else {
+                setIncorrectCreds(true);
                 alert("Something went wrong. Please try again later.");
             }
         } else {
