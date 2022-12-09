@@ -124,10 +124,8 @@ class ClassTimesView(ListAPIView):
 
     def get_queryset(self):
         if not Studio.objects.filter(id=self.kwargs.get('studio_id')):
-            # raise NotFound(
-            #     detail='Studio with given studio_id does not exist.')
-            raise ValidationError(
-                {"Value Error": ["404 Not found"]})
+            raise NotFound(
+                detail='Studio with given studio_id does not exist.')
         elif not Class.objects.filter(id=self.kwargs.get('class_id')):
             raise NotFound(
                 detail='Class with given class_id does not exist.')
