@@ -232,25 +232,17 @@ function MyAppBar() {
                     open={Boolean(anchorElUser)}
                     onClose={handleCloseUserMenu}
                 >
-                <MenuItem  onClick={handleCloseUserMenu} >
-                    <RouterLink to="/account" style={linkStyle}>
+                <MenuItem component={RouterLink} to="/account" onClick={handleCloseUserMenu} >
                     <Typography textAlign="center" href="/account">Profile</Typography>
-                    </RouterLink>
                 </MenuItem>
-                <MenuItem  onClick={handleCloseUserMenu} >
-                    <RouterLink to="/user/subscription" style={linkStyle}>
+                <MenuItem component={RouterLink} to="/user/subscription" onClick={handleCloseUserMenu} >
                     <Typography textAlign="center" href="/user/subscription">Subscription</Typography>
-                    </RouterLink>
                 </MenuItem>
-                <MenuItem  onClick={handleCloseUserMenu} >
-                    <RouterLink to="/user/classes" style={linkStyle}>
+                <MenuItem component={RouterLink} to="/user/classes" onClick={handleCloseUserMenu} >
                     <Typography textAlign="center" href="/user/classes">Classes</Typography>
-                    </RouterLink>
                 </MenuItem>
-                <MenuItem  onClick={handleCloseUserMenu} >
-                    <RouterLink to="/payment" style={linkStyle}>
+                <MenuItem component={RouterLink} to="/payment" onClick={handleCloseUserMenu} >
                     <Typography textAlign="center" href="/payment">Payments</Typography>
-                    </RouterLink>
                 </MenuItem>
                 <MenuItem  onClick={handleCloseUserMenu2} >
                     <Typography textAlign="center">Logout</Typography>
