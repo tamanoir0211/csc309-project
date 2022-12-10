@@ -143,16 +143,23 @@ function MyAppBar() {
                   }}
                 >
   
-                    <MenuItem onClick={handleCloseNavMenu}>
-                    <RouterLink to="/" style={linkStyle}>
-                      <Typography textAlign="center">Studios</Typography>
-                    </RouterLink>
+                <MenuItem component={RouterLink} to="/account" onClick={handleCloseNavMenu} >
+                    <Typography textAlign="center" href="/account">Profile</Typography>
+                </MenuItem>
+
+                    <MenuItem onClick={handleCloseNavMenu} component={RouterLink} to="/">
+                      <Typography textAlign="center">Studio Search</Typography>
                     </MenuItem>
-                    <MenuItem onClick={handleCloseNavMenu}>
-                    <RouterLink to="/classes/search" style={linkStyle}>
+                    <MenuItem onClick={handleCloseNavMenu} component={RouterLink} to="/studios/list">
+                      <Typography textAlign="center">Studio List</Typography>
+                    </MenuItem>
+                    <MenuItem onClick={handleCloseNavMenu}  component={RouterLink} to="/classes/search">
                       <Typography textAlign="center">Classes</Typography>
-                    </RouterLink>
                     </MenuItem>
+                    <MenuItem onClick={handleCloseNavMenu}  component={RouterLink} to="/subscriptions">
+                      <Typography textAlign="center">Subscriptions</Typography>
+                    </MenuItem>
+
                 </Menu>
               </Box>
               <Typography
@@ -213,7 +220,7 @@ function MyAppBar() {
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                    <Avatar src="/broken-image.jpg" />
                     </IconButton>
                 </Tooltip>
                 <Menu
