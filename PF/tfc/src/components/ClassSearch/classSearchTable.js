@@ -10,6 +10,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { grey } from '@mui/material/colors';
+import {Link} from "react-router-dom";
 
 const color = grey[700];
 
@@ -34,10 +35,11 @@ const ClassSearchTable = ({ params }) => {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow style={{height: "3.5rem"}}>
-                        <StyledTableCell align="center" style={{width: "20%"}}>Name</StyledTableCell>
-                        <StyledTableCell align="center" style={{width: "50%"}}>Description</StyledTableCell>
-                        <StyledTableCell align="center" style={{width: "18%"}}>Coach</StyledTableCell>
-                        <StyledTableCell align="center" style={{width: "12%"}}>Capacity</StyledTableCell>
+                        <StyledTableCell align="center" style={{width: "14.5%"}}>Name</StyledTableCell>
+                        <StyledTableCell align="center" style={{width: "14.5%"}}>Studio Name</StyledTableCell>
+                        <StyledTableCell align="center" style={{width: "45%"}}>Description</StyledTableCell>
+                        <StyledTableCell align="center" style={{width: "14.5%"}}>Coach</StyledTableCell>
+                        <StyledTableCell align="center" style={{width: "11.5%"}}>Capacity</StyledTableCell>
                     </TableRow>
                 </TableHead>
 
@@ -50,6 +52,11 @@ const ClassSearchTable = ({ params }) => {
                         >
                             {/* <p>{cl.name}</p> */}
                             <StyledTableCell align="center" style={{fontSize: 16}}>{cl.name}</StyledTableCell>
+                            <StyledTableCell align="center" style={{fontSize: 16}}>
+                                <Link to={`/studios/list/details/${cl.studio.id}`} align={"center"}>
+                                {cl.studio.name}
+                                </Link>
+                            </StyledTableCell>
                             <StyledTableCell style={{width: "50%"}}>{ cl.description}</StyledTableCell>
                             <StyledTableCell align="center" style={{fontSize: 16}}>{ cl.coach.name}</StyledTableCell>
                             <StyledTableCell align="center" style={{fontSize: 16}}>{ cl.capacity}</StyledTableCell>
