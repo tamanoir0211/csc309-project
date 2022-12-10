@@ -1,7 +1,0 @@
-db.sqlite3
-media
-studio.__pycache__
-User.__pycache__
-subscriptions.__pycache__
-TFC.__pycache__
-*.pyc
