@@ -26,12 +26,6 @@ const RegisterPage = () => {
             last_name: e.target.last_name.value, 
             phone_number: e.target.phone_number.value};
 
-        const data2 = {
-            email: e.target.email.value, 
-            first_name: e.target.first_name.value, 
-            last_name: e.target.last_name.value, 
-            phone_number: e.target.phone_number.value};
-        setUser(data2);
         setPassword(e.target.password.value);
         setEmail(e.target.email.value);
             

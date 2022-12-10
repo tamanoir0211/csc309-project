@@ -83,15 +83,6 @@ function MyAppBar() {
         setAnchorElUser(null);
       };
 
-//     <IconButton
-//     size="large"
-//     edge="start"
-//     color="inherit"
-//     aria-label="menu"
-//     sx={{ mr: 2 }}
-// >
-//     <MenuIcon />
-// </IconButton>
     const pages = ['Studios', 'Classes']
     const settings = ['Profile', 'Logout']
     React.useEffect(() => {
@@ -248,17 +239,17 @@ function MyAppBar() {
                 </MenuItem>
                 <MenuItem  onClick={handleCloseUserMenu} >
                     <RouterLink to="/user/subscription" style={linkStyle}>
-                    <Typography textAlign="center" href="/account">Subscription</Typography>
+                    <Typography textAlign="center" href="/user/subscription">Subscription</Typography>
                     </RouterLink>
                 </MenuItem>
                 <MenuItem  onClick={handleCloseUserMenu} >
                     <RouterLink to="/user/classes" style={linkStyle}>
-                    <Typography textAlign="center" href="/account">Classes</Typography>
+                    <Typography textAlign="center" href="/user/classes">Classes</Typography>
                     </RouterLink>
                 </MenuItem>
                 <MenuItem  onClick={handleCloseUserMenu} >
                     <RouterLink to="/payment" style={linkStyle}>
-                    <Typography textAlign="center" href="/account">Payments</Typography>
+                    <Typography textAlign="center" href="/payment">Payments</Typography>
                     </RouterLink>
                 </MenuItem>
                 <MenuItem  onClick={handleCloseUserMenu2} >

@@ -9,7 +9,13 @@ import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
+import { Link } from "react-router-dom";
 const theme = createTheme();
+
+const linkStyle = {
+    textDecoration: 'none',
+    color: 'inherit',
+}
 
 const LoginPage = () => {
     const { loginUser, loading, setLoading, incorrectCreds, setIncorrectCreds } = useContext(AuthContext);
@@ -101,7 +107,18 @@ const LoginPage = () => {
                     >
                         Sign In
                     </Button>
+                    <Link to="/register" style={linkStyle}>
+                <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                    >
+                        Register
+                    </Button>
+                </Link>
                 </Box>
+
             </Box>
         </Container>
     </ThemeProvider>
