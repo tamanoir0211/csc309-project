@@ -107,9 +107,10 @@ const LoginPage = () => {
                     >
                         Sign In
                     </Button>
-                    <Link to="/register" style={linkStyle}>
+
+                </Box>
+                <Link to="/register" style={linkStyle}>
                 <Button
-                        type="submit"
                         fullWidth
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
@@ -117,8 +118,6 @@ const LoginPage = () => {
                         Register
                     </Button>
                 </Link>
-                </Box>
-
             </Box>
         </Container>
     </ThemeProvider>

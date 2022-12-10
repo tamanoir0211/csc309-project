@@ -7,15 +7,16 @@ import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import { useContext, useEffect, useState } from "react";
-
+import {useNavigate} from "react-router-dom";
 const theme = createTheme();
 
 const RegisterPage = () => {
 
-    const {user, authTokens, loadUser, logoutUser, updateUser, setUser, loginUser} = useContext(AuthContext);
+    const {user, authTokens, loadUser, logoutUser, updateUser, setUser, setAuthTokens} = useContext(AuthContext);
     
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -28,9 +29,6 @@ const RegisterPage = () => {
             //avatar: e.target.avatar.value
         };
 
-        setPassword(e.target.password.value);
-        setEmail(e.target.email.value);
-            
         fetch('http://localhost:8000/user/register/', {
             method: 'POST',
             headers: {
@@ -45,7 +43,8 @@ const RegisterPage = () => {
                 return null;
             }
         }).then((data) => {
-            return loginUser(email, password);
+            console.log("registered");
+            window.location.href = "/login";
         })
     }
 
@@ -55,6 +54,21 @@ const RegisterPage = () => {
     const [password2Error, setPassword2Error] = useState(false);
     const [password1, setPassword1] = useState("");
     const [emailError, setEmailError] = useState(false);
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
+
+    const handleFirstNameInput = (e) => {
+        setFirstName(e.target.value);
+    };
+
+    const handleLastNameInput = (e) => {
+        setLastName(e.target.value);
+    };
+
+    const handlePhoneNumberInput = (e) => {
+        setPhoneNumber(e.target.value);
+    };
 
 
     const [password2, setPassword2] = useState("");
@@ -92,6 +106,7 @@ const RegisterPage = () => {
 
     };
 
+    
     return (
     <ThemeProvider theme={theme}>
     <Container component="main" maxWidth="xs">
@@ -137,13 +152,14 @@ const RegisterPage = () => {
             error={password2Error}
             helperText={password2Error && "Passwords don't match"}
         />
-                <TextField
+        <TextField
             margin="normal"
             fullWidth
             required
             id="first_name"
             label="First Name"
             name="first_name"
+            onChange={handleFirstNameInput}
         />
         <TextField
             margin="normal"
@@ -152,6 +168,7 @@ const RegisterPage = () => {
             id="last_name"
             label="Last Name"
             name="last_name"
+            onChange={handleLastNameInput}
         />
         <TextField
             margin="normal"
@@ -160,6 +177,7 @@ const RegisterPage = () => {
             required
             label="Phone Number"
             name="phone_number"
+            onChange={handlePhoneNumberInput}
         />
         {/* <Button
             variant="contained"
@@ -180,7 +198,7 @@ const RegisterPage = () => {
             required
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
-            disabled={((passwordError || password2Error) && (password1.length > 0)) || emailError}
+            disabled={((passwordError || password2Error)) || emailError || (firstName === "" || lastName === "" || phoneNumber === "" || password1 === "")}
         >
             Register
         </Button>

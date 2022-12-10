@@ -20,7 +20,6 @@ export const AuthProvider = ({children}) => {
     const [incorrectCreds, setIncorrectCreds] = useState(false);
     const { BACKEND_URL } = process.env;
     const loginUser = async (email, password) => {
-        setIncorrectCreds(true);
 
         const res = await fetch("http://127.0.0.1:8000"+ "/user/login/", {
             method: "POST",
@@ -38,7 +37,6 @@ export const AuthProvider = ({children}) => {
                 setIncorrectCreds(false);
                 localStorage.setItem("authTokens", JSON.stringify(data.token));
                 setAuthTokens(data.token);
-                console.log(data.token);
                 await loadUser();
                 navigate('/account');
             } else {

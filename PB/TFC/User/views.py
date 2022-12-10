@@ -25,6 +25,12 @@ def user_create(request):
             data = dict()
             data['response'] = "successfully created user"
             data['email'] = serializer.data['email']
+            user = User.objects.get(email=serializer.data['email'])
+            try:
+                token = Token.objects.get(user=user)
+            except Token.DoesNotExist:
+                token = Token.objects.create(user=user)
+            data['token'] = token.key
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
