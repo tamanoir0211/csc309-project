@@ -51,7 +51,9 @@ const ClassSearchTable = ({ params }) => {
                             style={{height: 73}}
                         >
                             {/* <p>{cl.name}</p> */}
-                            <StyledTableCell align="center" style={{fontSize: 16}}>{cl.name}</StyledTableCell>
+                            <StyledTableCell align="center" style={{fontSize: 16}}>
+                            <Link to={`/studios/${cl.studio.id}/classes/${cl.id}/schedule`} align={"center"}>
+                                {cl.name}</Link></StyledTableCell>
                             <StyledTableCell align="center" style={{fontSize: 16}}>
                                 <Link to={`/studios/list/details/${cl.studio.id}`} align={"center"}>
                                 {cl.studio.name}
