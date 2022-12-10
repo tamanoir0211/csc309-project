@@ -48,10 +48,11 @@ class CoachSerializer(serializers.ModelSerializer):
 
 class ClassSerializer(serializers.ModelSerializer):
     coach = CoachSerializer()
+    studio = StudioSerializer()
 
     class Meta:
         model = Class
-        fields = ['id', 'name', 'description', 'capacity', 'coach']
+        fields = ['id', 'name', 'description', 'capacity', 'coach', 'studio']
 
 
 class ClassScheduleSerializer(serializers.ModelSerializer):
