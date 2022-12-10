@@ -30,7 +30,7 @@ const ClassSearch = () => {
                 return res.json()
             })  
             .then(json => {
-                console.log(json)
+                console.log(json.results)
                 setClasses(json.results);
                 setCount(Math.ceil(json.count/perPage))
             })

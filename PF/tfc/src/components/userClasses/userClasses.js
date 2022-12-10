@@ -113,18 +113,6 @@ const UserClasses = () => {
               }, 5000);
         })  
 
-        // if (response.status >= 200 && response.status <= 299) {
-        //     setError(false)
-        //     setIfSubscribed(true)
-        //     const jsonResponse =  response.json();
-        //     console.log(jsonResponse);
-        // } else {
-        //     if (response.status == 401 || response.statusText == 'Unauthorized'){
-        //         setError(true)
-        //         setIfSubscribed(false)
-        //     }
-        // }
-  
     }
 
     const handleDropAll = async () => {
@@ -193,7 +181,7 @@ const UserClasses = () => {
                         </TableHead>
                         <TableBody>
                             <StyledTableCell colSpan={3} align="center">
-                                You are not currently enrolled in any classes. <Link to={`/studios/search`}>Click here to see classes offered by our studios.
+                                You are not currently enrolled in any classes. <Link to={`/classes/search`}>Click here to see classes offered by our studios.
                                 </Link></StyledTableCell>
                         </TableBody>
                     </Table>

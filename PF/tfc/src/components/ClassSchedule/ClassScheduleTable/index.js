@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import {useParams} from "react-router-dom";
 import AuthContext from "../../../context/AuthContext";
 import EnrollMessageHandler from './classSearchMessage';
+import {Link} from "react-router-dom";
 
 const color = grey[700];
 const dark_grey = grey[800];
@@ -58,19 +59,6 @@ const ClassScheduleTable = () => {
                 setShowAlert(false);
               }, 5000);
         })  
-
-        // if (response.status >= 200 && response.status <= 299) {
-        //     // setError(false)
-        //     // setIfEnrolled(true)
-        //     const jsonResponse = await response.json();
-        //     console.log(jsonResponse);
-        // } else {
-        //     if (response.status == 401 || response.statusText == 'Unauthorized'){
-        //         // setError(true)
-        //         // setIfEnrolled(false)
-        //     }
-        //     // TODO: Other error handling for 400 and 404
-        // }
     }
 
         const handleEnrollAll = async () => {
@@ -94,18 +82,6 @@ const ClassScheduleTable = () => {
               }, 5000);
         })  
 
-        // if (response.status >= 200 && response.status <= 299) {
-        //     // setError(false)
-        //     // setIfEnrolled(true)
-        //     const jsonResponse = await response.json();
-        //     console.log(jsonResponse);
-        // } else {
-        //     if (response.status == 401 || response.statusText == 'Unauthorized'){
-        //         // setError(true)
-        //         // setIfEnrolled(false)
-        //     }
-        //     // TODO: Other error handling for 400 and 404
-        // }
     }
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -128,20 +104,21 @@ const ClassScheduleTable = () => {
         },
     }));
 
+    console.log(classes)
+
     
-    if(classes != null && classes.length > 0){
-        
-        return (
+    if(classes != null ){
+        if (! classes.length > 0){
+            return(
             <>
             <TableContainer component={Paper} style={{marginTop: "20px"}} >
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                     <TableRow>
-                            <StyledTableHeader align="center">{classes[0].classes.name}</StyledTableHeader>
-                            <StyledTableHeader align="center"><Button 
-                                    variant="contained"
-                                    onClick={() => handleEnrollAll()}>Enroll ALL!</Button></StyledTableHeader>
-    
+                            <StyledTableHeader align="center" colSpan={2}
+                             sx={{
+                                fontSize: "1rem",
+                                }}>Class Schedule</StyledTableHeader>
                         </TableRow>
                         <TableRow>
                             <StyledTableCell align="center">Time</StyledTableCell>
@@ -149,24 +126,57 @@ const ClassScheduleTable = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {classes.map((each_class) => (
-                            <TableRow
-                                key={each_class.id}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <StyledTableCell align="center">{ formatDate(each_class.time, false) } - {formatDate(each_class.end_time, true)}</StyledTableCell>
-                                <StyledTableCell align="center"><Button 
-                                    variant="contained"
-                                    onClick={() => handleClassEnrol(each_class.id)}>Enroll</Button></StyledTableCell>
-                            </TableRow>
-                        ))}
+                        <StyledTableCell colSpan={2} align="center">
+                                There are currently no class times for this class. <Link to={`/classes/search`}>Click here to see othr classes offered by our studios.
+                                </Link></StyledTableCell>
                     </TableBody>
                 </Table>
             </TableContainer>
-            { showAlert? <EnrollMessageHandler></EnrollMessageHandler>: ""}
+            
             </>
-        );
-    }
+            )
+        }
+
+        else{
+            
+            return (
+                <>
+                <TableContainer component={Paper} style={{marginTop: "20px"}} >
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                        <TableRow>
+                                <StyledTableHeader align="center">{classes[0].classes.name}</StyledTableHeader>
+                                <StyledTableHeader align="center"><Button 
+                                        variant="contained"
+                                        onClick={() => handleEnrollAll()}>Enroll ALL!</Button></StyledTableHeader>
+        
+                            </TableRow>
+                            <TableRow>
+                                <StyledTableCell align="center">Time</StyledTableCell>
+                                <StyledTableCell align="center">Enroll Now!</StyledTableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {classes.map((each_class) => (
+                                <TableRow
+                                    key={each_class.id}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <StyledTableCell align="center">{ formatDate(each_class.time, false) } - {formatDate(each_class.end_time, true)}</StyledTableCell>
+                                    <StyledTableCell align="center"><Button 
+                                        variant="contained"
+                                        onClick={() => handleClassEnrol(each_class.id)}>Enroll</Button></StyledTableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                { showAlert? <EnrollMessageHandler></EnrollMessageHandler>: ""}
+                </>
+            );
+        }
+        }
+        
     
 }
 export default ClassScheduleTable;
