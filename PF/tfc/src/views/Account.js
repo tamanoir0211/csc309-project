@@ -168,7 +168,7 @@ const AccountPage = () => {
                 error={password2Error}
                 helperText={password2Error && "Passwords don't match"}
             />
-                    {alertUpdated && <Alert severity="success"> Udate Successful </Alert>}
+                    {alertUpdated && <Alert severity="success"> Update Successful </Alert>}
 
             <Button
                 type="submit"

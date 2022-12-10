@@ -24,7 +24,9 @@ const RegisterPage = () => {
             password: e.target.password.value, 
             first_name: e.target.first_name.value, 
             last_name: e.target.last_name.value, 
-            phone_number: e.target.phone_number.value};
+            phone_number: e.target.phone_number.value
+            //avatar: e.target.avatar.value
+        };
 
         setPassword(e.target.password.value);
         setEmail(e.target.email.value);
@@ -159,6 +161,19 @@ const RegisterPage = () => {
             label="Phone Number"
             name="phone_number"
         />
+        {/* <Button
+            variant="contained"
+            component="label"
+            fullWidth
+            sx={{ mt: 3, mb: 2 }}
+        >
+            Upload Profile Picture
+            <input
+                type="file"
+                id="avatar"
+                hidden
+            />
+        </Button> */}
         <Button
             type="submit"
             fullWidth
